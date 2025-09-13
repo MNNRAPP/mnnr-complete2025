@@ -1,0 +1,274 @@
+// MNNR Platform - Enterprise-Grade Receipt Management System
+// Military-grade security with encrypted fields and zero-trust architecture
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User model with military-grade security features
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  emailVerified     DateTime?
+  hashedPassword    String?  // Encrypted with bcrypt
+  name              String?
+  image             String?
+  role              UserRole @default(USER)
+  status            UserStatus @default(ACTIVE)
+  
+  // Security fields
+  twoFactorEnabled  Boolean  @default(false)
+  twoFactorSecret   String?  // Encrypted TOTP secret
+  biometricEnabled  Boolean  @default(false)
+  biometricData     String?  // Encrypted biometric template
+  sessionFingerprint String? // Encrypted session identifier
+  lastLoginAt       DateTime?
+  failedLoginAttempts Int      @default(0)
+  lockedUntil       DateTime?
+  
+  // AI-powered fraud detection
+  fraudScore        Float    @default(0.0)
+  riskLevel         RiskLevel @default(LOW)
+  behavioralPattern String?  // Encrypted behavioral analysis data
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+  
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  receipts          Receipt[]
+  userPreferences   UserPreferences?
+  auditLogs         AuditLog[]
+  fraudAlerts       FraudAlert[]
+  
+  @@index([email])
+  @@index([status])
+  @@index([role])
+  @@index([fraudScore])
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state   String?
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  
+  // Security features
+  ipAddress    String?
+  userAgent    String?
+  fingerprint  String?  // Encrypted session fingerprint
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// Receipt model with encrypted sensitive data
+model Receipt {
+  id                String   @id @default(cuid())
+  userId            String
+  
+  // Encrypted receipt data
+  merchantName      String   // Encrypted merchant name
+  merchantAddress   String?  // Encrypted address
+  transactionDate   DateTime
+  totalAmount       Decimal  @db.Decimal(10, 2)
+  taxAmount       Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+  
+  // Additional encrypted fields
+  items             String?  @db.Text // Encrypted JSON of items
+  paymentMethod     String?  // Encrypted payment method
+  cardLastFour    String?  // Encrypted last 4 digits
+  receiptNumber     String?  // Encrypted receipt number
+  
+  // AI analysis
+  category          String?  // AI-determined category
+  confidenceScore   Float    @default(0.0)
+  fraudRisk         Float    @default(0.0)
+  
+  // File storage
+  imageUrl          String?
+  ocrText           String?  @db.Text // Raw OCR text
+  
+  // Status and processing
+  status            ReceiptStatus @default(PENDING)
+  processedAt       DateTime?
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+  
+  // Relations
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  auditLogs         AuditLog[]
+  
+  @@index([userId])
+  @@index([transactionDate])
+  @@index([status])
+  @@index([category])
+}
+
+model UserPreferences {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  
+  // Security preferences
+  twoFactorMethod   TwoFactorMethod @default(TOTP)
+  sessionTimeout    Int      @default(3600) // seconds
+  loginAlerts       Boolean  @default(true)
+  fraudAlerts       Boolean  @default(true)
+  
+  // UI preferences
+  theme             Theme    @default(LIGHT)
+  language          String   @default("en")
+  timezone          String   @default("UTC")
+  
+  // Receipt processing preferences
+  autoCategorize    Boolean  @default(true)
+  autoProcess       Boolean  @default(true)
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// Audit logging for security compliance
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String?
+  action      String
+  resource    String
+  details     String?     @db.Text
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime    @default(now())
+  severity    LogSeverity @default(INFO)
+  
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([timestamp])
+  @@index([action])
+}
+
+// Fraud detection and alerts
+model FraudAlert {
+  id            String      @id @default(cuid())
+  userId        String
+  type          FraudType
+  severity      FraudSeverity
+  description   String
+  evidence      String?     @db.Text // Encrypted evidence data
+  status        AlertStatus @default(ACTIVE)
+  createdAt     DateTime    @default(now())
+  resolvedAt    DateTime?
+  
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  LOCKED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TwoFactorMethod {
+  TOTP
+  SMS
+  EMAIL
+  BIOMETRIC
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum ReceiptStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  FLAGGED
+}
+
+enum LogSeverity {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum FraudType {
+  SUSPICIOUS_LOGIN
+  UNUSUAL_TRANSACTION
+  VELOCITY_VIOLATION
+  GEOGRAPHIC_ANOMALY
+  BEHAVIORAL_ANOMALY
+}
+
+enum FraudSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  ACTIVE
+  INVESTIGATING
+  RESOLVED
+  FALSE_POSITIVE
+}

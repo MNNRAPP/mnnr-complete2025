@@ -1,0 +1,131 @@
+# Production Docker Compose - Multi-Service Architecture
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: mnnr-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mnnr_platform
+      POSTGRES_USER: mnnr_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secure_password_123}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+      POSTGRES_HOST_AUTH_METHOD: "scram-sha-256"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - mnnr_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mnnr_user -d mnnr_platform"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mnnr-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_secure_123}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - mnnr_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # MNNR Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: mnnr-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://mnnr_user:${DB_PASSWORD:-secure_password_123}@postgres:5432/mnnr_platform?schema=public
+      DIRECT_URL: postgresql://mnnr_user:${DB_PASSWORD:-secure_password_123}@postgres:5432/mnnr_platform?schema=public
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-your-nextauth-secret-key-minimum-32-characters-long}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-https://your-domain.com}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-your-32-character-hex-encryption-key}
+      JWT_SECRET: ${JWT_SECRET:-your-jwt-signing-secret}
+      MFA_ENCRYPTION_KEY: ${MFA_ENCRYPTION_KEY:-your-mfa-encryption-key}
+      REDIS_URL: redis://default:${REDIS_PASSWORD:-redis_secure_123}@redis:6379
+      SENTRY_DSN: ${SENTRY_DSN}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      RATE_LIMIT_REDIS_URL: redis://default:${REDIS_PASSWORD:-redis_secure_123}@redis:6379
+      FRAUD_DETECTION_API_KEY: ${FRAUD_DETECTION_API_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GITHUB_ID: ${GITHUB_ID}
+      GITHUB_SECRET: ${GITHUB_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    networks:
+      - mnnr_network
+    volumes:
+      - ./public:/app/public
+      - ./uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: mnnr-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./public:/usr/share/nginx/html:ro
+    depends_on:
+      - app
+    networks:
+      - mnnr_network
+
+  # Filebeat for Log Management
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.11.0
+    container_name: mnnr-filebeat
+    restart: unless-stopped
+    user: root
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - mnnr_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  mnnr_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
