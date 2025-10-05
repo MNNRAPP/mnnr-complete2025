@@ -1,12 +1,5 @@
 import Stripe from 'stripe';
 import { stripe } from '@/utils/stripe/config';
-import {
-  upsertProductRecord,
-  upsertPriceRecord,
-  manageSubscriptionStatusChange,
-  deleteProductRecord,
-  deletePriceRecord
-} from '@/utils/supabase/admin';
 import { logger } from '@/utils/logger';
 import {
   checkRateLimit,
@@ -29,6 +22,11 @@ const relevantEvents = new Set([
 ]);
 
 export async function POST(req: Request) {
+  // Skip during build time when env vars aren't available
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    return new Response('Webhook not configured', { status: 500 });
+  }
+
   // Apply enterprise rate limiting
   const clientIp = getClientIp(req);
   const rateLimit = await checkRateLimit(clientIp, rateLimitConfigs.webhook);
@@ -50,13 +48,23 @@ export async function POST(req: Request) {
     }
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     logger.webhook(event.type, { eventId: event.id, clientIp });
-  } catch (err: any) {
+  } catch (err: unknown) {
     logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
     try {
+      // Dynamically import admin functions to avoid build-time issues
+      const {
+        upsertProductRecord,
+        upsertPriceRecord,
+        manageSubscriptionStatusChange,
+        deleteProductRecord,
+        deletePriceRecord
+      } = await import('@/utils/supabase/admin');
+
       switch (event.type) {
         case 'product.created':
         case 'product.updated':
