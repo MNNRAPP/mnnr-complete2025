@@ -27,7 +27,30 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=()'
+    value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
+  },
+  // Cross-Origin Policies for enhanced security isolation
+  {
+    key: 'Cross-Origin-Embedder-Policy',
+    value: 'require-corp'
+  },
+  {
+    key: 'Cross-Origin-Opener-Policy',
+    value: 'same-origin'
+  },
+  {
+    key: 'Cross-Origin-Resource-Policy',
+    value: 'same-origin'
+  },
+  // Prevent Adobe Flash/PDF cross-domain policies
+  {
+    key: 'X-Permitted-Cross-Domain-Policies',
+    value: 'none'
+  },
+  // Certificate Transparency monitoring
+  {
+    key: 'Expect-CT',
+    value: 'max-age=86400, enforce'
   },
   {
     key: 'Content-Security-Policy',
@@ -39,7 +62,10 @@ const securityHeaders = [
       "font-src 'self' data:",
       "connect-src 'self' https://*.supabase.co https://api.stripe.com",
       "frame-src https://js.stripe.com https://hooks.stripe.com",
-      "form-action 'self'"
+      "form-action 'self'",
+      "base-uri 'self'",
+      "object-src 'none'",
+      "upgrade-insecure-requests"
     ].join('; ')
   }
 ];

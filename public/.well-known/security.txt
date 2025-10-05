@@ -1,0 +1,52 @@
+# Security Contact Information
+# RFC 9116 Compliant Security.txt
+# https://securitytxt.org/
+
+Contact: mailto:security@yourdomain.com
+Expires: 2026-10-04T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://yourdomain.com/.well-known/security.txt
+
+# Security Policy
+Policy: https://github.com/MNNRAPP/mnnr-complete2025/blob/main/SECURITY.md
+
+# Acknowledgments
+Acknowledgments: https://yourdomain.com/security-acknowledgments
+
+# Hiring (optional)
+# Hiring: https://yourdomain.com/careers
+
+# PGP Key (optional - add when available)
+# Encryption: https://yourdomain.com/pgp-key.txt
+
+# Additional Information
+# This application follows OWASP security best practices.
+# We take security seriously and appreciate responsible disclosure.
+# 
+# Vulnerability Disclosure Process:
+# 1. Email security@yourdomain.com with details
+# 2. We will acknowledge within 48 hours
+# 3. We will provide a timeline for fix within 7 days
+# 4. We will credit researchers (if desired) after fix is deployed
+#
+# Please DO NOT:
+# - Open public GitHub issues for security vulnerabilities
+# - Test on production systems without authorization
+# - Access or modify user data
+# - Perform denial of service testing
+#
+# In Scope:
+# - Authentication bypass
+# - Privilege escalation
+# - SQL injection
+# - XSS (cross-site scripting)
+# - CSRF (cross-site request forgery)
+# - Sensitive data exposure
+# - Business logic vulnerabilities
+#
+# Out of Scope:
+# - Social engineering attacks
+# - Physical attacks
+# - DoS/DDoS attacks
+# - Spam or content injection
+# - Issues in third-party services (Stripe, Supabase)
