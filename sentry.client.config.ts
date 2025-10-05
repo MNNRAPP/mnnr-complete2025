@@ -33,9 +33,6 @@ if (sentryDsn) {
       return event;
     },
     
-    // Session tracking
-    autoSessionTracking: true,
-    
     // Additional options
     environment: process.env.NODE_ENV,
     

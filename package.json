@@ -22,13 +22,17 @@
     "supabase:pull": "npx supabase db pull"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "@radix-ui/react-toast": "^1.1.5",
     "@sentry/nextjs": "^10.17.0",
+    "@simplewebauthn/browser": "^13.2.2",
+    "@simplewebauthn/server": "^13.2.2",
     "@stripe/stripe-js": "2.4.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.43.4",
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.4",
+    "@vercel/otel": "^2.0.1",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

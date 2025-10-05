@@ -18,5 +18,13 @@ export async function register() {
         process.exit(1);
       }
     }
+
+    // Initialize OpenTelemetry for distributed tracing
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+      const { registerOTel } = await import('@vercel/otel');
+      registerOTel({
+        serviceName: 'mnnr-app',
+      });
+    }
   }
 }

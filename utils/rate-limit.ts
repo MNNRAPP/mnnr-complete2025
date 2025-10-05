@@ -37,11 +37,9 @@ try {
   } else {
     logger.warn('Redis not configured, falling back to in-memory rate limiting');
   }
-} catch (error) {
-  logger.warn('Redis initialization failed, using in-memory fallback', error);
-}
-
-// In-memory store (fallback when Redis unavailable)
+  } catch (error) {
+    logger.warn('Redis initialization failed, using in-memory fallback', error as Error);
+  }// In-memory store (fallback when Redis unavailable)
 const rateLimitStore = new Map<string, RateLimitRecord>();
 
 // Clean up old entries every 5 minutes (in-memory only)
