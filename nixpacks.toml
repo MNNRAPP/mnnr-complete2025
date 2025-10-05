@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["nodejs_24", "pnpm-9_x", "openssl"]
+
+[phases.build]
+cmds = ["pnpm install --frozen-lockfile", "pnpm build"]
+
+[phases.start]
+cmd = "node server.js"
