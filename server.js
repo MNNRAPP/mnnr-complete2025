@@ -10,6 +10,8 @@ console.log(`🚀 Starting MNNR server...`)
 console.log(`📦 Environment: ${dev ? 'development' : 'production'}`)
 console.log(`🌐 Port: ${port} (Railway provided: ${process.env.PORT})`)
 console.log(`🔗 Host: ${hostname}`)
+console.log(`🔄 Build Version: 2025-10-05-v2`)
+console.log(`📁 API Routes Available: health, auth, webhooks, v1`)
 
 // Initialize the Next.js app
 const app = next({ dev })
