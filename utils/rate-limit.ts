@@ -48,7 +48,8 @@ const rateLimitStore = new Map<string, RateLimitRecord>();
 if (!redis) {
   setInterval(() => {
     const now = Date.now();
-    for (const [key, record] of rateLimitStore.entries()) {
+    const entries = Array.from(rateLimitStore.entries());
+    for (const [key, record] of entries) {
       if (record.resetTime < now) {
         rateLimitStore.delete(key);
       }

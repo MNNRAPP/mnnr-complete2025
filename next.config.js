@@ -93,10 +93,6 @@ const nextConfig = {
         'localhost:3000',
         process.env.NEXT_PUBLIC_SITE_URL
       ].filter(Boolean)
-    },
-    // Security: Disable server components logging
-    logging: {
-      level: 'error'
     }
   },
 
