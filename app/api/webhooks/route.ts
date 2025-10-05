@@ -7,6 +7,13 @@ import {
   deleteProductRecord,
   deletePriceRecord
 } from '@/utils/supabase/admin';
+import { logger } from '@/utils/logger';
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitConfigs,
+  createRateLimitResponse
+} from '@/utils/rate-limit';
 
 const relevantEvents = new Set([
   'product.created',
@@ -22,19 +29,38 @@ const relevantEvents = new Set([
 ]);
 
 export async function POST(req: Request) {
+  // Apply rate limiting
+  const clientIp = getClientIp(req);
+  const rateLimit = checkRateLimit(clientIp, rateLimitConfigs.webhook);
+
+  if (!rateLimit.allowed) {
+    logger.warn('Webhook rate limit exceeded', { clientIp });
+    return createRateLimitResponse(rateLimit.resetTime);
+  }
   const body = await req.text();
-  const sig = req.headers.get('stripe-signature') as string;
+  const sig = req.headers.get('stripe-signature');
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   let event: Stripe.Event;
 
   try {
-    if (!sig || !webhookSecret)
-      return new Response('Webhook secret not found.', { status: 400 });
+    // Critical: Validate webhook secret exists
+    if (!webhookSecret) {
+      logger.error('CRITICAL: STRIPE_WEBHOOK_SECRET is not configured');
+      return new Response('Server configuration error', { status: 500 });
+    }
+
+    if (!sig) {
+      logger.warn('Webhook received without signature', { hasBody: !!body });
+      return new Response('Missing signature', { status: 400 });
+    }
+
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    console.log(`🔔  Webhook received: ${event.type}`);
+    logger.webhook(event.type, { eventId: event.id });
   } catch (err: any) {
-    console.log(`❌ Error message: ${err.message}`);
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    logger.error('Webhook signature validation failed', err, {
+      errorMessage: err?.message
+    });
+    return new Response('Webhook signature validation failed', { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
@@ -79,15 +105,19 @@ export async function POST(req: Request) {
           throw new Error('Unhandled relevant event!');
       }
     } catch (error) {
-      console.log(error);
-      return new Response(
-        'Webhook handler failed. View your Next.js function logs.',
-        {
-          status: 400
-        }
-      );
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logger.error('Webhook processing failed', error, {
+        eventType: event.type,
+        eventId: event.id
+      });
+
+      return new Response('Webhook processing failed', { status: 500 });
     }
   } else {
+    logger.warn('Unsupported event type received', {
+      eventType: event.type,
+      eventId: event.id
+    });
     return new Response(`Unsupported event type: ${event.type}`, {
       status: 400
     });

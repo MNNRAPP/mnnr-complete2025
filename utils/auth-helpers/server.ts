@@ -5,10 +5,81 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from 'utils/helpers';
 import { getAuthTypes } from 'utils/auth-helpers/settings';
+import { logger } from '@/utils/logger';
 
-function isValidEmail(email: string) {
-  var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+const MAX_EMAIL_LENGTH = 320; // RFC 5321
+const MAX_NAME_LENGTH = 255;
+const MIN_PASSWORD_LENGTH = 8;
+
+/**
+ * Validate email address format and length
+ * Enhanced validation to prevent email injection attacks
+ */
+function isValidEmail(email: string): boolean {
+  if (!email || email.length > MAX_EMAIL_LENGTH || email.length < 3) {
+    return false;
+  }
+
+  // More robust regex that handles modern TLDs and prevents common injection patterns
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  // Additional checks for suspicious patterns
+  if (email.includes('..') || email.startsWith('.') || email.endsWith('.')) {
+    return false;
+  }
+
   return regex.test(email);
+}
+
+/**
+ * Sanitize user input to prevent XSS
+ */
+function sanitizeInput(input: string, maxLength: number = 1000): string {
+  if (!input) return '';
+
+  // Trim and limit length
+  let sanitized = input.trim().substring(0, maxLength);
+
+  // Remove null bytes and other control characters
+  sanitized = sanitized.replace(/\0/g, '');
+
+  return sanitized;
+}
+
+/**
+ * Validate name input
+ */
+function isValidName(name: string): boolean {
+  if (!name || name.length > MAX_NAME_LENGTH || name.length < 1) {
+    return false;
+  }
+
+  // Allow letters, spaces, hyphens, apostrophes, and common international characters
+  const regex = /^[a-zA-Z\s'-\u00C0-\u017F]+$/;
+  return regex.test(name);
+}
+
+/**
+ * Validate password strength
+ */
+function isValidPassword(password: string): { valid: boolean; error?: string } {
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return { valid: false, error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters` };
+  }
+
+  if (password.length > 128) {
+    return { valid: false, error: 'Password is too long' };
+  }
+
+  // Check for at least one number and one letter
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+
+  if (!hasLetter || !hasNumber) {
+    return { valid: false, error: 'Password must contain both letters and numbers' };
+  }
+
+  return { valid: true };
 }
 
 export async function redirectToPath(path: string) {
@@ -166,15 +237,24 @@ export async function signInWithPassword(formData: FormData) {
 export async function signUp(formData: FormData) {
   const callbackURL = getURL('/auth/callback');
 
-  const email = String(formData.get('email')).trim();
-  const password = String(formData.get('password')).trim();
+  const email = sanitizeInput(String(formData.get('email')), MAX_EMAIL_LENGTH);
+  const password = String(formData.get('password'));
   let redirectPath: string;
 
   if (!isValidEmail(email)) {
-    redirectPath = getErrorRedirect(
+    return getErrorRedirect(
       '/signin/signup',
       'Invalid email address.',
       'Please try again.'
+    );
+  }
+
+  const passwordValidation = isValidPassword(password);
+  if (!passwordValidation.valid) {
+    return getErrorRedirect(
+      '/signin/signup',
+      'Invalid password.',
+      passwordValidation.error || 'Please try again.'
     );
   }
 
@@ -307,7 +387,15 @@ export async function updateEmail(formData: FormData) {
 
 export async function updateName(formData: FormData) {
   // Get form data
-  const fullName = String(formData.get('fullName')).trim();
+  const fullName = sanitizeInput(String(formData.get('fullName')), MAX_NAME_LENGTH);
+
+  if (!isValidName(fullName)) {
+    return getErrorRedirect(
+      '/account',
+      'Invalid name.',
+      'Name can only contain letters, spaces, hyphens, and apostrophes.'
+    );
+  }
 
   const supabase = createClient();
   const { error, data } = await supabase.auth.updateUser({

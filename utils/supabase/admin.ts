@@ -3,18 +3,20 @@ import { stripe } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database, Tables, TablesInsert } from 'types_db';
+import { logger } from '@/utils/logger';
+import { env } from '@/utils/env-validation';
 
 type Product = Tables<'products'>;
 type Price = Tables<'prices'>;
 
 // Change to control trial period length
-const TRIAL_PERIOD_DAYS = 0;
+const TRIAL_PERIOD_DAYS = env.trial.periodDays();
 
 // Note: supabaseAdmin uses the SERVICE_ROLE_KEY which you must only use in a secure server-side context
 // as it has admin privileges and overwrites RLS policies!
 const supabaseAdmin = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  env.supabase.url(),
+  env.supabase.serviceRoleKey()
 );
 
 const upsertProductRecord = async (product: Stripe.Product) => {
@@ -32,7 +34,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
     .upsert([productData]);
   if (upsertError)
     throw new Error(`Product insert/update failed: ${upsertError.message}`);
-  console.log(`Product inserted/updated: ${product.id}`);
+  logger.info('Product upserted', { productId: product.id });
 };
 
 const upsertPriceRecord = async (
@@ -58,7 +60,11 @@ const upsertPriceRecord = async (
 
   if (upsertError?.message.includes('foreign key constraint')) {
     if (retryCount < maxRetries) {
-      console.log(`Retry attempt ${retryCount + 1} for price ID: ${price.id}`);
+      logger.warn('Price upsert retry due to foreign key constraint', {
+        priceId: price.id,
+        retryAttempt: retryCount + 1,
+        maxRetries
+      });
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await upsertPriceRecord(price, retryCount + 1, maxRetries);
     } else {
@@ -69,7 +75,7 @@ const upsertPriceRecord = async (
   } else if (upsertError) {
     throw new Error(`Price insert/update failed: ${upsertError.message}`);
   } else {
-    console.log(`Price inserted/updated: ${price.id}`);
+    logger.info('Price upserted', { priceId: price.id });
   }
 };
 
@@ -80,7 +86,7 @@ const deleteProductRecord = async (product: Stripe.Product) => {
     .eq('id', product.id);
   if (deletionError)
     throw new Error(`Product deletion failed: ${deletionError.message}`);
-  console.log(`Product deleted: ${product.id}`);
+  logger.info('Product deleted', { productId: product.id });
 };
 
 const deletePriceRecord = async (price: Stripe.Price) => {
@@ -89,7 +95,7 @@ const deletePriceRecord = async (price: Stripe.Price) => {
     .delete()
     .eq('id', price.id);
   if (deletionError) throw new Error(`Price deletion failed: ${deletionError.message}`);
-  console.log(`Price deleted: ${price.id}`);
+  logger.info('Price deleted', { priceId: price.id });
 };
 
 const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
@@ -162,16 +168,16 @@ const createOrRetrieveCustomer = async ({
         throw new Error(
           `Supabase customer record update failed: ${updateError.message}`
         );
-      console.warn(
-        `Supabase customer record mismatched Stripe ID. Supabase record updated.`
-      );
+      logger.warn('Supabase customer record mismatched Stripe ID', {
+        userId: uuid
+      });
     }
     // If Supabase has a record and matches Stripe, return Stripe customer ID
     return stripeCustomerId;
   } else {
-    console.warn(
-      `Supabase customer record was missing. A new record was created.`
-    );
+    logger.warn('Supabase customer record was missing, creating new record', {
+      userId: uuid
+    });
 
     // If Supabase has no record, create a new record and return Stripe customer ID
     const upsertedStripeCustomer = await upsertCustomerToSupabase(
@@ -192,12 +198,16 @@ const copyBillingDetailsToCustomer = async (
   uuid: string,
   payment_method: Stripe.PaymentMethod
 ) => {
-  //Todo: check this assertion
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
-  //@ts-ignore
-  await stripe.customers.update(customer, { name, phone, address });
+
+  // Update Stripe customer with billing details
+  await stripe.customers.update(customer, {
+    name,
+    phone,
+    address: address as Stripe.CustomerUpdateParams.Address
+  });
   const { error: updateError } = await supabaseAdmin
     .from('users')
     .update({
@@ -235,9 +245,7 @@ const manageSubscriptionStatusChange = async (
     metadata: subscription.metadata,
     status: subscription.status,
     price_id: subscription.items.data[0].price.id,
-    //TODO check quantity on subscription
-    // @ts-ignore
-    quantity: subscription.quantity,
+    quantity: subscription.items.data[0]?.quantity ?? null,
     cancel_at_period_end: subscription.cancel_at_period_end,
     cancel_at: subscription.cancel_at
       ? toDateTime(subscription.cancel_at).toISOString()
@@ -268,18 +276,21 @@ const manageSubscriptionStatusChange = async (
     .upsert([subscriptionData]);
   if (upsertError)
     throw new Error(`Subscription insert/update failed: ${upsertError.message}`);
-  console.log(
-    `Inserted/updated subscription [${subscription.id}] for user [${uuid}]`
+
+  logger.subscription(
+    createAction ? 'created' : 'updated',
+    subscription.id,
+    uuid
   );
 
   // For a new subscription copy the billing details to the customer object.
   // NOTE: This is a costly operation and should happen at the very end.
-  if (createAction && subscription.default_payment_method && uuid)
-    //@ts-ignore
+  if (createAction && subscription.default_payment_method && uuid) {
     await copyBillingDetailsToCustomer(
       uuid,
       subscription.default_payment_method as Stripe.PaymentMethod
     );
+  }
 };
 
 export {

@@ -76,7 +76,15 @@ export default function Pricing({ user, products, subscription }: Props) {
     }
 
     const stripe = await getStripe();
-    stripe?.redirectToCheckout({ sessionId });
+    if (stripe) {
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      if (error) {
+        console.error('Stripe redirect failed:', error);
+        return router.push(
+          getErrorRedirect(currentPath, 'Checkout failed', error.message)
+        );
+      }
+    }
 
     setPriceIdLoading(undefined);
   };
