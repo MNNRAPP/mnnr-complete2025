@@ -6,3 +6,6 @@ cmds = ["pnpm install --frozen-lockfile", "pnpm build"]
 
 [phases.start]
 cmd = "node server.js"
+
+[variables]
+NODE_ENV = "production"
