@@ -5,7 +5,8 @@ nixPkgs = ["nodejs_24", "pnpm-9_x", "openssl"]
 cmds = [
   "pnpm install --frozen-lockfile", 
   "pnpm build",
-  "ls -la .next/server/app/api/"
+  "chmod +x verify-build.sh",
+  "./verify-build.sh"
 ]
 
 [phases.start]
@@ -14,4 +15,4 @@ cmd = "node server.js"
 [variables]
 NODE_ENV = "production"
 NODE_VERSION = "24"
-FORCE_REBUILD = "2025-10-05-v2"
+FORCE_REBUILD = "2025-10-05-v3"
