@@ -8,7 +8,6 @@
 
 import { NextResponse } from 'next/server';
 // import { createClient } from '@/utils/supabase/server';
-import { logger } from '@/utils/logger';
 
 type ServiceStatus = 'ok' | 'error';
 type DatabaseStatus = 'connected' | 'error';
@@ -89,7 +88,7 @@ export async function GET() {
 
     // Log health check (only in development or if there's an error)
     if (process.env.NODE_ENV === 'development' || healthData.database === 'error') {
-      logger.info('Health check performed', {
+      console.log('Health check performed', {
         status: healthData.status,
         database: healthData.database,
         redis: healthData.redis,
@@ -103,7 +102,7 @@ export async function GET() {
     });
 
   } catch (error) {
-    logger.error('Health check failed', error);
+    console.error('Health check failed', error);
     
     const errorResponse = {
       status: 'error',
