@@ -42,10 +42,11 @@ export function Toaster() {
         'error_description'
       ];
       paramsToRemove.forEach((param) => newSearchParams.delete(param));
-      const redirectPath = `${pathname}?${newSearchParams.toString()}`;
+      const queryString = newSearchParams.toString();
+      const redirectPath = queryString ? `${pathname}?${queryString}` : pathname;
       router.replace(redirectPath, { scroll: false });
     }
-  }, [searchParams]);
+  }, [pathname, router, searchParams, toast]);
 
   return (
     <ToastProvider>

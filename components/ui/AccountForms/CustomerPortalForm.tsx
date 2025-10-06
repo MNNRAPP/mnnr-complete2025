@@ -29,13 +29,18 @@ export default function CustomerPortalForm({ subscription }: Props) {
   const currentPath = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const subscriptionPrice =
-    subscription &&
-    new Intl.NumberFormat('en-US', {
+  const subscriptionPrice = (() => {
+    if (!subscription) return null;
+
+    const currency = subscription?.prices?.currency ?? 'USD';
+    const unitAmount = subscription?.prices?.unit_amount ?? 0;
+
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: subscription?.prices?.currency!,
+      currency,
       minimumFractionDigits: 0
-    }).format((subscription?.prices?.unit_amount || 0) / 100);
+    }).format(unitAmount / 100);
+  })();
 
   const handleStripePortalRequest = async () => {
     setIsSubmitting(true);

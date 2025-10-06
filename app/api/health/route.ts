@@ -6,16 +6,35 @@
  * Used for monitoring, load balancers, and API documentation
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { logger } from '@/utils/logger';
 
-export async function GET(request: NextRequest) {
+type ServiceStatus = 'ok' | 'error';
+type DatabaseStatus = 'connected' | 'error';
+type RedisStatus = 'connected' | 'error' | 'not_configured';
+
+interface HealthResponse {
+  status: ServiceStatus;
+  timestamp: string;
+  environment: string;
+  version: string;
+  uptime: number;
+  memory: NodeJS.MemoryUsage;
+  node_version: string;
+  database?: DatabaseStatus;
+  database_error?: string;
+  redis?: RedisStatus;
+  redis_error?: string;
+  response_time_ms?: number;
+}
+
+export async function GET() {
   const startTime = Date.now();
   
   try {
     // Basic system info
-    const healthData = {
+    const healthData: HealthResponse = {
       status: 'ok',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
@@ -28,12 +47,10 @@ export async function GET(request: NextRequest) {
     // Test database connectivity
     try {
       const supabase = createClient();
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('users')
-        .select('count')
-        .limit(1)
-        .single();
-      
+        .select('*', { count: 'exact', head: true });
+
       healthData.database = error ? 'error' : 'connected';
       if (error) {
         healthData.database_error = error.message;
@@ -54,6 +71,7 @@ export async function GET(request: NextRequest) {
         healthData.redis = response.ok ? 'connected' : 'error';
       } catch (redisError) {
         healthData.redis = 'error';
+        healthData.redis_error = redisError instanceof Error ? redisError.message : 'Unknown redis error';
       }
     } else {
       healthData.redis = 'not_configured';

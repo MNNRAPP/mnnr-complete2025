@@ -16,9 +16,16 @@ interface SecurityMetrics {
   mfaEnrollmentRate: number;
   passkeyEnrollmentRate: number;
   suspiciousIPs: Array<{ ip: string; attempts: number }>;
-  securityAlerts: Array<any>;
+  securityAlerts: SecurityAlert[];
   dataAccessCount: number;
   activeSessions: number;
+}
+
+interface SecurityAlert {
+  action?: string;
+  timestamp: string | number | Date;
+  ip_address?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export function SecurityDashboard({ metrics }: { metrics: SecurityMetrics }) {

@@ -55,7 +55,7 @@ export async function signInWithEmail(formData: FormData) {
 
   // If allowPassword is false, do not create a new user
   const { allowPassword } = getAuthTypes();
-  if (allowPassword) options.shouldCreateUser = false;
+  if (!allowPassword) options.shouldCreateUser = false;
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: options
