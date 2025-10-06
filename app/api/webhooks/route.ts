@@ -1,12 +1,12 @@
 import Stripe from 'stripe';
 import { stripe } from '@/utils/stripe/config';
+import { logger } from '@/utils/logger';
 import {
-  upsertProductRecord,
-  upsertPriceRecord,
-  manageSubscriptionStatusChange,
-  deleteProductRecord,
-  deletePriceRecord
-} from '@/utils/supabase/admin';
+  checkRateLimit,
+  getClientIp,
+  rateLimitConfigs,
+  createRateLimitResponse
+} from '@/utils/rate-limit';
 
 const relevantEvents = new Set([
   'product.created',
@@ -22,23 +22,49 @@ const relevantEvents = new Set([
 ]);
 
 export async function POST(req: Request) {
+  // Skip during build time when env vars aren't available
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    return new Response('Webhook not configured', { status: 500 });
+  }
+
+  // Apply enterprise rate limiting
+  const clientIp = getClientIp(req);
+  const rateLimit = await checkRateLimit(clientIp, rateLimitConfigs.webhook);
+
+  if (!rateLimit.allowed) {
+    logger.warn('Webhook rate limit exceeded', { clientIp, remaining: rateLimit.remaining });
+    return createRateLimitResponse(rateLimit.resetTime);
+  }
+
   const body = await req.text();
   const sig = req.headers.get('stripe-signature') as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   let event: Stripe.Event;
 
   try {
-    if (!sig || !webhookSecret)
+    if (!sig || !webhookSecret) {
+      logger.error('Webhook validation failed: Missing signature or secret');
       return new Response('Webhook secret not found.', { status: 400 });
+    }
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    console.log(`🔔  Webhook received: ${event.type}`);
-  } catch (err: any) {
-    console.log(`❌ Error message: ${err.message}`);
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    logger.webhook(event.type, { eventId: event.id, clientIp });
+  } catch (err: unknown) {
+    logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
     try {
+      // Dynamically import admin functions to avoid build-time issues
+      const {
+        upsertProductRecord,
+        upsertPriceRecord,
+        manageSubscriptionStatusChange,
+        deleteProductRecord,
+        deletePriceRecord
+      } = await import('@/utils/supabase/admin');
+
       switch (event.type) {
         case 'product.created':
         case 'product.updated':
@@ -76,10 +102,13 @@ export async function POST(req: Request) {
           }
           break;
         default:
+          logger.error('Unhandled relevant event type', undefined, { eventType: event.type, eventId: event.id });
           throw new Error('Unhandled relevant event!');
       }
+      
+      logger.info('Webhook processed successfully', { eventType: event.type, eventId: event.id });
     } catch (error) {
-      console.log(error);
+      logger.error('Webhook processing failed', error, { eventType: event.type, eventId: event.id });
       return new Response(
         'Webhook handler failed. View your Next.js function logs.',
         {
@@ -88,6 +117,7 @@ export async function POST(req: Request) {
       );
     }
   } else {
+    logger.warn('Unsupported webhook event type', { eventType: event.type, eventId: event.id });
     return new Response(`Unsupported event type: ${event.type}`, {
       status: 400
     });

@@ -1,7 +1,9 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import Logo from '@/components/icons/Logo';
 import GitHub from '@/components/icons/GitHub';
+import ContactButton from '@/components/ui/ContactButton/ContactButton';
 
 export default function Footer() {
   return (
@@ -58,23 +60,20 @@ export default function Footer() {
           <ul className="flex flex-col flex-initial md:flex-1">
             <li className="py-3 md:py-0 md:pb-4">
               <p className="font-bold text-white transition duration-150 ease-in-out hover:text-zinc-200">
-                LEGAL
+                SUPPORT
               </p>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Privacy Policy
-              </Link>
+              <ContactButton className="text-white transition duration-150 ease-in-out hover:text-zinc-200">
+                📧 Contact Support
+              </ContactButton>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
               <Link
-                href="/"
+                href="/docs"
                 className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
               >
-                Terms of Use
+                Documentation
               </Link>
             </li>
           </ul>
@@ -99,10 +98,13 @@ export default function Footer() {
         <div className="flex items-center">
           <span className="text-white">Crafted by</span>
           <a href="https://vercel.com" aria-label="Vercel.com Link">
-            <img
+            <Image
               src="/vercel.svg"
               alt="Vercel.com Logo"
-              className="inline-block h-6 ml-4 text-white"
+              width={120}
+              height={24}
+              className="inline-block h-6 ml-4 w-auto text-white"
+              priority
             />
           </a>
         </div>

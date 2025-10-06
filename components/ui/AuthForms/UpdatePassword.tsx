@@ -13,12 +13,14 @@ interface UpdatePasswordProps {
 export default function UpdatePassword({
   redirectMethod
 }: UpdatePasswordProps) {
-  const router = redirectMethod === 'client' ? useRouter() : null;
+  const router = useRouter();
+  const shouldUseClientRouting = redirectMethod === 'client';
+  const activeRouter = shouldUseClientRouting ? router : null;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, updatePassword, router);
+    await handleRequest(e, updatePassword, activeRouter);
     setIsSubmitting(false);
   };
 
