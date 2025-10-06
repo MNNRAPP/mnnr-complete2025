@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import Logo from '@/components/icons/Logo';
 import GitHub from '@/components/icons/GitHub';
+import ContactButton from '@/components/ui/ContactButton/ContactButton';
 
 export default function Footer() {
   return (
@@ -63,12 +64,9 @@ export default function Footer() {
               </p>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
-              <a
-                href="mailto:support@mnnr.app"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Contact Support
-              </a>
+              <ContactButton className="text-white transition duration-150 ease-in-out hover:text-zinc-200">
+                📧 Contact Support
+              </ContactButton>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
               <Link

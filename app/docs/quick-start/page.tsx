@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import ContactButton from '@/components/ui/ContactButton/ContactButton';
 
 export const metadata: Metadata = {
   title: 'Quick Start - MNNR',
@@ -203,7 +204,9 @@ def handle_webhook(request):
             Our support team is here to help you get started. Don&apos;t hesitate to reach out!
           </p>
           <p className="text-sm text-blue-600">
-            📧 Contact: support@mnnr.app | 📚 Docs: <Link href="/docs" className="text-blue-600 hover:text-blue-800">docs.mnnr.app</Link>
+            <ContactButton className="text-blue-600 hover:text-blue-800 font-medium">
+              📧 Contact Support
+            </ContactButton> | 📚 Docs: <Link href="/docs" className="text-blue-600 hover:text-blue-800">docs.mnnr.app</Link>
           </p>
         </div>
 
