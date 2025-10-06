@@ -59,23 +59,23 @@ export default function Footer() {
           <ul className="flex flex-col flex-initial md:flex-1">
             <li className="py-3 md:py-0 md:pb-4">
               <p className="font-bold text-white transition duration-150 ease-in-out hover:text-zinc-200">
-                LEGAL
+                SUPPORT
               </p>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
+              <a
+                href="mailto:support@mnnr.app"
                 className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
               >
-                Privacy Policy
-              </Link>
+                Contact Support
+              </a>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
               <Link
-                href="/"
+                href="/docs"
                 className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
               >
-                Terms of Use
+                Documentation
               </Link>
             </li>
           </ul>

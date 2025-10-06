@@ -6,42 +6,42 @@ param(
     [switch]$Production = $false
 )
 
-Write-Host "🚂 MNNR Railway Deployment Automation" -ForegroundColor Green
+Write-Host "MNNR Railway Deployment Automation" -ForegroundColor Green
 Write-Host "=====================================" -ForegroundColor Green
 
 # Environment configuration
 $environment = if ($Production) { "production" } else { "staging" }
 $siteUrl = if ($Production) { "https://$Domain" } else { "https://mnnr-production.up.railway.app" }
 
-Write-Host "🎯 Target: $environment environment" -ForegroundColor Cyan
-Write-Host "🌐 Domain: $Domain" -ForegroundColor Cyan
+Write-Host "Target: $environment environment" -ForegroundColor Cyan
+Write-Host "Domain: $Domain" -ForegroundColor Cyan
 
 # Check Railway CLI
 if (!(Get-Command railway -ErrorAction SilentlyContinue)) {
-    Write-Host "❌ Railway CLI not found. Installing..." -ForegroundColor Yellow
+    Write-Host "Railway CLI not found. Installing..." -ForegroundColor Yellow
     npm install -g @railway/cli
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Failed to install Railway CLI" -ForegroundColor Red
+        Write-Host "Failed to install Railway CLI" -ForegroundColor Red
         exit 1
     }
 }
 
 # Login check
-Write-Host "🔐 Checking Railway authentication..." -ForegroundColor Cyan
+Write-Host "Checking Railway authentication..." -ForegroundColor Cyan
 $authCheck = railway status 2>&1
 if ($authCheck -like "*not authenticated*" -or $LASTEXITCODE -ne 0) {
-    Write-Host "🔑 Starting Railway login..." -ForegroundColor Yellow
+    Write-Host "Starting Railway login..." -ForegroundColor Yellow
     railway login --browserless
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Railway authentication failed" -ForegroundColor Red
+        Write-Host "Railway authentication failed" -ForegroundColor Red
         exit 1
     }
 }
 
-Write-Host "✅ Railway CLI authenticated" -ForegroundColor Green
+Write-Host "Railway CLI authenticated" -ForegroundColor Green
 
 # Set core environment variables
-Write-Host "🔧 Configuring environment variables..." -ForegroundColor Cyan
+Write-Host "Configuring environment variables..." -ForegroundColor Cyan
 
 $envVars = @{
     "NODE_ENV" = "production"
@@ -94,38 +94,38 @@ for ($i = 0; $i -lt $varArray.Count; $i += $batchSize) {
     Invoke-Expression $cmd
     
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Failed to set variables batch" -ForegroundColor Red
+        Write-Host "Failed to set variables batch" -ForegroundColor Red
         continue
     }
     Start-Sleep -Seconds 2
 }
 
-Write-Host "✅ All environment variables configured" -ForegroundColor Green
+Write-Host "All environment variables configured" -ForegroundColor Green
 
 # Deploy application
-Write-Host "🚀 Deploying to Railway..." -ForegroundColor Cyan
+Write-Host "Deploying to Railway..." -ForegroundColor Cyan
 railway up --detach
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✅ Deployment initiated successfully!" -ForegroundColor Green
+    Write-Host "Deployment initiated successfully!" -ForegroundColor Green
     
     # Get domain info
-    Write-Host "🌐 Getting Railway domain..." -ForegroundColor Cyan
+    Write-Host "Getting Railway domain..." -ForegroundColor Cyan
     $domainInfo = railway domain 2>&1
     Write-Host $domainInfo
     
     Write-Host "" -ForegroundColor White
-    Write-Host "🎉 Railway Deployment Complete!" -ForegroundColor Green
+    Write-Host "Railway Deployment Complete!" -ForegroundColor Green
     Write-Host "===============================" -ForegroundColor Green
-    Write-Host "✅ Environment: $environment" -ForegroundColor White
-    Write-Host "✅ All variables configured" -ForegroundColor White
-    Write-Host "✅ Deployment initiated" -ForegroundColor White
-    Write-Host "✅ Domain configured: $Domain" -ForegroundColor White
+    Write-Host "Environment: $environment" -ForegroundColor White
+    Write-Host "All variables configured" -ForegroundColor White
+    Write-Host "Deployment initiated" -ForegroundColor White
+    Write-Host "Domain configured: $Domain" -ForegroundColor White
     Write-Host "" -ForegroundColor White
-    Write-Host "🌐 Railway URL: https://mnnr-production.up.railway.app" -ForegroundColor Cyan
-    Write-Host "🎯 Target URL: $siteUrl" -ForegroundColor Green
+    Write-Host "Railway URL: https://mnnr-production.up.railway.app" -ForegroundColor Cyan
+    Write-Host "Target URL: $siteUrl" -ForegroundColor Green
     Write-Host "" -ForegroundColor White
-    Write-Host "📋 Next Steps:" -ForegroundColor Yellow
+    Write-Host "Next Steps:" -ForegroundColor Yellow
     if ($Production) {
         Write-Host "   1. Configure Cloudflare DNS (run .\cloudflare-setup.ps1)" -ForegroundColor White
         Write-Host "   2. Add custom domain in Railway dashboard" -ForegroundColor White
@@ -134,6 +134,6 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "   4. Check status: railway status" -ForegroundColor White
     
 } else {
-    Write-Host "❌ Deployment failed" -ForegroundColor Red
-    Write-Host "📋 Check logs: railway logs" -ForegroundColor Yellow
+    Write-Host "Deployment failed" -ForegroundColor Red
+    Write-Host "Check logs: railway logs" -ForegroundColor Yellow
 }

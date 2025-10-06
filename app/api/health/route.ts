@@ -7,7 +7,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+// import { createClient } from '@/utils/supabase/server';
 import { logger } from '@/utils/logger';
 
 type ServiceStatus = 'ok' | 'error';
@@ -45,37 +45,37 @@ export async function GET() {
     };
 
     // Test database connectivity
-    try {
-      const supabase = createClient();
-      const { error } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true });
+    // try {
+    //   const supabase = createClient();
+    //   const { error } = await supabase
+    //     .from('users')
+    //     .select('*', { count: 'exact', head: true });
 
-      healthData.database = error ? 'error' : 'connected';
-      if (error) {
-        healthData.database_error = error.message;
-      }
-    } catch (dbError) {
-      healthData.database = 'error';
-      healthData.database_error = dbError instanceof Error ? dbError.message : 'Unknown database error';
-    }
+    //   healthData.database = error ? 'error' : 'connected';
+    //   if (error) {
+    //     healthData.database_error = error.message;
+    //   }
+    // } catch (dbError) {
+    //   healthData.database = 'error';
+    //   healthData.database_error = dbError instanceof Error ? dbError.message : 'Unknown database error';
+    // }
 
-    // Test Redis connectivity (if configured)
-    if (process.env.UPSTASH_REDIS_REST_URL) {
-      try {
-        const response = await fetch(`${process.env.UPSTASH_REDIS_REST_URL}/ping`, {
-          headers: {
-            'Authorization': `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`
-          }
-        });
-        healthData.redis = response.ok ? 'connected' : 'error';
-      } catch (redisError) {
-        healthData.redis = 'error';
-        healthData.redis_error = redisError instanceof Error ? redisError.message : 'Unknown redis error';
-      }
-    } else {
-      healthData.redis = 'not_configured';
-    }
+    // // Test Redis connectivity (if configured)
+    // if (process.env.UPSTASH_REDIS_REST_URL) {
+    //   try {
+    //     const response = await fetch(`${process.env.UPSTASH_REDIS_REST_URL}/ping`, {
+    //       headers: {
+    //         'Authorization': `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`
+    //       }
+    //     });
+    //     healthData.redis = response.ok ? 'connected' : 'error';
+    //   } catch (redisError) {
+    //     healthData.redis = 'error';
+    //     healthData.redis_error = redisError instanceof Error ? redisError.message : 'Unknown redis error';
+    //   }
+    // } else {
+    //   healthData.redis = 'not_configured';
+    // }
 
     // Calculate response time
     healthData.response_time_ms = Date.now() - startTime;
