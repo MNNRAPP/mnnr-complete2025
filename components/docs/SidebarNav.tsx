@@ -31,7 +31,7 @@ export default function SidebarNav({ onNavigate }: Props) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="block rounded-md px-2 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  className="block rounded-md px-2 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
                   onClick={onNavigate}
                 >
                   {item.label}

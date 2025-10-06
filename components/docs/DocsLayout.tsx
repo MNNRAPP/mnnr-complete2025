@@ -3,6 +3,7 @@
 import { PropsWithChildren, useState } from 'react';
 import SidebarNav from '@/components/docs/SidebarNav';
 import TOC from '@/components/docs/TOC';
+import AutoAnchors from '@/components/docs/AutoAnchors';
 
 export default function DocsLayout({ children }: PropsWithChildren) {
   const [open, setOpen] = useState(false);
@@ -65,6 +66,7 @@ export default function DocsLayout({ children }: PropsWithChildren) {
           </div>
         </aside>
         <main id="docs-content" className="col-span-12 md:col-span-9 xl:col-span-8 prose prose-slate max-w-none">
+          <AutoAnchors />
           {children}
         </main>
         <aside className="hidden xl:block xl:col-span-2">

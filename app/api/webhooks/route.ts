@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       const { createAdminClient } = await import('@/utils/supabase/admin');
       const supabase = createAdminClient();
 
-      const { data: existingEvent } = await (supabase as any)
+      const { data: existingEvent } = await supabase
         .from('stripe_events')
         .select('id')
         .eq('id', event.id)
@@ -125,7 +125,7 @@ export async function POST(req: Request) {
       }
 
       // PAY-020: Record successful processing for idempotency
-      await (supabase as any)
+      await supabase
         .from('stripe_events')
         .insert({
           id: event.id,

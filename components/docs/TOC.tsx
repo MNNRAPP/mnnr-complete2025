@@ -14,7 +14,7 @@ function slugify(text: string) {
 
 function getHeadings(root: Element | null): Heading[] {
   if (!root) return [];
-  const nodes = Array.from(root.querySelectorAll('h1, h2, h3')) as HTMLHeadingElement[];
+  const nodes = Array.from(root.querySelectorAll('h1, h2, h3, h4, h5')) as HTMLHeadingElement[];
   nodes.forEach((n) => {
     if (!n.id) {
       const id = slugify(n.textContent || '');
@@ -34,8 +34,12 @@ function indentClass(level: number) {
       return 'pl-0';
     case 2:
       return 'pl-3';
-    default:
+    case 3:
       return 'pl-6';
+    case 4:
+      return 'pl-9';
+    default:
+      return 'pl-12';
   }
 }
 
@@ -59,7 +63,7 @@ export default function TOC({ rootSelector = '#docs-content' }: { rootSelector?:
       { rootMargin: '0px 0px -70% 0px', threshold: [0, 1] }
     );
 
-    const hs = Array.from(root?.querySelectorAll('h1, h2, h3') || []);
+  const hs = Array.from(root?.querySelectorAll('h1, h2, h3, h4, h5') || []);
     hs.forEach((h) => observer.observe(h));
     return () => observer.disconnect();
   }, [rootSelector]);
@@ -78,8 +82,8 @@ export default function TOC({ rootSelector = '#docs-content' }: { rootSelector?:
             <a
               href={`#${h.id}`}
               className={
-                `block rounded-md px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 ${indentClass(h.level)} ` +
-                (active === h.id ? 'text-gray-900 bg-gray-100' : '')
+                `block rounded-md px-2 py-1 text-gray-600 hover:text-emerald-700 hover:bg-emerald-50 ${indentClass(h.level)} ` +
+                (active === h.id ? 'text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200' : '')
               }
             >
               {h.text}

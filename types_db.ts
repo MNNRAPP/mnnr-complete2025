@@ -32,6 +32,27 @@ export interface Database {
           }
         ]
       }
+      stripe_events: {
+        Row: {
+          id: string
+          created_at: string
+          event_type: string | null
+          processed_at: string | null
+        }
+        Insert: {
+          id: string
+          created_at?: string
+          event_type?: string | null
+          processed_at?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          event_type?: string | null
+          processed_at?: string | null
+        }
+        Relationships: []
+      }
       prices: {
         Row: {
           active: boolean | null
