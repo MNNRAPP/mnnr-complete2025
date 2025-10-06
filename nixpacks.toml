@@ -14,5 +14,5 @@ cmd = "node server.js"
 
 [variables]
 NODE_ENV = "production"
-NIXPACKS_NODE_VERSION = "20"
-FORCE_REBUILD = "2025-10-05-v4"
+NODE_VERSION = "20"
+FORCE_REBUILD = "2025-10-05-v5"
