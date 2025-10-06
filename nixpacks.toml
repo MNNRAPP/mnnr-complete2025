@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm-9_x", "openssl"]
+
+[phases.build]
+cmds = [
+  "pnpm install --frozen-lockfile", 
+  "pnpm build",
+  "chmod +x verify-build.sh",
+  "./verify-build.sh"
+]
+
+[phases.start]
+cmd = "node server.js"
+
+[variables]
+NODE_ENV = "production"
+NODE_VERSION = "20"
+FORCE_REBUILD = "2025-10-05-v5"

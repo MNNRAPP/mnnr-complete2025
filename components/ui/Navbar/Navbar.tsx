@@ -3,11 +3,18 @@ import s from './Navbar.module.css';
 import Navlinks from './Navlinks';
 
 export default async function Navbar() {
-  const supabase = createClient();
+  let user = null;
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = createClient();
+    const response = await Promise.race([
+      supabase.auth.getUser(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
+    ]);
+    user = (response as any)?.data?.user || null;
+  } catch (error) {
+    console.warn('Failed to get user, continuing without auth:', error);
+  }
 
   return (
     <nav className={s.root}>

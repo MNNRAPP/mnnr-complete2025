@@ -149,11 +149,13 @@ export default function Pricing({ user, products, subscription }: Props) {
                 (price) => price.interval === billingInterval
               );
               if (!price) return null;
+              const currency = price.currency ?? 'USD';
+              const amount = price.unit_amount ?? 0;
               const priceString = new Intl.NumberFormat('en-US', {
                 style: 'currency',
-                currency: price.currency!,
+                currency,
                 minimumFractionDigits: 0
-              }).format((price?.unit_amount || 0) / 100);
+              }).format(amount / 100);
               return (
                 <div
                   key={product.id}

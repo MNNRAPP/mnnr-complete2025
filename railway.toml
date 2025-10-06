@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "node server.js"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[build.buildCommand]
+cmd = "pnpm install --frozen-lockfile && pnpm build && echo 'API Routes Built:' && ls -la .next/server/app/api/"
