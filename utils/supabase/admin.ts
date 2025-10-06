@@ -2,6 +2,7 @@ import { toDateTime } from '@/utils/helpers';
 import { stripe } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { logger } from '@/utils/logger';
 import type { Database, Tables, TablesInsert } from 'types_db';
 
 type Product = Tables<'products'>;
@@ -37,7 +38,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
     .upsert([productData]);
   if (upsertError)
     throw new Error(`Product insert/update failed: ${upsertError.message}`);
-  console.log(`Product inserted/updated: ${product.id}`);
+  logger.info(`Product inserted/updated`, { productId: product.id });
 };
 
 const upsertPriceRecord = async (
@@ -63,7 +64,7 @@ const upsertPriceRecord = async (
 
   if (upsertError?.message.includes('foreign key constraint')) {
     if (retryCount < maxRetries) {
-      console.log(`Retry attempt ${retryCount + 1} for price ID: ${price.id}`);
+  logger.warn('Retrying price upsert due to FK constraint', { attempt: retryCount + 1, priceId: price.id });
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await upsertPriceRecord(price, retryCount + 1, maxRetries);
     } else {
@@ -74,7 +75,7 @@ const upsertPriceRecord = async (
   } else if (upsertError) {
     throw new Error(`Price insert/update failed: ${upsertError.message}`);
   } else {
-    console.log(`Price inserted/updated: ${price.id}`);
+  logger.info('Price inserted/updated', { priceId: price.id });
   }
 };
 
@@ -85,7 +86,7 @@ const deleteProductRecord = async (product: Stripe.Product) => {
     .eq('id', product.id);
   if (deletionError)
     throw new Error(`Product deletion failed: ${deletionError.message}`);
-  console.log(`Product deleted: ${product.id}`);
+  logger.info('Product deleted', { productId: product.id });
 };
 
 const deletePriceRecord = async (price: Stripe.Price) => {
@@ -94,7 +95,7 @@ const deletePriceRecord = async (price: Stripe.Price) => {
     .delete()
     .eq('id', price.id);
   if (deletionError) throw new Error(`Price deletion failed: ${deletionError.message}`);
-  console.log(`Price deleted: ${price.id}`);
+  logger.info('Price deleted', { priceId: price.id });
 };
 
 const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
@@ -167,16 +168,12 @@ const createOrRetrieveCustomer = async ({
         throw new Error(
           `Supabase customer record update failed: ${updateError.message}`
         );
-      console.warn(
-        `Supabase customer record mismatched Stripe ID. Supabase record updated.`
-      );
+      logger.warn('Supabase customer record mismatched Stripe ID. Updated to match Stripe.', { uuid, stripeCustomerId });
     }
     // If Supabase has a record and matches Stripe, return Stripe customer ID
     return stripeCustomerId;
   } else {
-    console.warn(
-      `Supabase customer record was missing. A new record was created.`
-    );
+    logger.warn('Supabase customer record was missing; created new record.', { uuid });
 
     // If Supabase has no record, create a new record and return Stripe customer ID
     const upsertedStripeCustomer = await upsertCustomerToSupabase(
@@ -201,7 +198,7 @@ const copyBillingDetailsToCustomer = async (
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
-  //@ts-ignore
+  // @ts-expect-error subscription.default_payment_method typing is broad; Stripe types require narrowing at runtime
   await stripe.customers.update(customer, { name, phone, address });
   const { error: updateError } = await supabaseAdmin
     .from('users')
@@ -273,14 +270,12 @@ const manageSubscriptionStatusChange = async (
     .upsert([subscriptionData]);
   if (upsertError)
     throw new Error(`Subscription insert/update failed: ${upsertError.message}`);
-  console.log(
-    `Inserted/updated subscription [${subscription.id}] for user [${uuid}]`
-  );
+  logger.info('Subscription upserted', { subscriptionId: subscription.id, userId: uuid });
 
   // For a new subscription copy the billing details to the customer object.
   // NOTE: This is a costly operation and should happen at the very end.
   if (createAction && subscription.default_payment_method && uuid)
-    //@ts-ignore
+    // @ts-expect-error Stripe type for default_payment_method needs narrowing; safe at runtime when present
     await copyBillingDetailsToCustomer(
       uuid,
       subscription.default_payment_method as Stripe.PaymentMethod

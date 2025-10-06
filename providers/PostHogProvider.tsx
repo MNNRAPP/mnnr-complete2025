@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { PostHog } from 'posthog-js';
+import posthog from 'posthog-js';
+import { logger } from '@/utils/logger';
 import { PostHogProvider as PostHogProviderCore } from 'posthog-js/react';
 
 // Initialize PostHog
@@ -9,19 +11,15 @@ const initPostHog = (): PostHog | null => {
   if (typeof window !== 'undefined') {
     // Skip initialization if no key provided
     if (!process.env.NEXT_PUBLIC_POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY === 'phc_demo_key_replace_with_real_key') {
-      console.warn('PostHog key not configured - analytics disabled');
+      logger.warn('PostHog key not configured - analytics disabled');
       return null;
     }
-
-    const posthog = require('posthog-js');
 
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
       person_profiles: 'identified_only',
       loaded: (posthog: PostHog) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('PostHog loaded successfully');
-        }
+        logger.debug('PostHog loaded successfully');
       },
       autocapture: {
         dom_event_allowlist: ['click', 'change', 'submit'],
