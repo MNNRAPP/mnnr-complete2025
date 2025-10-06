@@ -1,0 +1,97 @@
+# SEC-003: Code Owners
+# Define who must review changes to critical files
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ============================================
+# DEFAULT OWNERS
+# ============================================
+# These owners will be the default owners for everything
+# Unless a later match takes precedence
+* @devops-lead @security-team
+
+# ============================================
+# SECURITY-CRITICAL FILES
+# ============================================
+# Require security team review for all security changes
+
+# Environment variables
+.env* @security-team
+*.env @security-team
+
+# Security configurations
+middleware.ts @security-team
+next.config.js @security-team
+.github/workflows/*.yml @security-team @devops-lead
+
+# Database migrations
+/supabase/migrations/ @backend-lead @security-team
+
+# Authentication & authorization
+/utils/supabase/admin.ts @security-team @backend-lead
+/utils/auth-helpers/ @security-team @backend-lead
+
+# API routes (especially webhooks)
+/app/api/ @backend-lead @security-team
+
+# Rate limiting & security utilities
+/utils/rate-limit.ts @security-team
+/utils/logger.ts @security-team
+/utils/env-validation.ts @security-team
+
+# ============================================
+# INFRASTRUCTURE & DEPLOYMENT
+# ============================================
+# Require devops approval for infrastructure changes
+
+vercel.json @devops-lead
+.github/ @devops-lead @security-team
+/scripts/ @devops-lead
+Dockerfile @devops-lead
+docker-compose*.yml @devops-lead
+
+# ============================================
+# STRIPE INTEGRATION
+# ============================================
+# Require backend lead + security for payment changes
+
+/utils/stripe/ @backend-lead @security-team
+/app/api/webhooks/ @backend-lead @security-team
+
+# ============================================
+# DOCUMENTATION
+# ============================================
+# Require approval for security documentation changes
+
+/docs/SECURITY*.md @security-team
+/docs/*HARDENING*.md @security-team
+/docs/*_KEY_ROTATION.md @security-team
+/docs/INCIDENT_RESPONSE.md @security-team
+SECURITY.md @security-team
+
+# ============================================
+# CONFIGURATION FILES
+# ============================================
+# Require careful review of config changes
+
+package.json @devops-lead
+package-lock.json @devops-lead
+tsconfig.json @backend-lead
+.eslintrc* @backend-lead
+
+# ============================================
+# FRONTEND COMPONENTS
+# ============================================
+# Frontend team owns UI components
+
+/components/ @frontend-lead
+/app/**/page.tsx @frontend-lead
+/app/**/layout.tsx @frontend-lead
+
+# ============================================
+# TEAM ASSIGNMENTS (update with real GitHub usernames)
+# ============================================
+# Replace these placeholders with actual GitHub usernames:
+# @security-team - Security team members
+# @devops-lead - DevOps lead
+# @backend-lead - Backend lead
+# @frontend-lead - Frontend lead

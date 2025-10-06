@@ -104,19 +104,10 @@ const nextConfig = {
   // Security: Disable powered by header
   poweredByHeader: false,
 
-  // Security: Enable strict mode
-<<<<<<< HEAD
-  // Note: removeConsole only works in production builds, not in dev mode
-  ...(process.env.NODE_ENV === 'production' && {
-    compiler: {
-      removeConsole: true
-    }
-  }),
-=======
+  // Security: Remove console logs in production
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production'
   },
->>>>>>> b9d848ffa7e2f6050b823adbeabd434708421fbf
 
   // Add security headers to all routes
   async headers() {

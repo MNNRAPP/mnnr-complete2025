@@ -17,6 +17,11 @@ const supabaseAdmin = createClient<Database>(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Expose a factory to access the admin client where needed (e.g., in webhooks)
+export function createAdminClient() {
+  return supabaseAdmin;
+}
+
 const upsertProductRecord = async (product: Stripe.Product) => {
   const productData: Product = {
     id: product.id,

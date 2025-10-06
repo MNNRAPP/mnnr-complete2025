@@ -1,0 +1,65 @@
+# SEC-002: Dependabot Configuration
+# Automated dependency updates and security alerts
+
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Los_Angeles"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "security-team"
+    assignees:
+      - "devops-lead"
+    labels:
+      - "dependencies"
+      - "security"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    # Security updates only (comment out for all updates)
+    versioning-strategy: increase-if-necessary
+    # Group updates to reduce PR noise
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+    # Ignore specific packages if needed
+    ignore:
+      # Example: ignore major version updates for stable packages
+      # - dependency-name: "next"
+      #   update-types: ["version-update:semver-major"]
+    # Auto-merge patch updates (requires GitHub Actions)
+    # See: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "ci"
+      - "security"
+    commit-message:
+      prefix: "chore(ci)"
+
+  # Docker (if using)
+  # - package-ecosystem: "docker"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #   open-pull-requests-limit: 5

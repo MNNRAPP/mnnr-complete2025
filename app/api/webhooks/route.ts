@@ -56,6 +56,24 @@ export async function POST(req: Request) {
 
   if (relevantEvents.has(event.type)) {
     try {
+      // PAY-020: Idempotency check - prevent duplicate processing
+      const { createAdminClient } = await import('@/utils/supabase/admin');
+      const supabase = createAdminClient();
+
+      const { data: existingEvent } = await (supabase as any)
+        .from('stripe_events')
+        .select('id')
+        .eq('id', event.id)
+        .single();
+
+      if (existingEvent) {
+        logger.info('Webhook already processed (idempotency)', { eventId: event.id, eventType: event.type });
+        return new Response(JSON.stringify({ received: true, processed: 'already' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
       // Dynamically import admin functions to avoid build-time issues
       const {
         upsertProductRecord,
@@ -105,7 +123,15 @@ export async function POST(req: Request) {
           logger.error('Unhandled relevant event type', undefined, { eventType: event.type, eventId: event.id });
           throw new Error('Unhandled relevant event!');
       }
-      
+
+      // PAY-020: Record successful processing for idempotency
+      await (supabase as any)
+        .from('stripe_events')
+        .insert({
+          id: event.id,
+          event_type: event.type
+        });
+
       logger.info('Webhook processed successfully', { eventType: event.type, eventId: event.id });
     } catch (error) {
       logger.error('Webhook processing failed', error, { eventType: event.type, eventId: event.id });
