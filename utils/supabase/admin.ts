@@ -1,5 +1,5 @@
 import { toDateTime } from '@/utils/helpers';
-import { stripe } from '@/utils/stripe/config';
+import { getStripeClient } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { logger } from '@/utils/logger';
@@ -110,6 +110,7 @@ const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
 };
 
 const createCustomerInStripe = async (uuid: string, email: string) => {
+  const stripe = getStripeClient();
   const customerData = { metadata: { supabaseUUID: uuid }, email: email };
   const newCustomer = await stripe.customers.create(customerData);
   if (!newCustomer) throw new Error('Stripe customer creation failed.');
@@ -137,6 +138,7 @@ const createOrRetrieveCustomer = async ({
   }
 
   // Retrieve the Stripe customer ID using the Supabase customer ID, with email fallback
+  const stripe = getStripeClient();
   let stripeCustomerId: string | undefined;
   if (existingSupabaseCustomer?.stripe_customer_id) {
     const existingStripeCustomer = await stripe.customers.retrieve(
@@ -203,6 +205,8 @@ const copyBillingDetailsToCustomer = async (
   const { name, phone, address } = payment_method.billing_details;
   if (!customer || !name || !phone || !address) return;
 
+  const stripe = getStripeClient();
+
   // Map Stripe.Address to Stripe.AddressParam for update
   const addressParam: Stripe.AddressParam = {
     city: address.city ?? undefined,
@@ -241,6 +245,7 @@ const manageSubscriptionStatusChange = async (
 
   const { id: uuid } = customerData!;
 
+  const stripe = getStripeClient();
   const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
     expand: ['default_payment_method']
   });

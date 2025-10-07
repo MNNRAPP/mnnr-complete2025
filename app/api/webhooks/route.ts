@@ -1,5 +1,9 @@
 import Stripe from 'stripe';
-import { stripe } from '@/utils/stripe/config';
+import {
+  getStripeClient,
+  isStripeConfigured,
+  StripeNotConfiguredError
+} from '@/utils/stripe/config';
 import { logger } from '@/utils/logger';
 import {
   checkRateLimit,
@@ -27,6 +31,14 @@ export async function POST(req: Request) {
     return new Response('Webhook not configured', { status: 500 });
   }
 
+  if (!isStripeConfigured()) {
+    logger.error('Stripe webhook invoked without secret key configured');
+    return new Response(
+      'Stripe is not configured. Set STRIPE_SECRET_KEY to handle webhooks.',
+      { status: 500 }
+    );
+  }
+
   // Apply enterprise rate limiting
   const clientIp = getClientIp(req);
   const rateLimit = await checkRateLimit(clientIp, rateLimitConfigs.webhook);
@@ -46,9 +58,16 @@ export async function POST(req: Request) {
       logger.error('Webhook validation failed: Missing signature or secret');
       return new Response('Webhook secret not found.', { status: 400 });
     }
+    const stripe = getStripeClient();
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     logger.webhook(event.type, { eventId: event.id, clientIp });
   } catch (err: unknown) {
+    if (err instanceof StripeNotConfiguredError) {
+      logger.error('Stripe client unavailable during webhook validation');
+      return new Response('Stripe is not configured on this deployment.', {
+        status: 500
+      });
+    }
     logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
     return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
