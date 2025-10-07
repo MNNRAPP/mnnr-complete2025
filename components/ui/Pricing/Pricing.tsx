@@ -113,7 +113,7 @@ export default function Pricing({ user, products, subscription }: Props) {
   return (
     <section className="relative overflow-hidden py-28">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(140%_140%_at_50%_0%,rgba(15,118,110,0.15),rgba(0,0,0,0))]" />
-      <div className="mx-auto w-full max-w-6xl px-6">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200">
             Pricing

@@ -5,7 +5,7 @@ export default function CTA() {
   return (
     <section className="relative overflow-hidden py-24">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_50%_0%,rgba(16,185,129,0.18),rgba(0,0,0,0))]" />
-      <div className="mx-auto max-w-4xl px-6">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
         <div className="relative overflow-hidden rounded-[36px] border border-white/10 bg-gradient-to-br from-black/70 via-emerald-500/10 to-black/70 p-10 text-center shadow-[0_40px_120px_rgba(0,0,0,0.45)]">
           <div className="absolute -left-16 -top-20 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl" />
           <div className="absolute -bottom-24 -right-24 h-52 w-52 rounded-full bg-sky-400/20 blur-3xl" />

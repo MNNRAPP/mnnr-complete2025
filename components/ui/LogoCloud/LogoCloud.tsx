@@ -51,14 +51,17 @@ const LOGOS = [
 export default function LogoCloud() {
   return (
     <div className="w-full">
-      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-white/5 px-6 py-10 backdrop-blur">
-        <p className="text-center text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-emerald-200">
-          Backed by the platforms you ship with
+      <div className="mx-auto max-w-6xl rounded-[32px] border border-white/10 bg-white/[0.04] px-6 py-10 backdrop-blur">
+        <p className="text-center text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-emerald-200/90">
+          Trusted by the platforms you already deploy with
         </p>
-        <div className="mt-8 grid grid-cols-2 place-items-center gap-6 sm:grid-cols-3 md:grid-cols-5">
+        <div className="mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto px-2 sm:grid sm:grid-cols-5 sm:gap-8 sm:px-0">
           {LOGOS.map((logo) => (
-            <div key={logo.src} className="flex h-12 items-center justify-center">
-              <a href={logo.href} aria-label={logo.ariaLabel} className="opacity-80 transition hover:opacity-100">
+            <div
+              key={logo.src}
+              className="flex h-14 min-w-[140px] snap-center items-center justify-center rounded-2xl border border-white/10 bg-black/50 px-4 py-3 opacity-80 transition hover:opacity-100 sm:min-w-0"
+            >
+              <a href={logo.href} aria-label={logo.ariaLabel} className="flex items-center justify-center">
                 <Image
                   src={logo.src}
                   alt={logo.alt}

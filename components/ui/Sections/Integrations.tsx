@@ -25,8 +25,8 @@ const CONNECTORS = [
 export default function Integrations() {
   return (
     <section className="relative overflow-hidden py-24">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_50%_100%,rgba(37,99,235,0.12),rgba(0,0,0,0))]" />
-      <div className="mx-auto grid w-full max-w-6xl gap-16 px-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_50%_100%,rgba(59,130,246,0.12),rgba(15,23,42,0))]" />
+      <div className="mx-auto grid w-full max-w-6xl gap-16 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div className="space-y-8">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200">
             Integrations

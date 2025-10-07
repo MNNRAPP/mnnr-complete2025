@@ -44,8 +44,8 @@ const OUTCOMES = [
 export default function Features() {
   return (
     <section className="relative py-24">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(80%_80%_at_0%_0%,rgba(79,70,229,0.15),rgba(0,0,0,0))]" />
-      <div className="mx-auto grid w-full max-w-6xl gap-16 px-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(100%_90%_at_0%_0%,rgba(59,130,246,0.12),rgba(15,23,42,0))]" />
+      <div className="mx-auto grid w-full max-w-6xl gap-16 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
         <div className="flex flex-col gap-8">
           <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-200">
             Why teams choose MNNR
@@ -76,7 +76,7 @@ export default function Features() {
             return (
               <div
                 key={feature.title}
-                className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)]"
+                className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-black/55 p-6 shadow-[0_22px_70px_rgba(15,23,42,0.45)]"
               >
                 <div>
                   <span className="inline-flex items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 p-2">

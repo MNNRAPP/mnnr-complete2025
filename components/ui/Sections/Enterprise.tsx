@@ -27,8 +27,8 @@ const PILLARS = [
 export default function Enterprise() {
   return (
     <section className="relative overflow-hidden py-24">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-white/[0.02] via-transparent to-emerald-500/10" />
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-6">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_50%_0%,rgba(16,185,129,0.12),rgba(15,23,42,0))]" />
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl space-y-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200">
             Enterprise posture

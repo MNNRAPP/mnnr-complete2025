@@ -30,42 +30,64 @@ const STEPS = [
 export default function Workflow() {
   return (
     <section className="relative py-24">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(100%_100%_at_100%_0%,rgba(16,185,129,0.15),rgba(0,0,0,0))]" />
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-6">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_0%_0%,rgba(37,99,235,0.12),rgba(15,23,42,0))]" />
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl space-y-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200">
             Operating model
           </span>
           <h2 className="text-3xl font-semibold text-white md:text-5xl md:leading-[1.1]">
-            Endless runway for your product roadmap
+            A guided runway from first idea to global rollout
           </h2>
           <p className="text-base leading-relaxed text-zinc-300 md:text-lg">
-            From proof-of-concept to global rollout, MNNR scales with your agents. Each phase introduces new controls and
-            visibility without rewriting how you ship features.
+            Every customer journey can stretch or sprint. Our scrollable blueprint lets stakeholders explore the MNNR
+            lifecycle at their own pace—especially on mobile where endless scroll feels native.
           </p>
         </div>
 
-        <ol className="relative grid gap-10 border-l border-white/10 pl-8 md:pl-10">
-          {STEPS.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <li key={step.title} className="group relative">
-                <span className="absolute -left-[42px] flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 text-sm font-semibold text-emerald-200 shadow-[0_12px_40px_rgba(16,185,129,0.25)] md:-left-[52px] md:h-12 md:w-12">
-                  {index + 1}
-                </span>
-                <div className="relative flex flex-col gap-4 rounded-3xl border border-white/10 bg-black/60 p-6 transition duration-200 group-hover:border-emerald-300/50">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10">
-                      <Icon className="h-5 w-5 text-emerald-200" />
+        <div className="relative -mx-4 overflow-hidden md:mx-0">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-slate-950 to-transparent md:hidden" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-950 to-transparent md:hidden" />
+          <ol className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-4 md:grid md:snap-none md:grid-cols-4 md:gap-8 md:border-l md:border-white/10 md:px-0 md:pb-0">
+            {STEPS.map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <li
+                  key={step.title}
+                  className="group relative min-w-[260px] snap-center rounded-3xl border border-white/10 bg-black/60 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.45)] transition-colors duration-200 hover:border-emerald-300/50 md:min-w-0 md:snap-align-none md:border-transparent md:bg-transparent md:p-0 md:shadow-none"
+                >
+                  <div className="hidden h-full flex-col gap-4 rounded-3xl border border-white/10 bg-black/60 p-6 md:flex">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-sm font-semibold text-emerald-200">
+                      {index + 1}
                     </span>
-                    <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10">
+                        <Icon className="h-5 w-5 text-emerald-200" />
+                      </span>
+                      <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                    </div>
+                    <p className="text-sm text-zinc-300">{step.description}</p>
                   </div>
-                  <p className="text-sm text-zinc-300">{step.description}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+
+                  <div className="flex h-full flex-col gap-4 md:hidden">
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 text-xs font-semibold text-emerald-200">
+                        {index + 1}
+                      </span>
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10">
+                        <Icon className="h-5 w-5 text-emerald-200" />
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-base font-semibold text-white">{step.title}</h3>
+                      <p className="text-sm text-zinc-300">{step.description}</p>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   );

@@ -3,6 +3,7 @@ import Features from '@/components/ui/Sections/Features';
 import Integrations from '@/components/ui/Sections/Integrations';
 import CTA from '@/components/ui/Sections/CTA';
 import Enterprise from '@/components/ui/Sections/Enterprise';
+import Trust from '@/components/ui/Sections/Trust';
 import Workflow from '@/components/ui/Sections/Workflow';
 import Pricing from '@/components/ui/Pricing/Pricing';
 import Analytics from '@/components/Analytics/Analytics';
@@ -34,6 +35,7 @@ export default async function HomePage() {
       <Hero />
       <Features />
       <Enterprise />
+      <Trust />
       <Workflow />
       <Integrations />
       <CTA />
