@@ -7,11 +7,12 @@ export default async function Navbar() {
 
   try {
     const supabase = createClient();
-    const response = await Promise.race([
-      supabase.auth.getUser(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
-    ]);
-    user = (response as any)?.data?.user || null;
+    const getUserPromise = supabase.auth.getUser();
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Timeout')), 2000)
+    );
+    const response = await Promise.race([getUserPromise, timeout]);
+    user = response.data.user ?? null;
   } catch (error) {
     console.warn('Failed to get user, continuing without auth:', error);
   }

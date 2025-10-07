@@ -26,7 +26,9 @@
     "supabase:generate-migration": "npx supabase db diff | npx supabase migration new",
     "supabase:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
     "supabase:push": "npx supabase db push",
-    "supabase:pull": "npx supabase db pull"
+    "supabase:pull": "npx supabase db pull",
+    "launch:manager": "node scripts/launch-manager.mjs",
+    "launch:execute": "node scripts/launch-executor.mjs"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -40,7 +42,7 @@
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.4",
     "@vercel/otel": "^2.0.1",
-  "posthog-js": "^1.140.0",
+    "posthog-js": "^1.140.0",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

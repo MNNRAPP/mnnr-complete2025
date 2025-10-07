@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
+// Legal text intentionally keeps standard punctuation for readability.
+
 export const metadata = {
   title: 'Terms of Service | MNNR.APP',
   description: 'Terms of Service for MNNR - AI-Powered Pilot Recruiting Platform'
