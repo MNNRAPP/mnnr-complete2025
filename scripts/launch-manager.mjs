@@ -6,6 +6,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
+const args = process.argv.slice(2);
+const showHelp = args.includes('--help') || args.includes('-h');
+const showAccelerated = args.includes('--accelerated') || args.includes('-a');
 
 const requiredEnvKeys = {
   production: [
@@ -325,7 +328,91 @@ function printDocsReminder(taskId) {
   }
 }
 
+function printAcceleratedTimeline() {
+  const blocks = [
+    {
+      label: 'Hour 0–1 — Launch Kickoff & Guardrails',
+      tasks: [
+        'Run npm run launch:manager -- --accelerated to capture gaps before you start.',
+        'Patch production Supabase + Stripe environment variables inside Vercel.',
+        'Queue the SECURITY_HARDENING_PLAN.md SQL so deny-by-default RLS is ready immediately after migrations.'
+      ]
+    },
+    {
+      label: 'Hour 1–3 — Database & Authentication Hardening',
+      tasks: [
+        'Apply all Supabase migrations and confirm RLS policies are active (APPLY_MIGRATIONS.md).',
+        'Execute the deny-by-default RLS SQL across the public schema.',
+        'Exercise signup, email verification, password reset, and session persistence flows.'
+      ]
+    },
+    {
+      label: 'Hour 3–5 — Payments & Billing Validation',
+      tasks: [
+        'Validate Stripe credentials, run checkout, and confirm webhook signature enforcement.',
+        'Inspect webhook handler idempotency so duplicate events cannot desync state.'
+      ]
+    },
+    {
+      label: 'Hour 5–7 — Domain, Security Headers & Legal',
+      tasks: [
+        'Point mnnr.app to Vercel and verify SSL provisioning.',
+        'Lock in HSTS, CSP, X-Frame-Options, and related headers in middleware.ts.',
+        'Publish Privacy Policy, Terms of Service, and Refund Policy pages.'
+      ]
+    },
+    {
+      label: 'Hour 7–8 — Analytics, Monitoring & Rate Limiting',
+      tasks: [
+        'Configure PostHog (or equivalent) production keys for analytics + error visibility.',
+        'Enable Redis-backed rate limiting via Vercel Edge Config + Upstash/Vercel KV.'
+      ]
+    },
+    {
+      label: 'Hour 8–9 — UX Polish & Multi-Device QA',
+      tasks: [
+        'Review mobile/desktop/tablet flows, tightening loading, success, and error states.',
+        'Confirm onboarding, dashboard, and legal pages render crisply across browsers.'
+      ]
+    },
+    {
+      label: 'Hour 9–10 — End-to-End Testing & Launch Collateral',
+      tasks: [
+        'Run a full journey: signup → payment → onboarding → dashboard → cancellation/refund.',
+        'Validate production headers via securityheaders.com (or similar).',
+        'Assemble announcement copy, screenshots, and social assets.'
+      ]
+    },
+    {
+      label: 'Hour 10+ — Launch Execution & Monitoring',
+      tasks: [
+        'Perform a final smoke test and go live.',
+        'Monitor analytics, Supabase logs, and Stripe alerts for rapid triage.'
+      ]
+    }
+  ];
+
+  console.log('Accelerated Launch Timeline');
+  console.log('-----------------------------');
+  blocks.forEach((block) => {
+    console.log(`• ${block.label}`);
+    block.tasks.forEach((task) => {
+      console.log(`   - ${task}`);
+    });
+    console.log('');
+  });
+  console.log('Reference docs/three-day-launch-plan.md for detailed context on each block.');
+}
+
 async function main() {
+  if (showHelp) {
+    console.log('Usage: npm run launch:manager [-- [options]]');
+    console.log('Options:');
+    console.log('  -a, --accelerated   Append the compressed one-day launch timeline.');
+    console.log('  -h, --help          Show this help message.');
+    process.exit(0);
+  }
+
   console.log('🚀 mnnr.app Launch Manager');
   console.log('============================\n');
 
@@ -385,6 +472,11 @@ async function main() {
   console.log('4. Run end-to-end smoke test prior to launch.');
 
   console.log('\nNeed more detail? Use the referenced documentation for step-by-step instructions.');
+
+  if (showAccelerated) {
+    console.log('\n');
+    printAcceleratedTimeline();
+  }
 }
 
 main().catch((error) => {
