@@ -1,5 +1,14 @@
 # Next.js Subscription Payments Starter
 
+> [!IMPORTANT]  
+> **📊 3-Day Progress Assessment Complete (October 7, 2025)**  
+> An honest evaluation of this project's status has been completed. Start with [`ASSESSMENT_SUMMARY.md`](./ASSESSMENT_SUMMARY.md) for the full picture.
+>
+> **Quick Summary:**
+> - ✅ Build passes, documentation excellent (50+ files)
+> - ⚠️ 40% complete - needs integration & testing
+> - 🎯 4-6 weeks to production-ready with focused work
+> - 📄 Full assessment: 50,000+ words across 4 documents
 
 > [!WARNING]  
 > This repo has been sunset and replaced by a new template: https://github.com/nextjs/saas-starter
