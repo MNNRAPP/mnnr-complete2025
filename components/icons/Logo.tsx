@@ -1,20 +1,41 @@
 const Logo = ({ ...props }) => (
-  <svg
-    width="32"
-    height="32"
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
-    <rect width="100%" height="100%" rx="16" fill="white" />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-      fill="black"
-    />
-  </svg>
+  <div className="flex items-center space-x-3" {...props}>
+    {/* MNNR Icon */}
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Central square with dollar sign */}
+      <rect x="37.5" y="37.5" width="25" height="25" fill="#10b981" rx="2"/>
+      <text x="50" y="55" fontSize="16" fontWeight="bold" fill="#000" textAnchor="middle">$</text>
+      
+      {/* Connection nodes */}
+      <circle cx="12.5" cy="12.5" r="4" fill="#10b981"/>
+      <circle cx="87.5" cy="12.5" r="4" fill="#10b981"/>
+      <circle cx="12.5" cy="87.5" r="4" fill="#10b981"/>
+      <circle cx="87.5" cy="87.5" r="4" fill="#10b981"/>
+      <circle cx="50" cy="5" r="4" fill="#10b981"/>
+      <circle cx="5" cy="50" r="4" fill="#10b981"/>
+      <circle cx="95" cy="50" r="4" fill="#10b981"/>
+      <circle cx="50" cy="95" r="4" fill="#10b981"/>
+      
+      {/* Connection lines */}
+      <line x1="16.5" y1="16.5" x2="37.5" y2="37.5" stroke="#10b981" strokeWidth="2"/>
+      <line x1="83.5" y1="16.5" x2="62.5" y2="37.5" stroke="#10b981" strokeWidth="2"/>
+      <line x1="16.5" y1="83.5" x2="37.5" y2="62.5" stroke="#10b981" strokeWidth="2"/>
+      <line x1="83.5" y1="83.5" x2="62.5" y2="62.5" stroke="#10b981" strokeWidth="2"/>
+      <line x1="50" y1="9" x2="50" y2="37.5" stroke="#10b981" strokeWidth="2"/>
+      <line x1="9" y1="50" x2="37.5" y2="50" stroke="#10b981" strokeWidth="2"/>
+      <line x1="91" y1="50" x2="62.5" y2="50" stroke="#10b981" strokeWidth="2"/>
+      <line x1="50" y1="91" x2="50" y2="62.5" stroke="#10b981" strokeWidth="2"/>
+    </svg>
+    
+    {/* MNNR Text */}
+    <span className="text-xl font-light text-emerald-400 tracking-wider">MNNR</span>
+  </div>
 );
 
 export default Logo;

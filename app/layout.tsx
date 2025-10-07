@@ -7,8 +7,8 @@ import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
 import 'styles/main.css';
 
-const title = 'Next.js Subscription Starter';
-const description = 'Brought to you by Vercel, Stripe, and Supabase.';
+const title = 'MNNR - Payments for Machines';
+const description = 'Pay-per-call for agents/APIs with verifiable receipts. Agent wallets, spend caps, and real-time settlement.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
@@ -16,7 +16,12 @@ export const metadata: Metadata = {
   description: description,
   openGraph: {
     title: title,
-    description: description
+    description: description,
+    images: ['/mnnr-logo-full.svg']
+  },
+  icons: {
+    icon: '/mnnr-icon.svg',
+    apple: '/mnnr-icon.svg'
   }
 };
 

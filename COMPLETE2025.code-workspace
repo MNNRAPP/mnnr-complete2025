@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../SITE-PLATFORM"
+		},
+		{
+			"path": "../../SITE-STATIC"
+		}
+	],
+	"settings": {
+		"claudeCodeChat.permissions.yoloMode": true,
+		"python-envs.pythonProjects": [
+			{
+				"path": "ASSETS",
+				"envManager": "ms-python.python:venv",
+				"packageManager": "ms-python.python:pip",
+				"workspace": "SITE-STATIC"
+			}
+		]
+	}
+}

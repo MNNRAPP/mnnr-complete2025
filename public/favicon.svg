@@ -1,0 +1,23 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background for favicon -->
+  <rect width="32" height="32" fill="#111827"/>
+  
+  <!-- Simplified MNNR network icon for favicon -->
+  <g fill="#10b981">
+    <!-- Central square with dollar -->
+    <rect x="11" y="11" width="10" height="10" fill="#10b981" rx="1"/>
+    <text x="16" y="19" font-family="Arial" font-size="8" font-weight="bold" fill="#000" text-anchor="middle">$</text>
+    
+    <!-- Corner nodes -->
+    <circle cx="6" cy="6" r="2"/>
+    <circle cx="26" cy="6" r="2"/>
+    <circle cx="6" cy="26" r="2"/>
+    <circle cx="26" cy="26" r="2"/>
+    
+    <!-- Connection lines -->
+    <line x1="8" y1="8" x2="11" y2="11" stroke="#10b981" stroke-width="1"/>
+    <line x1="24" y1="8" x2="21" y2="11" stroke="#10b981" stroke-width="1"/>
+    <line x1="8" y1="24" x2="11" y2="21" stroke="#10b981" stroke-width="1"/>
+    <line x1="24" y1="24" x2="21" y2="21" stroke="#10b981" stroke-width="1"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Network connection icon with dollar sign -->
+  <g fill="#10b981">
+    <!-- Central square with dollar sign -->
+    <rect x="125" y="125" width="50" height="50" fill="#10b981" rx="4"/>
+    <text x="150" y="160" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#000" text-anchor="middle">$</text>
+    
+    <!-- Connection nodes -->
+    <circle cx="75" cy="75" r="12" />
+    <circle cx="225" cy="75" r="12" />
+    <circle cx="75" cy="225" r="12" />
+    <circle cx="225" cy="225" r="12" />
+    <circle cx="150" cy="50" r="12" />
+    <circle cx="50" cy="150" r="12" />
+    <circle cx="250" cy="150" r="12" />
+    <circle cx="150" cy="250" r="12" />
+    
+    <!-- Connection lines -->
+    <line x1="87" y1="87" x2="125" y2="125" stroke="#10b981" stroke-width="4"/>
+    <line x1="213" y1="87" x2="175" y2="125" stroke="#10b981" stroke-width="4"/>
+    <line x1="87" y1="213" x2="125" y2="175" stroke="#10b981" stroke-width="4"/>
+    <line x1="213" y1="213" x2="175" y2="175" stroke="#10b981" stroke-width="4"/>
+    <line x1="150" y1="62" x2="150" y2="125" stroke="#10b981" stroke-width="4"/>
+    <line x1="62" y1="150" x2="125" y2="150" stroke="#10b981" stroke-width="4"/>
+    <line x1="238" y1="150" x2="175" y2="150" stroke="#10b981" stroke-width="4"/>
+    <line x1="150" y1="238" x2="150" y2="175" stroke="#10b981" stroke-width="4"/>
+  </g>
+</svg>
