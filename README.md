@@ -39,9 +39,11 @@ Should the automatic setup fail, please [create a Supabase account](https://app.
 
 #### Enable OAuth providers in Supabase
 
-- Follow [this guide](https://supabase.com/docs/guides/auth/social-login/auth-github) to set up an OAuth app with GitHub and configure Supabase to use it as an auth provider.
-- To add Google sign-in (or any other provider Supabase supports), create credentials in the provider's console and then enable the provider in [Supabase Auth settings](https://supabase.com/docs/guides/auth/social-login) by supplying the client ID and secret. Supabase will expose the provider automatically in the hosted Auth UI used by this starter once enabled.
-- After enabling additional providers, redeploy your project (or restart your local dev server) so that the Supabase configuration changes propagate to the app.
+- **GitHub** – Follow [Supabase's GitHub guide](https://supabase.com/docs/guides/auth/social-login/auth-github) to register an OAuth app at `https://github.com/settings/developers`, set the callback URL to `https://<YOUR-SUPABASE-PROJECT-REF>.supabase.co/auth/v1/callback`, and paste the client ID/secret in the **Authentication → Providers** section of Supabase.
+- **Google** – In the [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create an "OAuth client ID" for a web application, add the same Supabase callback URL, and copy the client ID/secret into the Google provider inside Supabase.
+- **Microsoft** – Go to the [Azure Portal](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade), create a "Web" app registration, set the redirect URI to the Supabase callback, and move the application (client) ID and client secret into the Microsoft provider configuration in Supabase.
+- **Other majors (Apple, Twitter/X, etc.)** – Supabase maintains step-by-step docs for every supported provider in the [social login section](https://supabase.com/docs/guides/auth/social-login). Register an app with the provider, add the Supabase callback URL, and then enable the provider in Supabase with the issued credentials.
+- After enabling additional providers, redeploy your project (or restart your local dev server) so that the Supabase configuration changes propagate to the app. The hosted Auth UI used by this starter automatically surfaces any provider you toggle on.
 
 In your Supabase project, navigate to [auth > URL configuration](https://app.supabase.com/project/_/auth/url-configuration) and set your main production URL (e.g. https://your-deployment-url.vercel.app) as the site url.
 
@@ -141,12 +143,14 @@ Ensure you have [pnpm](https://pnpm.io/installation) installed and run:
 pnpm install
 ```
 
-Next, use the [Vercel CLI](https://vercel.com/docs/cli) to link your project:
+Next, use the [Vercel CLI](https://vercel.com/docs/cli) to authenticate and link your project:
 
 ```bash
 pnpm dlx vercel login
 pnpm dlx vercel link
 ```
+
+`vercel login` opens a browser (or email flow if you pass `--token`) so you can confirm the deployment account you want to use. Once logged in, `vercel link` connects the local folder to the correct Vercel project. You only need to run these commands again if you switch Vercel teams or want to relink to a different project.
 
 `pnpm dlx` runs a package from the registry, without installing it as a dependency. Alternatively, you can install these packages globally, and drop the `pnpm dlx` part.
 
