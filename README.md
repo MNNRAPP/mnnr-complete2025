@@ -28,6 +28,16 @@
 
 Refer to [`docs/USDC_PAYMENTS.md`](docs/USDC_PAYMENTS.md), [`docs/ANALYTICS_DASHBOARD.md`](docs/ANALYTICS_DASHBOARD.md), and [`docs/SDK_GUIDE.md`](docs/SDK_GUIDE.md) for configuration guidance.
 
+## Debugging & verification
+
+Run the combined debug sweep before shipping changes to ensure the codebase still lint-checks and compiles cleanly:
+
+```bash
+npm run debug
+```
+
+The script runs `next lint` followed by `next build`, mirroring the production deployment pipeline so you surface type, lint, and compile errors locally.
+
 ## Architecture
 
 ![Architecture diagram](./public/architecture_diagram.png)
