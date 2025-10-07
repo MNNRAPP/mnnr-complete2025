@@ -18,6 +18,14 @@ const optionalEnvVars = [
   // Redis for distributed rate limiting
   'UPSTASH_REDIS_REST_URL',
   'UPSTASH_REDIS_REST_TOKEN',
+  // Coinbase Commerce for USDC
+  'COINBASE_COMMERCE_API_KEY',
+  'COINBASE_COMMERCE_WEBHOOK_SECRET',
+  // SDK ingestion
+  'SDK_INGEST_SECRET',
+  // PostHog server-side capture
+  'POSTHOG_API_KEY',
+  'POSTHOG_HOST',
   // Sentry for error monitoring
   'SENTRY_DSN',
   'SENTRY_ORG',
@@ -67,6 +75,18 @@ export function validateEnv(): ValidationResult {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     warnings.push(
       'SUPABASE_SERVICE_ROLE_KEY not set. Admin operations (e.g., in Stripe webhook handlers) will not function.'
+    );
+  }
+
+  if (process.env.COINBASE_COMMERCE_API_KEY && !process.env.COINBASE_COMMERCE_WEBHOOK_SECRET) {
+    warnings.push(
+      'COINBASE_COMMERCE_WEBHOOK_SECRET not set. USDC payment webhooks will be unverifiable.'
+    );
+  }
+
+  if (process.env.COINBASE_COMMERCE_API_KEY && !process.env.SDK_INGEST_SECRET) {
+    warnings.push(
+      'SDK_INGEST_SECRET not set. Public SDKs cannot authenticate when streaming analytics events.'
     );
   }
 

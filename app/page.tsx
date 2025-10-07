@@ -21,6 +21,7 @@ export default async function HomePage() {
     getProducts(supabase),
     getSubscription(supabase)
   ]);
+  const usdcEnabled = Boolean(process.env.COINBASE_COMMERCE_API_KEY);
 
   return (
     <>
@@ -43,6 +44,7 @@ export default async function HomePage() {
         user={user}
         products={products ?? []}
         subscription={subscription}
+        usdcEnabled={usdcEnabled}
       />
     </>
   );

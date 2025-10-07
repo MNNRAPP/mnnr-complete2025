@@ -9,6 +9,9 @@
 - Secure user management and authentication with [Supabase](https://supabase.io/docs/guides/auth)
 - Powerful data access & management tooling on top of PostgreSQL with [Supabase](https://supabase.io/docs/guides/database)
 - Integration with [Stripe Checkout](https://stripe.com/docs/payments/checkout) and the [Stripe customer portal](https://stripe.com/docs/billing/subscriptions/customer-portal)
+- Optional USDC on-chain checkout via Coinbase Commerce with a guarded fallback when credentials are absent
+- Enterprise analytics dashboard with revenue KPIs, growth signals, and SDK ingestion health
+- First-party JavaScript and Python SDKs for streaming product analytics into Supabase/PostHog
 - Automatic syncing of pricing plans and subscription statuses via [Stripe webhooks](https://stripe.com/docs/webhooks)
 
 ## Demo
@@ -16,6 +19,14 @@
 - https://subscription-payments.vercel.app/
 
 [![Screenshot of demo](./public/demo.png)](https://subscription-payments.vercel.app/)
+
+## Enterprise upgrades in this fork
+
+- **USDC checkout** — Pricing cards now surface a “Pay with USDC” button whenever `COINBASE_COMMERCE_API_KEY` is configured. The helper defers to Coinbase Commerce and redirects back to your site on completion.
+- **Advanced analytics** — Visit `/account/analytics` for MRR, churn, trial conversion, and ingestion health. The dashboard automatically degrades with actionable messaging when service credentials are missing.
+- **SDK ingestion** — New `/api/sdk/events` endpoint authenticated with `SDK_INGEST_SECRET` stores usage telemetry in Supabase and forwards it to PostHog. Reference clients live under [`sdks/javascript`](sdks/javascript) and [`sdks/python`](sdks/python).
+
+Refer to [`docs/USDC_PAYMENTS.md`](docs/USDC_PAYMENTS.md), [`docs/ANALYTICS_DASHBOARD.md`](docs/ANALYTICS_DASHBOARD.md), and [`docs/SDK_GUIDE.md`](docs/SDK_GUIDE.md) for configuration guidance.
 
 ## Architecture
 

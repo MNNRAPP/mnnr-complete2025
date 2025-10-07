@@ -6,6 +6,7 @@ import type { Tables } from '@/types_db';
 import { getStripe } from '@/utils/stripe/client';
 import { checkoutWithStripe } from '@/utils/stripe/server';
 import { getErrorRedirect } from '@/utils/helpers';
+import { beginUsdcCheckout } from '@/app/actions/usdc';
 import { User } from '@supabase/supabase-js';
 import cn from 'classnames';
 import { useRouter, usePathname } from 'next/navigation';
@@ -28,11 +29,12 @@ interface Props {
   user: User | null | undefined;
   products: ProductWithPrices[];
   subscription: SubscriptionWithProduct | null;
+  usdcEnabled?: boolean;
 }
 
 type BillingInterval = 'lifetime' | 'year' | 'month';
 
-export default function Pricing({ user, products, subscription }: Props) {
+export default function Pricing({ user, products, subscription, usdcEnabled = false }: Props) {
   const intervals = Array.from(
     new Set(
       products.flatMap((product) =>
@@ -44,6 +46,7 @@ export default function Pricing({ user, products, subscription }: Props) {
   const [billingInterval, setBillingInterval] =
     useState<BillingInterval>('month');
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
+  const [usdcLoading, setUsdcLoading] = useState<string>();
   const currentPath = usePathname();
 
   const handleStripeCheckout = async (price: Price) => {
@@ -79,6 +82,48 @@ export default function Pricing({ user, products, subscription }: Props) {
     stripe?.redirectToCheckout({ sessionId });
 
     setPriceIdLoading(undefined);
+  };
+
+  const handleUsdcCheckout = async (price: Price) => {
+    setUsdcLoading(price.id);
+
+    if (!user) {
+      setUsdcLoading(undefined);
+      return router.push('/signin/signup');
+    }
+
+    const result = await beginUsdcCheckout(price.id, currentPath);
+
+    if (result.errorRedirect) {
+      setUsdcLoading(undefined);
+      return router.push(result.errorRedirect);
+    }
+
+    if (result.error) {
+      setUsdcLoading(undefined);
+      return router.push(
+        getErrorRedirect(
+          currentPath,
+          'USDC checkout unavailable',
+          result.error
+        )
+      );
+    }
+
+    if (result.hostedUrl) {
+      window.location.href = result.hostedUrl;
+      setUsdcLoading(undefined);
+      return;
+    }
+
+    setUsdcLoading(undefined);
+    router.push(
+      getErrorRedirect(
+        currentPath,
+        'USDC checkout unavailable',
+        'We could not start the Coinbase Commerce flow. Please retry in a moment.'
+      )
+    );
   };
 
   if (!products.length) {
@@ -198,15 +243,28 @@ export default function Pricing({ user, products, subscription }: Props) {
                   </div>
                 </div>
 
-                <Button
-                  variant="slim"
-                  type="button"
-                  loading={priceIdLoading === price.id}
-                  onClick={() => handleStripeCheckout(price)}
-                  className="w-full rounded-full bg-white/10 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
-                >
-                  {subscription ? 'Manage subscription' : 'Get started'}
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    variant="slim"
+                    type="button"
+                    loading={priceIdLoading === price.id}
+                    onClick={() => handleStripeCheckout(price)}
+                    className="w-full rounded-full bg-white/10 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                  >
+                    {subscription ? 'Manage subscription' : 'Get started'}
+                  </Button>
+                  {usdcEnabled && (
+                    <Button
+                      variant="slim"
+                      type="button"
+                      loading={usdcLoading === price.id}
+                      onClick={() => handleUsdcCheckout(price)}
+                      className="w-full rounded-full border border-emerald-300/50 bg-emerald-400/10 py-3 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-400/20"
+                    >
+                      Pay with USDC
+                    </Button>
+                  )}
+                </div>
               </div>
             );
           })}
