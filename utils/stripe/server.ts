@@ -1,7 +1,10 @@
 'use server';
 
 import Stripe from 'stripe';
-import { stripe } from '@/utils/stripe/config';
+import {
+  getStripeClient,
+  StripeNotConfiguredError
+} from '@/utils/stripe/config';
 import { createClient } from '@/utils/supabase/server';
 import { createOrRetrieveCustomer } from '@/utils/supabase/admin';
 import {
@@ -23,6 +26,8 @@ export async function checkoutWithStripe(
   redirectPath: string = '/account'
 ): Promise<CheckoutResponse> {
   try {
+    const stripe = getStripeClient();
+
     // Get the user from Supabase auth
     const supabase = createClient();
     const {
@@ -99,6 +104,15 @@ export async function checkoutWithStripe(
       throw new Error('Unable to create checkout session.');
     }
   } catch (error) {
+    if (error instanceof StripeNotConfiguredError) {
+      return {
+        errorRedirect: getErrorRedirect(
+          redirectPath,
+          'Stripe is not configured.',
+          'Add STRIPE_SECRET_KEY to enable billing features.'
+        )
+      };
+    }
     if (error instanceof Error) {
       return {
         errorRedirect: getErrorRedirect(
@@ -121,6 +135,8 @@ export async function checkoutWithStripe(
 
 export async function createStripePortal(currentPath: string) {
   try {
+    const stripe = getStripeClient();
+
     const supabase = createClient();
     const {
       error,
@@ -163,6 +179,13 @@ export async function createStripePortal(currentPath: string) {
       throw new Error('Could not create billing portal');
     }
   } catch (error) {
+    if (error instanceof StripeNotConfiguredError) {
+      return getErrorRedirect(
+        currentPath,
+        'Stripe is not configured.',
+        'Add STRIPE_SECRET_KEY to enable billing features.'
+      );
+    }
     if (error instanceof Error) {
       console.error(error);
       return getErrorRedirect(

@@ -1,5 +1,9 @@
 import Stripe from 'stripe';
-import { stripe } from '@/utils/stripe/config';
+import {
+  getStripeClient,
+  isStripeConfigured,
+  StripeNotConfiguredError
+} from '@/utils/stripe/config';
 import { logger } from '@/utils/logger';
 import {
   checkRateLimit,
@@ -22,9 +26,26 @@ const relevantEvents = new Set([
 ]);
 
 export async function POST(req: Request) {
+  const respondStripeNotConfigured = (reason: string) =>
+    new Response(
+      JSON.stringify({ received: false, reason }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+
   // Skip during build time when env vars aren't available
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    return new Response('Webhook not configured', { status: 500 });
+    logger.warn('Stripe webhook invoked without STRIPE_WEBHOOK_SECRET');
+    return respondStripeNotConfigured('Stripe webhook secret is not configured.');
+  }
+
+  if (!isStripeConfigured()) {
+    logger.error('Stripe webhook invoked without secret key configured');
+    return respondStripeNotConfigured(
+      'Stripe is not configured. Set STRIPE_SECRET_KEY to handle webhooks.'
+    );
   }
 
   // Apply enterprise rate limiting
@@ -46,9 +67,14 @@ export async function POST(req: Request) {
       logger.error('Webhook validation failed: Missing signature or secret');
       return new Response('Webhook secret not found.', { status: 400 });
     }
+    const stripe = getStripeClient();
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     logger.webhook(event.type, { eventId: event.id, clientIp });
   } catch (err: unknown) {
+    if (err instanceof StripeNotConfiguredError) {
+      logger.error('Stripe client unavailable during webhook validation');
+      return respondStripeNotConfigured('Stripe is not configured on this deployment.');
+    }
     logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
     return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
