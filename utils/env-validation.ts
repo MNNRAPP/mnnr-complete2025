@@ -3,12 +3,12 @@
  * Ensures all required env vars are set before app starts
  */
 
+// Keep the global required set minimal so the app doesn't crash in production
+// when optional backend integrations are not yet configured. Specific routes
+// (like /api/webhooks) will still check their own required secrets at runtime.
 const requiredEnvVars = [
   'NEXT_PUBLIC_SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-  'SUPABASE_SERVICE_ROLE_KEY',
-  'STRIPE_SECRET_KEY',
-  'STRIPE_WEBHOOK_SECRET'
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY'
 ] as const;
 
 const optionalEnvVars = [
@@ -45,6 +45,28 @@ export function validateEnv(): ValidationResult {
     if (!process.env[key]) {
       missing.push(key);
     }
+  }
+
+  // Stripe secrets: allow either STRIPE_SECRET_KEY or STRIPE_SECRET_KEY_LIVE
+  const hasStripeSecret = Boolean(
+    process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY_LIVE
+  );
+  if (!hasStripeSecret) {
+    warnings.push(
+      'Stripe secret key not set (STRIPE_SECRET_KEY or STRIPE_SECRET_KEY_LIVE). Stripe features will be disabled.'
+    );
+  }
+
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    warnings.push(
+      'Stripe webhook secret (STRIPE_WEBHOOK_SECRET) not set. Webhook endpoint /api/webhooks will return 500.'
+    );
+  }
+
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    warnings.push(
+      'SUPABASE_SERVICE_ROLE_KEY not set. Admin operations (e.g., in Stripe webhook handlers) will not function.'
+    );
   }
 
   // Check for common mistakes

@@ -13,10 +13,8 @@ export async function register() {
       assertValidEnv();
     } catch (error) {
       console.error('Environment validation failed:', error);
-      // In production, you might want to prevent the app from starting
-      if (process.env.NODE_ENV === 'production') {
-        process.exit(1);
-      }
+      // Do not crash the process; routes will guard themselves and return
+      // helpful errors where needed (e.g., /api/webhooks).
     }
 
     // Initialize OpenTelemetry for distributed tracing

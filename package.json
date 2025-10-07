@@ -40,6 +40,7 @@
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.4",
     "@vercel/otel": "^2.0.1",
+  "posthog-js": "^1.140.0",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

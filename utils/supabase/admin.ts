@@ -194,12 +194,26 @@ const copyBillingDetailsToCustomer = async (
   uuid: string,
   payment_method: Stripe.PaymentMethod
 ) => {
-  //Todo: check this assertion
-  const customer = payment_method.customer as string;
+  // Narrow customer id from PaymentMethod.customer (can be string | object | null)
+  const customer =
+    typeof payment_method.customer === 'string'
+      ? payment_method.customer
+      : payment_method.customer?.id;
+
   const { name, phone, address } = payment_method.billing_details;
-  if (!name || !phone || !address) return;
-  // @ts-expect-error subscription.default_payment_method typing is broad; Stripe types require narrowing at runtime
-  await stripe.customers.update(customer, { name, phone, address });
+  if (!customer || !name || !phone || !address) return;
+
+  // Map Stripe.Address to Stripe.AddressParam for update
+  const addressParam: Stripe.AddressParam = {
+    city: address.city ?? undefined,
+    country: address.country ?? undefined,
+    line1: address.line1 ?? undefined,
+    line2: address.line2 ?? undefined,
+    postal_code: address.postal_code ?? undefined,
+    state: address.state ?? undefined
+  };
+
+  await stripe.customers.update(customer, { name, phone, address: addressParam });
   const { error: updateError } = await supabaseAdmin
     .from('users')
     .update({
@@ -274,12 +288,13 @@ const manageSubscriptionStatusChange = async (
 
   // For a new subscription copy the billing details to the customer object.
   // NOTE: This is a costly operation and should happen at the very end.
-  if (createAction && subscription.default_payment_method && uuid)
-    // @ts-expect-error Stripe type for default_payment_method needs narrowing; safe at runtime when present
-    await copyBillingDetailsToCustomer(
-      uuid,
-      subscription.default_payment_method as Stripe.PaymentMethod
-    );
+  if (createAction && uuid) {
+    const dpm = subscription.default_payment_method;
+    // dpm can be string | Stripe.PaymentMethod | null depending on expansion
+    if (dpm && typeof dpm !== 'string') {
+      await copyBillingDetailsToCustomer(uuid, dpm);
+    }
+  }
 };
 
 export {

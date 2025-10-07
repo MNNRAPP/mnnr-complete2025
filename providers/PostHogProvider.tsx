@@ -29,15 +29,22 @@ const initPostHog = (): PostHog | null => {
       capture_pageview: true,
       capture_pageleave: true,
       enable_recording_console_log: true,
-      session_recording: {
-        recordCanvas: false,
-        recordCrossOriginIframes: false,
-        sampleRate: 0.1, // Only record 10% of sessions to save on costs
-      },
       bootstrap: {
         distinctID: undefined,
       },
     });
+
+    // Optional session recording sampling (env: NEXT_PUBLIC_POSTHOG_RECORDING_SAMPLE = 0..1)
+    const sampleStr = process.env.NEXT_PUBLIC_POSTHOG_RECORDING_SAMPLE;
+    const sample = sampleStr ? Number(sampleStr) : 0;
+    const withinRange = !Number.isNaN(sample) && sample > 0 && sample <= 1;
+    const enableRecording = withinRange ? Math.random() < sample : false;
+    if (enableRecording) {
+      // Methods are optional on older SDKs; use optional chaining
+      posthog.startSessionRecording?.();
+    } else {
+      posthog.stopSessionRecording?.();
+    }
 
     return posthog;
   }
