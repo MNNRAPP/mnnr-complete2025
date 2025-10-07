@@ -37,7 +37,11 @@ Should the automatic setup fail, please [create a Supabase account](https://app.
 
 ### Configure Auth
 
-Follow [this guide](https://supabase.com/docs/guides/auth/social-login/auth-github) to set up an OAuth app with GitHub and configure Supabase to use it as an auth provider.
+#### Enable OAuth providers in Supabase
+
+- Follow [this guide](https://supabase.com/docs/guides/auth/social-login/auth-github) to set up an OAuth app with GitHub and configure Supabase to use it as an auth provider.
+- To add Google sign-in (or any other provider Supabase supports), create credentials in the provider's console and then enable the provider in [Supabase Auth settings](https://supabase.com/docs/guides/auth/social-login) by supplying the client ID and secret. Supabase will expose the provider automatically in the hosted Auth UI used by this starter once enabled.
+- After enabling additional providers, redeploy your project (or restart your local dev server) so that the Supabase configuration changes propagate to the app.
 
 In your Supabase project, navigate to [auth > URL configuration](https://app.supabase.com/project/_/auth/url-configuration) and set your main production URL (e.g. https://your-deployment-url.vercel.app) as the site url.
 
@@ -60,6 +64,16 @@ If you've deployed this template via the "Deploy to Vercel" button above, you ca
 Otherwise navigate to the [API settings](https://app.supabase.com/project/_/settings/api) and paste them into the Vercel deployment interface. Copy project API keys and paste into the `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` fields, and copy the project URL and paste to Vercel as `NEXT_PUBLIC_SUPABASE_URL`.
 
 Congrats, this completes the Supabase setup, almost there!
+
+### Configure Upstash Redis (recommended for production)
+
+The app ships with a Redis-backed rate limiter (`utils/redis-rate-limit.ts`) that automatically no-ops when Redis credentials are missing. To enforce distributed rate limits in production:
+
+1. In Vercel, open your project and install the [Upstash Redis integration](https://vercel.com/integrations/upstash) (or create a database from the [Upstash dashboard](https://console.upstash.com/redis)).
+2. Copy the REST URL and token from Upstash and add them as **Production** environment variables in Vercel:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+3. Redeploy the project so the new secrets are available to the Serverless Functions. Once set, the rate limiter will automatically persist usage across regions.
 
 ### Configure Stripe
 
