@@ -126,13 +126,15 @@ export async function getAnalyticsOverview(): Promise<AnalyticsOverview> {
   const supabaseAdmin = createAdminClient();
   const since = daysAgo(30).toISOString();
 
-  const { data: subscriptions = [] } = await supabaseAdmin
+  const { data: subscriptionsData, error: subscriptionsError } = await supabaseAdmin
     .from('subscriptions')
     .select(
       `id, status, created, canceled_at, trial_start, trial_end, price_id,
        prices:prices!inner(unit_amount, currency, interval, interval_count, products(name))`
     )
     .gte('created', daysAgo(365).toISOString());
+
+  const subscriptions = subscriptionsError ? [] : subscriptionsData ?? [];
 
   const { data: eventsRaw, error: eventsError } = await supabaseAdmin
     .from('usage_events')

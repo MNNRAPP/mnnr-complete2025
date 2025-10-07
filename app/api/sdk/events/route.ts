@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
+import type { Json } from '@/types_db';
 
 interface EventPayload {
   event: string;
   userId?: string;
-  properties?: Record<string, unknown>;
+  properties?: Record<string, Json>;
   occurredAt?: string;
 }
 
@@ -40,10 +41,12 @@ export async function POST(request: Request) {
   const supabase = createAdminClient();
   const timestamp = payload.occurredAt ? new Date(payload.occurredAt) : new Date();
 
+  const metadata = (payload.properties ?? {}) as Json;
+
   const { error } = await supabase.from('usage_events').insert({
     event_name: payload.event,
     user_id: payload.userId ?? null,
-    metadata: payload.properties ?? {},
+    metadata,
     created_at: timestamp.toISOString()
   });
 
