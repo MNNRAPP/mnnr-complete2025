@@ -13,6 +13,7 @@ const requiredEnvVars = [
 
 const optionalEnvVars = [
   'NEXT_PUBLIC_SITE_URL',
+  'NEXT_PUBLIC_GITHUB_URL',
   'TRIAL_PERIOD_DAYS',
   // Redis for distributed rate limiting
   'UPSTASH_REDIS_REST_URL',
@@ -88,6 +89,14 @@ export function validateEnv(): ValidationResult {
       new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
     } catch {
       warnings.push('NEXT_PUBLIC_SUPABASE_URL is not a valid URL');
+    }
+  }
+
+  if (process.env.NEXT_PUBLIC_GITHUB_URL) {
+    try {
+      new URL(process.env.NEXT_PUBLIC_GITHUB_URL);
+    } catch {
+      warnings.push('NEXT_PUBLIC_GITHUB_URL is not a valid URL');
     }
   }
 

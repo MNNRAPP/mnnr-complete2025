@@ -5,6 +5,8 @@ import GitHub from '@/components/icons/GitHub';
 import ContactButton from '@/components/ui/ContactButton/ContactButton';
 
 export default function Footer() {
+  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL ?? 'https://github.com/MNNRAPP/mnnr-complete2025';
+
   return (
     <footer className="mx-auto max-w-[1920px] px-6">
       <div className="grid grid-cols-1 gap-8 border-b border-white/10 bg-black/60 py-12 text-white transition-colors duration-150 backdrop-blur lg:grid-cols-12">
@@ -71,8 +73,10 @@ export default function Footer() {
         <div className="flex items-start col-span-1 text-white lg:col-span-6 lg:justify-end">
           <div className="flex h-10 items-center space-x-6">
             <a
-              aria-label="Github Repository"
-              href="https://github.com/vercel/nextjs-subscription-payments"
+              aria-label="GitHub link"
+              href={githubUrl}
+              target="_blank"
+              rel="noreferrer"
             >
               <GitHub />
             </a>

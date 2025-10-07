@@ -262,6 +262,18 @@ Note that webhook forwarding and the development server must be running concurre
 
 Finally, navigate to [http://localhost:3000](http://localhost:3000) in your browser to see the application rendered.
 
+### Decide what the GitHub footer icon points to
+
+The footer ships with a GitHub mark so visitors can inspect the project or learn more about the platform. Set the `NEXT_PUBLIC_GITHUB_URL` environment variable to control where that icon sends people. The value is read at build time and falls back to the public marketing repository if you leave it undefined.
+
+Common choices include:
+
+- **Public source repository** – Ideal when the product is open source and you want contributors to review the code or file issues.
+- **Public roadmap or project page** – Works well if the codebase is private but you still want to highlight progress, changelogs, or docs hosted on GitHub.
+- **Another trust signal** – Point the link at documentation, a security portal, or a status page if you do not have any public GitHub presence yet.
+
+Avoid linking to a private repository—visitors without access will see a 404. If you plan to keep all repositories private, consider swapping in a different icon or removing the button entirely by editing `components/ui/Footer/Footer.tsx`.
+
 ## Going live
 
 ### Archive testing products
