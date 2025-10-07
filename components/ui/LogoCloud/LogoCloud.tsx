@@ -50,24 +50,26 @@ const LOGOS = [
 
 export default function LogoCloud() {
   return (
-    <div>
-      <p className="mt-24 text-xs uppercase text-zinc-400 text-center font-bold tracking-[0.3em]">
-        Brought to you by
-      </p>
-      <div className="grid grid-cols-1 place-items-center my-12 space-y-4 sm:mt-8 sm:space-y-0 md:mx-auto md:max-w-2xl sm:grid sm:gap-6 sm:grid-cols-5">
-        {LOGOS.map((logo) => (
-          <div key={logo.src} className="flex items-center justify-start h-12">
-            <a href={logo.href} aria-label={logo.ariaLabel}>
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={logo.width}
-                height={logo.height}
-                className={logo.className}
-              />
-            </a>
-          </div>
-        ))}
+    <div className="w-full">
+      <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-white/5 px-6 py-10 backdrop-blur">
+        <p className="text-center text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-emerald-200">
+          Backed by the platforms you ship with
+        </p>
+        <div className="mt-8 grid grid-cols-2 place-items-center gap-6 sm:grid-cols-3 md:grid-cols-5">
+          {LOGOS.map((logo) => (
+            <div key={logo.src} className="flex h-12 items-center justify-center">
+              <a href={logo.href} aria-label={logo.ariaLabel} className="opacity-80 transition hover:opacity-100">
+                <Image
+                  src={logo.src}
+                  alt={logo.alt}
+                  width={logo.width}
+                  height={logo.height}
+                  className={logo.className}
+                />
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

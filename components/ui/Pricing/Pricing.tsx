@@ -83,124 +83,139 @@ export default function Pricing({ user, products, subscription }: Props) {
 
   if (!products.length) {
     return (
-      <section className="bg-black">
-        <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
-          <div className="sm:flex sm:flex-col sm:align-center"></div>
-          <p className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
-            No subscription pricing plans found. Create them in your{' '}
-            <a
-              className="text-pink-500 underline"
-              href="https://dashboard.stripe.com/products"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Stripe Dashboard
-            </a>
-            .
-          </p>
-        </div>
-        <LogoCloud />
-      </section>
-    );
-  } else {
-    return (
-      <section className="bg-black">
-        <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
-          <div className="sm:flex sm:flex-col sm:align-center">
-            <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
-              Pricing Plans
-            </h1>
-            <p className="max-w-2xl m-auto mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl">
-              Start building for free, then add a site plan to go live. Account
-              plans unlock additional features.
+      <section className="relative py-24">
+        <div className="mx-auto max-w-5xl px-6 text-center">
+          <div className="rounded-3xl border border-white/10 bg-black/60 p-10 shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
+            <h2 className="text-3xl font-semibold text-white md:text-4xl">
+              No pricing plans detected
+            </h2>
+            <p className="mt-4 text-base text-zinc-300">
+              Create subscription products and prices in your{' '}
+              <a
+                className="text-emerald-300 underline decoration-dotted underline-offset-4"
+                href="https://dashboard.stripe.com/products"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Stripe Dashboard
+              </a>{' '}
+              to surface packages here.
             </p>
-            <div className="relative self-center mt-6 bg-zinc-900 rounded-lg p-0.5 flex sm:mt-8 border border-zinc-800">
-              {intervals.includes('month') && (
-                <button
-                  onClick={() => setBillingInterval('month')}
-                  type="button"
-                  className={`${
-                    billingInterval === 'month'
-                      ? 'relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white'
-                      : 'ml-0.5 relative w-1/2 border border-transparent text-zinc-400'
-                  } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
-                >
-                  Monthly billing
-                </button>
-              )}
-              {intervals.includes('year') && (
-                <button
-                  onClick={() => setBillingInterval('year')}
-                  type="button"
-                  className={`${
-                    billingInterval === 'year'
-                      ? 'relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white'
-                      : 'ml-0.5 relative w-1/2 border border-transparent text-zinc-400'
-                  } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
-                >
-                  Yearly billing
-                </button>
-              )}
-            </div>
           </div>
-          <div className="mt-12 space-y-0 sm:mt-16 flex flex-wrap justify-center gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
-            {products.map((product) => {
-              const price = product?.prices?.find(
-                (price) => price.interval === billingInterval
-              );
-              if (!price) return null;
-              const currency = price.currency ?? 'USD';
-              const amount = price.unit_amount ?? 0;
-              const priceString = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency,
-                minimumFractionDigits: 0
-              }).format(amount / 100);
-              return (
-                <div
-                  key={product.id}
-                  className={cn(
-                    'flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-900',
-                    {
-                      'border border-pink-500': subscription
-                        ? product.name === subscription?.prices?.products?.name
-                        : product.name === 'Freelancer'
-                    },
-                    'flex-1', // This makes the flex item grow to fill the space
-                    'basis-1/3', // Assuming you want each card to take up roughly a third of the container's width
-                    'max-w-xs' // Sets a maximum width to the cards to prevent them from getting too large
-                  )}
-                >
-                  <div className="p-6">
-                    <h2 className="text-2xl font-semibold leading-6 text-white">
-                      {product.name}
-                    </h2>
-                    <p className="mt-4 text-zinc-300">{product.description}</p>
-                    <p className="mt-8">
-                      <span className="text-5xl font-extrabold white">
-                        {priceString}
-                      </span>
-                      <span className="text-base font-medium text-zinc-100">
-                        /{billingInterval}
-                      </span>
-                    </p>
-                    <Button
-                      variant="slim"
-                      type="button"
-                      loading={priceIdLoading === price.id}
-                      onClick={() => handleStripeCheckout(price)}
-                      className="block w-full py-2 mt-8 text-sm font-semibold text-center text-white rounded-md hover:bg-zinc-900"
-                    >
-                      {subscription ? 'Manage' : 'Subscribe'}
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+        </div>
+        <div className="mt-16">
           <LogoCloud />
         </div>
       </section>
     );
   }
+
+  return (
+    <section className="relative overflow-hidden py-28">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(140%_140%_at_50%_0%,rgba(15,118,110,0.15),rgba(0,0,0,0))]" />
+      <div className="mx-auto w-full max-w-6xl px-6">
+        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-200">
+            Pricing
+          </span>
+          <h2 className="mt-6 text-3xl font-semibold text-white md:text-5xl md:leading-[1.1]">
+            Predictable plans for pilots and production scale
+          </h2>
+          <p className="mt-4 text-base text-zinc-300 md:text-lg">
+            Start in minutes with developer-friendly tooling. Graduate to enterprise controls when you are ready—without
+            a surprise migration.
+          </p>
+          <div className="mt-8 inline-flex items-center rounded-full border border-white/10 bg-white/5 p-1 text-sm font-medium text-zinc-300">
+            {intervals.includes('month') && (
+              <button
+                onClick={() => setBillingInterval('month')}
+                type="button"
+                className={cn(
+                  'rounded-full px-6 py-2 transition',
+                  billingInterval === 'month'
+                    ? 'bg-white text-black shadow-[0_12px_40px_rgba(255,255,255,0.25)]'
+                    : 'text-zinc-400 hover:text-white'
+                )}
+              >
+                Monthly
+              </button>
+            )}
+            {intervals.includes('year') && (
+              <button
+                onClick={() => setBillingInterval('year')}
+                type="button"
+                className={cn(
+                  'rounded-full px-6 py-2 transition',
+                  billingInterval === 'year'
+                    ? 'bg-white text-black shadow-[0_12px_40px_rgba(255,255,255,0.25)]'
+                    : 'text-zinc-400 hover:text-white'
+                )}
+              >
+                Annual
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {products.map((product) => {
+            const price = product?.prices?.find(
+              (price) => price.interval === billingInterval
+            );
+            if (!price) return null;
+            const currency = price.currency ?? 'USD';
+            const amount = price.unit_amount ?? 0;
+            const priceString = new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency,
+              minimumFractionDigits: 0
+            }).format(amount / 100);
+            const isActivePlan = subscription
+              ? product.name === subscription?.prices?.products?.name
+              : product.name === 'Freelancer';
+
+            return (
+              <div
+                key={product.id}
+                className={cn(
+                  'relative flex h-full flex-col gap-6 overflow-hidden rounded-3xl border border-white/10 bg-black/60 p-8 shadow-[0_30px_100px_rgba(0,0,0,0.45)] transition',
+                  isActivePlan && 'border-emerald-300/60 shadow-[0_30px_120px_rgba(16,185,129,0.25)]'
+                )}
+              >
+                <div className="space-y-4 text-left">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-2xl font-semibold text-white">{product.name}</h3>
+                    {isActivePlan && (
+                      <span className="rounded-full border border-emerald-300/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-zinc-300">{product.description}</p>
+                  <div>
+                    <span className="text-5xl font-semibold text-white">{priceString}</span>
+                    <span className="ml-2 text-sm text-zinc-400">/{billingInterval}</span>
+                  </div>
+                </div>
+
+                <Button
+                  variant="slim"
+                  type="button"
+                  loading={priceIdLoading === price.id}
+                  onClick={() => handleStripeCheckout(price)}
+                  className="w-full rounded-full bg-white/10 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                >
+                  {subscription ? 'Manage subscription' : 'Get started'}
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-20">
+          <LogoCloud />
+        </div>
+      </div>
+    </section>
+  );
 }
