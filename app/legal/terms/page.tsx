@@ -16,8 +16,8 @@ export default function TermsOfServicePage() {
       <div className="prose prose-lg max-w-none">
         <h2>1. Acceptance of Terms</h2>
         <p>
-          Welcome to MNNR ("Service," "we," "us," or "our"). By accessing or using mnnr.app (the "Platform"),
-          you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Service.
+          Welcome to MNNR (“Service,” “we,” “us,” or “our”). By accessing or using mnnr.app (the “Platform”),
+          you agree to be bound by these Terms of Service (“Terms”). If you do not agree, do not use the Service.
         </p>
 
         <h2>2. Service Description</h2>
@@ -141,9 +141,9 @@ export default function TermsOfServicePage() {
 
         <h2>9. Disclaimers and Limitations</h2>
 
-        <h3>9.1 "As Is" Service</h3>
+        <h3>9.1 “As Is” Service</h3>
         <p>
-          THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED,
+          THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE” WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED,
           INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
         </p>
 
@@ -214,7 +214,7 @@ export default function TermsOfServicePage() {
         <h3>12.2 Arbitration Agreement</h3>
         <p>
           Any disputes that cannot be resolved informally shall be resolved by binding arbitration in accordance with
-          the American Arbitration Association's rules. You waive your right to a jury trial or class action.
+          the American Arbitration Association’s rules. You waive your right to a jury trial or class action.
         </p>
 
         <h3>12.3 Governing Law</h3>
@@ -274,7 +274,7 @@ export default function TermsOfServicePage() {
         <hr className="my-8" />
 
         <p className="text-sm text-gray-600">
-          By clicking "I Agree" or by using MNNR, you acknowledge that you have read, understood,
+          By clicking “I Agree” or by using MNNR, you acknowledge that you have read, understood,
           and agree to be bound by these Terms of Service.
         </p>
       </div>

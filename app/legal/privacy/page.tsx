@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
       <div className="prose prose-lg max-w-none">
         <h2>1. Introduction</h2>
         <p>
-          MNNR ("we," "us," or "our") operates the mnnr.app website and platform (the "Service").
+          MNNR (“we,” “us,” or “our”) operates the mnnr.app website and platform (the “Service”).
           This Privacy Policy explains how we collect, use, disclose, and safeguard your information
           when you use our Service.
         </p>
@@ -124,7 +124,7 @@ export default function PrivacyPolicyPage() {
           where our service providers operate. We ensure appropriate safeguards are in place.
         </p>
 
-        <h2>9. Children's Privacy</h2>
+        <h2>9. Children’s Privacy</h2>
         <p>
           Our Service is not directed to individuals under 18. We do not knowingly collect information
           from children. If you believe we have collected information from a child, contact us immediately.
@@ -146,7 +146,7 @@ export default function PrivacyPolicyPage() {
         <h2>12. California Privacy Rights (CCPA)</h2>
         <p>California residents have additional rights under the CCPA:</p>
         <ul>
-          <li><strong>Right to Know:</strong> What personal information we collect and how it's used</li>
+          <li><strong>Right to Know:</strong> What personal information we collect and how it’s used</li>
           <li><strong>Right to Delete:</strong> Request deletion of your personal information</li>
           <li><strong>Right to Opt-Out:</strong> Opt out of sale of personal information (we do not sell your data)</li>
           <li><strong>Right to Non-Discrimination:</strong> Equal service regardless of privacy choices</li>
