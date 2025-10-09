@@ -1,7 +1,7 @@
 'use client';
 
 import { usePageTracking } from '@/hooks/usePageTracking';
-import { usePostHog } from '@/providers/PostHogProvider';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
 interface AnalyticsProps {

@@ -2,24 +2,26 @@
 
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { analytics } from '@/providers/PostHogProvider';
+import { usePostHog } from 'posthog-js/react';
 
 export function usePageTracking() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const posthog = usePostHog();
 
   useEffect(() => {
-    // Track page view
-    const fullPath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
-    
-    analytics.page(fullPath, {
-      path: pathname,
-      search: searchParams.toString(),
-      title: document.title,
-      referrer: document.referrer,
-      timestamp: new Date().toISOString(),
-    });
-  }, [pathname, searchParams]);
+    if (posthog) {
+      const fullPath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+
+      posthog.capture('$pageview', {
+        $current_url: fullPath,
+        $pathname: pathname,
+        $search: searchParams.toString(),
+        title: document.title,
+        referrer: document.referrer,
+      });
+    }
+  }, [pathname, searchParams, posthog]);
 }
 
 export default usePageTracking;
