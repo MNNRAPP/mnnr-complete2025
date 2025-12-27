@@ -1,8 +1,77 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "installCommand": "npm install",
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "outputDirectory": ".next"
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "outputDirectory": ".next",
+  
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ],
+  
+  "redirects": [
+    {
+      "source": "/docs",
+      "destination": "/documentation",
+      "permanent": true
+    }
+  ],
+  
+  "rewrites": [
+    {
+      "source": "/api/v1/:path*",
+      "destination": "/api/:path*"
+    }
+  ],
+  
+  "regions": ["iad1", "sfo1", "lhr1", "fra1", "sin1"],
+  
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "api/webhooks/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  
+  "crons": [
+    {
+      "path": "/api/cron/cleanup",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/metrics",
+      "schedule": "*/15 * * * *"
+    }
+  ]
 }
