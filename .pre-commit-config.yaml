@@ -1,0 +1,196 @@
+# Pre-commit hooks configuration for MNNR Complete 2025
+# Prevents secrets, sensitive data, and common security issues from being committed
+#
+# Installation:
+#   1. Install pre-commit: pip install pre-commit
+#   2. Install hooks: pre-commit install
+#   3. Test: pre-commit run --all-files
+#
+# Documentation: https://pre-commit.com/
+
+repos:
+  # ============================================
+  # Secret Detection - Primary Defense
+  # ============================================
+  
+  # Detect-secrets: Advanced secret scanner
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets
+        args: 
+          - '--baseline'
+          - '.secrets.baseline'
+        exclude: |
+          (?x)^(
+            package-lock.json|
+            pnpm-lock.yaml|
+            go.sum|
+            .*\.min\.js|
+            .*\.map
+          )$
+
+  # Gitleaks: Comprehensive secret scanner
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+        name: Gitleaks secret scanner
+        entry: gitleaks protect --verbose --redact --staged
+        language: system
+        pass_filenames: false
+
+  # ============================================
+  # Code Quality & Security
+  # ============================================
+  
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent large files
+      - id: check-added-large-files
+        name: Check for large files
+        args: ['--maxkb=1000']
+      
+      # Check for merge conflicts
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+      
+      # Check JSON/YAML syntax
+      - id: check-json
+        name: Check JSON syntax
+      - id: check-yaml
+        name: Check YAML syntax
+        args: ['--unsafe']  # Allow custom tags
+      
+      # Prevent committing to protected branches
+      - id: no-commit-to-branch
+        name: Prevent commits to main/master
+        args: ['--branch', 'main', '--branch', 'master']
+      
+      # Check for private keys
+      - id: detect-private-key
+        name: Detect private keys
+      
+      # Fix line endings
+      - id: end-of-file-fixer
+        name: Fix end of files
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        args: [--markdown-linebreak-ext=md]
+      
+      # Check for case conflicts
+      - id: check-case-conflict
+        name: Check for case conflicts
+
+  # ============================================
+  # TypeScript/JavaScript Security
+  # ============================================
+  
+  # ESLint for code quality and security
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.56.0
+    hooks:
+      - id: eslint
+        name: ESLint
+        files: \.(js|jsx|ts|tsx)$
+        types: [file]
+        args:
+          - --fix
+          - --max-warnings=0
+        additional_dependencies:
+          - eslint@8.57.1
+          - eslint-config-next@16.1.1
+          - '@typescript-eslint/eslint-plugin@6.21.0'
+          - '@typescript-eslint/parser@6.21.0'
+
+  # Prettier for consistent formatting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: Prettier
+        files: \.(js|jsx|ts|tsx|json|css|scss|md|yaml|yml)$
+        args:
+          - --write
+          - --ignore-unknown
+
+  # ============================================
+  # Environment File Protection
+  # ============================================
+  
+  # Prevent committing .env files
+  - repo: local
+    hooks:
+      - id: check-env-files
+        name: Check for .env files
+        entry: bash -c 'if git diff --cached --name-only | grep -E "\.env$|\.env\.local$|\.env\.production$"; then echo "ERROR - .env files should not be committed"; exit 1; fi'
+        language: system
+        pass_filenames: false
+
+  # ============================================
+  # Custom Secret Patterns
+  # ============================================
+  
+  - repo: local
+    hooks:
+      # Check for common secret patterns
+      - id: check-secrets-patterns
+        name: Check for secret patterns
+        entry: bash -c 'git diff --cached | grep -iE "(api_key|api_secret|access_token|secret_key|private_key|auth_token|bearer_token|client_secret|password|passwd|pwd|stripe_secret|supabase_key|sentry_token|github_token|aws_secret)" && echo "ERROR - Potential secret detected" && exit 1 || exit 0'
+        language: system
+        pass_filenames: false
+      
+      # Check for Stripe keys
+      - id: check-stripe-keys
+        name: Check for Stripe keys
+        entry: bash -c 'git diff --cached | grep -E "(sk_live_|sk_test_|pk_live_|pk_test_|whsec_)" && echo "ERROR - Stripe key detected" && exit 1 || exit 0'
+        language: system
+        pass_filenames: false
+      
+      # Check for Supabase keys
+      - id: check-supabase-keys
+        name: Check for Supabase keys
+        entry: bash -c 'git diff --cached | grep -E "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\." && echo "ERROR - Supabase JWT detected" && exit 1 || exit 0'
+        language: system
+        pass_filenames: false
+      
+      # Check for AWS credentials
+      - id: check-aws-credentials
+        name: Check for AWS credentials
+        entry: bash -c 'git diff --cached | grep -E "(AKIA[0-9A-Z]{16}|aws_access_key_id|aws_secret_access_key)" && echo "ERROR - AWS credentials detected" && exit 1 || exit 0'
+        language: system
+        pass_filenames: false
+
+  # ============================================
+  # Go Security (if applicable)
+  # ============================================
+  
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.55.2
+    hooks:
+      - id: golangci-lint
+        name: golangci-lint
+        files: \.go$
+        args:
+          - --fix
+
+# ============================================
+# Configuration
+# ============================================
+
+# Fail fast - stop on first failure
+fail_fast: false
+
+# Default language version
+default_language_version:
+  python: python3
+  node: system
+
+# Default stages
+default_stages: [commit, push]
+
+# Minimum pre-commit version
+minimum_pre_commit_version: '2.20.0'
