@@ -69,8 +69,8 @@ export async function POST(req: Request) {
       });
     }
     logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
+    // Return generic error message to prevent XSS (detailed error is logged above)
+    return new Response('Webhook validation failed', { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
