@@ -26,7 +26,11 @@
     "supabase:generate-migration": "npx supabase db diff | npx supabase migration new",
     "supabase:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
     "supabase:push": "npx supabase db push",
-    "supabase:pull": "npx supabase db pull"
+    "supabase:pull": "npx supabase db pull",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
