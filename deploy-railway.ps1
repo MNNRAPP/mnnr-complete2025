@@ -55,19 +55,31 @@ $envVars = @{
     "NODE_VERSION" = "24"
 }
 
-# Set Supabase variables
+# Set Supabase variables - Load from environment or .env file
+if ([string]::IsNullOrEmpty($env:NEXT_PUBLIC_SUPABASE_URL)) {
+    Write-Host "❌ Error: Required Supabase environment variables not set" -ForegroundColor Red
+    Write-Host "   Please set: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY" -ForegroundColor Yellow
+    exit 1
+}
+
 $supabaseVars = @{
-    "NEXT_PUBLIC_SUPABASE_URL" = "https://waykhwdysouihtgqwged.supabase.co"
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY" = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndheWtod2R5c291aWh0Z3F3Z2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2NTg4MzEsImV4cCI6MjA3MzIzNDgzMX0.kHcx3YojQGdrf1Q9ZjNhzj_w0NXSs2dA3WYiVaiQP4k"
-    "SUPABASE_SERVICE_ROLE_KEY" = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndheWtod2R5c291aWh0Z3F3Z2VkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzY1ODgzMSwiZXhwIjoyMDczMjM0ODMxfQ.8Or-UD5kFD_3pLRvhLNkecsVcm0r6VHVoPCP0ZEAMhA"
+    "NEXT_PUBLIC_SUPABASE_URL" = $env:NEXT_PUBLIC_SUPABASE_URL
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY" = $env:NEXT_PUBLIC_SUPABASE_ANON_KEY
+    "SUPABASE_SERVICE_ROLE_KEY" = $env:SUPABASE_SERVICE_ROLE_KEY
     "SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI" = "$siteUrl/auth/callback"
 }
 
-# Set Stripe variables
+# Set Stripe variables - Load from environment or .env file
+if ([string]::IsNullOrEmpty($env:STRIPE_SECRET_KEY)) {
+    Write-Host "❌ Error: Required Stripe environment variables not set" -ForegroundColor Red
+    Write-Host "   Please set: STRIPE_SECRET_KEY, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET" -ForegroundColor Yellow
+    exit 1
+}
+
 $stripeVars = @{
-    "STRIPE_SECRET_KEY" = "sk_test_51S6R0T8CWPGKXcGknkw727t8KJ8DyQyIqwtgGxJolLRvnupNPUnIYoAHmlAC9JmSYAoEjTq3rWiv0VJEa8YWuJNg00xzZvkFFx"
-    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" = "pk_test_51S6R0T8CWPGKXcGkWVYvqHwJX7Y9r4kX4wVqxHjFGqZoX4mHdqp1FQhzNpxVzqHbX7Y9r4kX4wVqxHjFGqZoX4mHdqp1F"
-    "STRIPE_WEBHOOK_SECRET" = "whsec_wRNftLajMZNeslQOP6vEPm4iVx5NlZ6z"
+    "STRIPE_SECRET_KEY" = $env:STRIPE_SECRET_KEY
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" = $env:NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    "STRIPE_WEBHOOK_SECRET" = $env:STRIPE_WEBHOOK_SECRET
 }
 
 # Set monitoring variables  

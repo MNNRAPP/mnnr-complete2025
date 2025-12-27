@@ -8,8 +8,12 @@ Write-Host "==============================" -ForegroundColor Green
 function Create-StripeProducts {
     Write-Host "🏗️  Creating Stripe products via API..." -ForegroundColor Cyan
     
-    # Get Stripe secret key
-    $stripeKey = "sk_test_51S6R0T8CWPGKXcGknkw727t8KJ8DyQyIqwtgGxJolLRvnupNPUnIYoAHmlAC9JmSYAoEjTq3rWiv0VJEa8YWuJNg00xzZvkFFx"
+    # Get Stripe secret key from environment
+    $stripeKey = $env:STRIPE_SECRET_KEY
+    if ([string]::IsNullOrEmpty($stripeKey)) {
+        Write-Host "❌ Error: STRIPE_SECRET_KEY environment variable not set" -ForegroundColor Red
+        return $false
+    }
     $headers = @{
         "Authorization" = "Bearer $stripeKey"
         "Content-Type" = "application/x-www-form-urlencoded"
@@ -48,7 +52,15 @@ function Create-StripeProducts {
 
 # Main execution
 Write-Host "🔑 Configuring webhook secret..." -ForegroundColor Cyan
-railway variables --set "STRIPE_WEBHOOK_SECRET=whsec_wRNftLajMZNeslQOP6vEPm4iVx5NlZ6z"
+
+# Get webhook secret from environment
+$webhookSecret = $env:STRIPE_WEBHOOK_SECRET
+if ([string]::IsNullOrEmpty($webhookSecret)) {
+    Write-Host "❌ Error: STRIPE_WEBHOOK_SECRET environment variable not set" -ForegroundColor Red
+    exit 1
+}
+
+railway variables --set "STRIPE_WEBHOOK_SECRET=$webhookSecret"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "✅ Webhook secret configured" -ForegroundColor Green

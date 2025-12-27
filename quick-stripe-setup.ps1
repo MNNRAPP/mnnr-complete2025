@@ -1,10 +1,17 @@
 # Quick Stripe Webhook Setup for MNNR
-# Sets the webhook secret you already have
+# Sets the webhook secret from environment variable
 
 Write-Host "🔗 Setting up Stripe webhook for MNNR..." -ForegroundColor Green
 
-# Set the webhook secret you provided
-$webhookSecret = "whsec_wRNftLajMZNeslQOP6vEPm4iVx5NlZ6z"
+# Get webhook secret from environment variable
+$webhookSecret = $env:STRIPE_WEBHOOK_SECRET
+
+if ([string]::IsNullOrEmpty($webhookSecret)) {
+    Write-Host "❌ Error: STRIPE_WEBHOOK_SECRET environment variable not set" -ForegroundColor Red
+    Write-Host "   Please set it first: `$env:STRIPE_WEBHOOK_SECRET='your_secret_here'" -ForegroundColor Yellow
+    Write-Host "   Get your webhook secret from: https://dashboard.stripe.com/test/webhooks" -ForegroundColor Yellow
+    exit 1
+}
 
 Write-Host "🚀 Updating Railway environment..." -ForegroundColor Cyan
 railway variables --set "STRIPE_WEBHOOK_SECRET=$webhookSecret"
