@@ -143,3 +143,22 @@ create policy "Can only view own subs data." on subscriptions for select using (
  */
 drop publication if exists supabase_realtime;
 create publication supabase_realtime for table products, prices;
+/**
+ * USAGE EVENTS
+ * Tracks SDK and product analytics events for dashboard reporting.
+ */
+create table if not exists usage_events (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  user_id uuid references auth.users,
+  event_name text not null,
+  metadata jsonb default '{}'::jsonb
+);
+
+alter table usage_events enable row level security;
+
+create policy "Users can insert their own usage events." on usage_events
+  for insert with check (auth.uid() = user_id);
+
+create policy "Users can view their own usage events." on usage_events
+  for select using (auth.uid() = user_id);

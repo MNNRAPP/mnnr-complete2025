@@ -1,17 +1,18 @@
 .root {
-  @apply sticky top-0 bg-black z-40 transition-all duration-150 h-16 md:h-20;
+  @apply sticky top-0 z-40 h-16 md:h-20 transition-all duration-200 border-b border-white/10 bg-black/60 backdrop-blur-xl;
+  @apply supports-[backdrop-filter]:bg-black/40;
 }
 
 .link {
-  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-zinc-200 rounded-md p-1;
+  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-150 cursor-pointer text-zinc-200 rounded-md px-2 py-1;
 }
 
 .link:hover {
-  @apply text-zinc-100;
+  @apply text-white;
 }
 
 .link:focus {
-  @apply outline-none text-zinc-100 ring-2 ring-pink-500 ring-opacity-50;
+  @apply outline-none text-white ring-2 ring-emerald-400/50;
 }
 
 .logo {
