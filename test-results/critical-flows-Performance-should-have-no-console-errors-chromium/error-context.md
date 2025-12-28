@@ -1,0 +1,376 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#skip"
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link "Logo" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e9]:
+            - img [ref=e10]:
+              - generic [ref=e12]: $
+            - generic [ref=e25]: MNNR
+        - navigation [ref=e26]:
+          - link "Pricing" [ref=e27] [cursor=pointer]:
+            - /url: /#pricing
+          - link "Documentation" [ref=e28] [cursor=pointer]:
+            - /url: /docs/quick-start
+      - generic [ref=e29]:
+        - link "Sign In" [ref=e30] [cursor=pointer]:
+          - /url: /signin
+        - link "Start Building" [ref=e31] [cursor=pointer]:
+          - /url: /signup
+  - main [ref=e32]:
+    - generic [ref=e34]:
+      - generic [ref=e39]: Payments Infrastructure for the Machine Economy
+      - heading "Monetize AI Agents" [level=1] [ref=e40]:
+        - generic [ref=e41]: Monetize
+        - generic [ref=e44]: AI Agents
+      - paragraph [ref=e46]: The universal billing layer for autonomous systems.
+      - paragraph [ref=e47]: One API to track usage, enforce limits, and collect payments from any machine, agent, or protocol.
+      - generic [ref=e48]:
+        - link "Start Building" [ref=e49] [cursor=pointer]:
+          - /url: /signup
+          - generic [ref=e50]: Start Building
+          - img [ref=e51]
+        - link "View Documentation →" [ref=e53] [cursor=pointer]:
+          - /url: /docs/quick-start
+          - generic [ref=e54]: View Documentation
+          - generic [ref=e55]: →
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e65]: Track usage in one line
+          - button "Copy" [ref=e66] [cursor=pointer]
+        - code [ref=e68]: "curl https://api.mnnr.app/v1/usage \\ -H \"Authorization: Bearer sk_live_...\" \\ -d '{\"tokens\": 1500, \"model\": \"gpt-4\"}'"
+        - generic [ref=e69]:
+          - text: "Response:"
+          - generic [ref=e70]: "{\"success\": true, \"usage_id\": \"usg_7x9k2...\", \"balance\": 8500}"
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]: < 5min
+          - generic [ref=e74]: Integration
+        - generic [ref=e75]:
+          - generic [ref=e76]: 99.99%
+          - generic [ref=e77]: Uptime
+        - generic [ref=e78]:
+          - generic [ref=e79]: $0
+          - generic [ref=e80]: To Start
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - generic [ref=e83]: 🔐
+          - generic [ref=e84]: SOC 2 Ready
+        - generic [ref=e85]:
+          - generic [ref=e86]: ⚡
+          - generic [ref=e87]: Edge Optimized
+        - generic [ref=e88]:
+          - generic [ref=e89]: 🌐
+          - generic [ref=e90]: Global CDN
+        - generic [ref=e91]:
+          - generic [ref=e92]: 🔗
+          - generic [ref=e93]: Web3 Native
+      - generic [ref=e94]:
+        - paragraph [ref=e95]: Built for the future
+        - generic [ref=e96]:
+          - generic [ref=e97]: AI Agents
+          - generic [ref=e98]: LLM APIs
+          - generic [ref=e99]: Crypto Protocols
+          - generic [ref=e100]: IoT Networks
+          - generic [ref=e101]: Robotics
+          - generic [ref=e102]: Edge Computing
+          - generic [ref=e103]: Smart Contracts
+          - generic [ref=e104]: Autonomous Vehicles
+    - generic [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e109]: ✨ Core Capabilities
+        - heading "Everything to monetize autonomous systems" [level=2] [ref=e110]
+        - paragraph [ref=e111]: A complete billing infrastructure designed for the machine economy. From AI agents to IoT networks, we handle the complexity.
+      - generic [ref=e112]:
+        - generic [ref=e115]:
+          - img [ref=e117]
+          - heading "Real-Time Usage Tracking" [level=3] [ref=e119]
+          - paragraph [ref=e120]: Track API calls, tokens, compute cycles, or any custom metric. Sub-millisecond latency with global edge deployment.
+          - generic [ref=e121]:
+            - generic [ref=e122]: Learn more
+            - img [ref=e123]
+        - generic [ref=e127]:
+          - img [ref=e129]
+          - heading "Programmable Billing" [level=3] [ref=e131]
+          - paragraph [ref=e132]: Usage-based, subscription, prepaid credits, or hybrid models. Stripe-powered with automatic invoicing and tax handling.
+          - generic [ref=e133]:
+            - generic [ref=e134]: Learn more
+            - img [ref=e135]
+        - generic [ref=e139]:
+          - img [ref=e141]
+          - heading "API Key Management" [level=3] [ref=e143]
+          - paragraph [ref=e144]: Generate, rotate, and revoke keys instantly. Scoped permissions, usage limits, and expiration policies per key.
+          - generic [ref=e145]:
+            - generic [ref=e146]: Learn more
+            - img [ref=e147]
+        - generic [ref=e151]:
+          - img [ref=e153]
+          - heading "Distributed Rate Limiting" [level=3] [ref=e155]
+          - paragraph [ref=e156]: Redis-backed rate limiting across global edge nodes. Protect infrastructure and enforce fair usage at scale.
+          - generic [ref=e157]:
+            - generic [ref=e158]: Learn more
+            - img [ref=e159]
+        - generic [ref=e163]:
+          - img [ref=e165]
+          - heading "Enterprise Security" [level=3] [ref=e167]
+          - paragraph [ref=e168]: SOC 2 Type II ready. End-to-end encryption, audit logs, SSO, and compliance controls built-in.
+          - generic [ref=e169]:
+            - generic [ref=e170]: Learn more
+            - img [ref=e171]
+        - generic [ref=e175]:
+          - img [ref=e177]
+          - heading "Web3 Native" [level=3] [ref=e179]
+          - paragraph [ref=e180]: First-class support for crypto payments, smart contract integration, and decentralized identity verification.
+          - generic [ref=e181]:
+            - generic [ref=e182]: Learn more
+            - img [ref=e183]
+      - generic [ref=e186]:
+        - generic [ref=e187]:
+          - generic [ref=e188]: <5ms
+          - generic [ref=e189]: API Latency
+        - generic [ref=e190]:
+          - generic [ref=e191]: 99.99%
+          - generic [ref=e192]: Uptime SLA
+        - generic [ref=e193]:
+          - generic [ref=e194]: 50+
+          - generic [ref=e195]: Edge Locations
+        - generic [ref=e196]:
+          - generic [ref=e197]: ∞
+          - generic [ref=e198]: Scale
+      - generic [ref=e199]:
+        - paragraph [ref=e200]: Trusted by teams building the future of autonomous systems
+        - generic [ref=e201]:
+          - generic [ref=e202]: AI Labs
+          - generic [ref=e203]: CryptoDAO
+          - generic [ref=e204]: RoboTech
+          - generic [ref=e205]: EdgeNet
+          - generic [ref=e206]: AutoDrive
+    - generic [ref=e208]:
+      - generic [ref=e209]:
+        - generic [ref=e211]: 🔌 Integrations
+        - heading "Works with your entire stack" [level=2] [ref=e212]
+        - paragraph [ref=e213]: Plug into your existing infrastructure. No migration required. From AI providers to blockchain networks.
+      - generic [ref=e214]:
+        - generic [ref=e217]:
+          - img "Stripe logo" [ref=e219]
+          - generic [ref=e220]: Payments
+        - generic [ref=e223]:
+          - img "Supabase logo" [ref=e225]
+          - generic [ref=e226]: Database
+        - generic [ref=e229]:
+          - img "Vercel logo" [ref=e231]
+          - generic [ref=e232]: Deployment
+        - generic [ref=e235]:
+          - img "GitHub logo" [ref=e237]
+          - generic [ref=e238]: DevOps
+      - generic [ref=e241]: Ecosystem
+      - generic [ref=e243]:
+        - generic [ref=e244]:
+          - generic [ref=e245]: 🧠
+          - generic [ref=e246]:
+            - generic [ref=e247]: OpenAI
+            - generic [ref=e248]: GPT, DALL-E, Whisper
+        - generic [ref=e249]:
+          - generic [ref=e250]: 🤖
+          - generic [ref=e251]:
+            - generic [ref=e252]: Anthropic
+            - generic [ref=e253]: Claude models
+        - generic [ref=e254]:
+          - generic [ref=e255]: ⟠
+          - generic [ref=e256]:
+            - generic [ref=e257]: Ethereum
+            - generic [ref=e258]: Smart contracts
+        - generic [ref=e259]:
+          - generic [ref=e260]: ◎
+          - generic [ref=e261]:
+            - generic [ref=e262]: Solana
+            - generic [ref=e263]: High-speed blockchain
+        - generic [ref=e264]:
+          - generic [ref=e265]: ☁️
+          - generic [ref=e266]:
+            - generic [ref=e267]: AWS
+            - generic [ref=e268]: Lambda, SageMaker
+        - generic [ref=e269]:
+          - generic [ref=e270]: 🌐
+          - generic [ref=e271]:
+            - generic [ref=e272]: Google Cloud
+            - generic [ref=e273]: Vertex AI
+        - generic [ref=e274]:
+          - generic [ref=e275]: 🤗
+          - generic [ref=e276]:
+            - generic [ref=e277]: Hugging Face
+            - generic [ref=e278]: Model hub
+        - generic [ref=e279]:
+          - generic [ref=e280]: 🔄
+          - generic [ref=e281]:
+            - generic [ref=e282]: Replicate
+            - generic [ref=e283]: ML inference
+      - generic [ref=e287]:
+        - generic [ref=e292]: Universal SDK
+        - code [ref=e295]:
+          - text: import
+          - generic [ref=e296]: "{ MNNR }"
+          - text: from '@mnnr/sdk'; // Works with any AI provider const mnnr = new MNNR
+          - generic [ref=e297]: "({"
+          - text: "apiKey: 'sk_live_...', provider: 'openai' // or 'anthropic', 'replicate', etc."
+          - generic [ref=e298]: "})"
+          - text: ; // Track usage automatically const response = await mnnr.track('gpt-4-completion'
+          - generic [ref=e299]: ", {"
+          - text: "tokens: 1500, userId: 'user_123'"
+          - generic [ref=e300]: "})"
+          - text: ;
+    - generic [ref=e302]:
+      - generic [ref=e305]:
+        - generic [ref=e310]: Early Access Program
+        - heading "Ready to monetize the machine economy?" [level=2] [ref=e311]
+        - paragraph [ref=e312]: Join the pioneers building autonomous systems that pay for themselves. Zero platform fees during beta. White-glove onboarding included.
+        - generic [ref=e313]:
+          - link "Start Building Free" [ref=e314] [cursor=pointer]:
+            - /url: /signup
+            - generic [ref=e315]: Start Building Free
+            - img [ref=e316]
+          - link "Read the Docs →" [ref=e318] [cursor=pointer]:
+            - /url: /docs/quick-start
+            - generic [ref=e319]: Read the Docs
+            - generic [ref=e320]: →
+        - generic [ref=e321]:
+          - generic [ref=e322]:
+            - img [ref=e323]
+            - generic [ref=e325]: No credit card required
+          - generic [ref=e326]:
+            - img [ref=e327]
+            - generic [ref=e329]: 5-minute integration
+          - generic [ref=e330]:
+            - img [ref=e331]
+            - generic [ref=e333]: Cancel anytime
+      - generic [ref=e334]:
+        - generic [ref=e335]:
+          - generic [ref=e336]: 🤖
+          - generic [ref=e337]: AI Agents
+        - generic [ref=e338]:
+          - generic [ref=e339]: 🔗
+          - generic [ref=e340]: Smart Contracts
+        - generic [ref=e341]:
+          - generic [ref=e342]: 📡
+          - generic [ref=e343]: IoT Networks
+        - generic [ref=e344]:
+          - generic [ref=e345]: 🚗
+          - generic [ref=e346]: Autonomous Vehicles
+    - generic [ref=e348]:
+      - generic [ref=e349]:
+        - heading "Simple, transparent pricing" [level=2] [ref=e350]
+        - paragraph [ref=e351]: Start free, scale as you grow. No hidden fees.
+      - generic [ref=e352]:
+        - generic [ref=e353]:
+          - generic [ref=e354]:
+            - heading "Free" [level=3] [ref=e355]
+            - generic [ref=e356]:
+              - generic [ref=e357]: $0
+              - generic [ref=e358]: /month
+          - list [ref=e359]:
+            - listitem [ref=e360]:
+              - generic [ref=e361]: ✓
+              - generic [ref=e362]: 10,000 API calls/month
+            - listitem [ref=e363]:
+              - generic [ref=e364]: ✓
+              - generic [ref=e365]: Basic usage analytics
+            - listitem [ref=e366]:
+              - generic [ref=e367]: ✓
+              - generic [ref=e368]: API key management
+            - listitem [ref=e369]:
+              - generic [ref=e370]: ✓
+              - generic [ref=e371]: Community support
+          - link "Start Free" [ref=e372] [cursor=pointer]:
+            - /url: /signin/signup
+        - generic [ref=e373]:
+          - generic [ref=e374]: MOST POPULAR
+          - generic [ref=e375]:
+            - heading "Pro" [level=3] [ref=e376]
+            - generic [ref=e377]:
+              - generic [ref=e378]: $49
+              - generic [ref=e379]: /month
+          - list [ref=e380]:
+            - listitem [ref=e381]:
+              - generic [ref=e382]: ✓
+              - generic [ref=e383]: 1M API calls/month
+            - listitem [ref=e384]:
+              - generic [ref=e385]: ✓
+              - generic [ref=e386]: Advanced analytics & insights
+            - listitem [ref=e387]:
+              - generic [ref=e388]: ✓
+              - generic [ref=e389]: Custom rate limits
+            - listitem [ref=e390]:
+              - generic [ref=e391]: ✓
+              - generic [ref=e392]: Stripe billing integration
+            - listitem [ref=e393]:
+              - generic [ref=e394]: ✓
+              - generic [ref=e395]: Email support
+          - link "Start Pro Trial" [ref=e396] [cursor=pointer]:
+            - /url: /signin/signup
+        - generic [ref=e397]:
+          - generic [ref=e398]:
+            - heading "Enterprise" [level=3] [ref=e399]
+            - generic [ref=e401]: Custom
+          - list [ref=e402]:
+            - listitem [ref=e403]:
+              - generic [ref=e404]: ✓
+              - generic [ref=e405]: Unlimited API calls
+            - listitem [ref=e406]:
+              - generic [ref=e407]: ✓
+              - generic [ref=e408]: Dedicated infrastructure
+            - listitem [ref=e409]:
+              - generic [ref=e410]: ✓
+              - generic [ref=e411]: SSO & advanced security
+            - listitem [ref=e412]:
+              - generic [ref=e413]: ✓
+              - generic [ref=e414]: Custom SLA
+            - listitem [ref=e415]:
+              - generic [ref=e416]: ✓
+              - generic [ref=e417]: Dedicated support
+          - link "Contact Sales" [ref=e418] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app
+      - paragraph [ref=e420]: All plans include 99.9% uptime SLA • Cancel anytime • No credit card required for free tier
+  - contentinfo [ref=e421]:
+    - generic [ref=e422]:
+      - link "MNNR" [ref=e424] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e426]:
+          - img [ref=e427]:
+            - generic [ref=e429]: $
+          - generic [ref=e442]: MNNR
+      - list [ref=e444]:
+        - listitem [ref=e445]:
+          - link "Home" [ref=e446] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e447]:
+          - link "Documentation" [ref=e448] [cursor=pointer]:
+            - /url: /docs
+        - listitem [ref=e449]:
+          - link "Pilot Program" [ref=e450] [cursor=pointer]:
+            - /url: /partners/register
+      - list [ref=e452]:
+        - listitem [ref=e453]:
+          - paragraph [ref=e454]: SUPPORT
+        - listitem [ref=e455]:
+          - link "📧 Contact Support" [ref=e456] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app
+        - listitem [ref=e457]:
+          - link "Documentation" [ref=e458] [cursor=pointer]:
+            - /url: /docs
+      - link "Security Documentation" [ref=e461] [cursor=pointer]:
+        - /url: /docs/security
+        - img [ref=e462]
+    - generic [ref=e464]:
+      - generic [ref=e466]: © 2025 MNNR. All rights reserved.
+      - generic [ref=e468]: Payments for Machines
+  - region "Notifications (F8)":
+    - list
+```
