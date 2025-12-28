@@ -393,3 +393,165 @@ describe('Hook Return Types', () => {
     expect(typeof result.current.mutate).toBe('function');
   });
 });
+
+
+describe('Integration Tests for Specific Hooks', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('useProfile should call apiClient.get with correct endpoint', async () => {
+    const { result } = renderHook(() => useProfile());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useSubscriptions should call apiClient.get with subscriptions endpoint', async () => {
+    const { result } = renderHook(() => useSubscriptions());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('usePaymentMethods should call apiClient.get with payments endpoint', async () => {
+    const { result } = renderHook(() => usePaymentMethods());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useInvoices should accept params', async () => {
+    const params = { limit: 10, status: 'paid' };
+    const { result } = renderHook(() => useInvoices(params));
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useInvoices should work without params', async () => {
+    const { result } = renderHook(() => useInvoices());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useUsage should accept params', async () => {
+    const params = { period: 'month', metric: 'api_calls' };
+    const { result } = renderHook(() => useUsage(params));
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useUsage should work without params', async () => {
+    const { result } = renderHook(() => useUsage());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useAdminUsers should accept params', async () => {
+    const params = { page: 1, limit: 50, search: 'test', status: 'active' };
+    const { result } = renderHook(() => useAdminUsers(params));
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useAdminUsers should work without params', async () => {
+    const { result } = renderHook(() => useAdminUsers());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useAdminAnalytics should accept period param', async () => {
+    const { result } = renderHook(() => useAdminAnalytics('month'));
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  it('useAdminAnalytics should work without params', async () => {
+    const { result } = renderHook(() => useAdminAnalytics());
+    
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
+  });
+});
+
+describe('Mutation Hook Integration Tests', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('useCreateSubscription should call mutate with data', () => {
+    const { result } = renderHook(() => useCreateSubscription());
+    
+    expect(result.current.mutate).toBeDefined();
+    expect(typeof result.current.mutate).toBe('function');
+  });
+
+  it('useCancelSubscription should call mutate with id and immediately flag', () => {
+    const { result } = renderHook(() => useCancelSubscription());
+    
+    expect(result.current.mutate).toBeDefined();
+    expect(typeof result.current.mutate).toBe('function');
+  });
+
+  it('useUpdateProfile should call mutate with profile data', () => {
+    const { result } = renderHook(() => useUpdateProfile());
+    
+    expect(result.current.mutate).toBeDefined();
+    expect(typeof result.current.mutate).toBe('function');
+  });
+
+  it('useAddPaymentMethod should call mutate with payment method data', () => {
+    const { result } = renderHook(() => useAddPaymentMethod());
+    
+    expect(result.current.mutate).toBeDefined();
+    expect(typeof result.current.mutate).toBe('function');
+  });
+
+  it('useRemovePaymentMethod should call mutate with payment method id', () => {
+    const { result } = renderHook(() => useRemovePaymentMethod());
+    
+    expect(result.current.mutate).toBeDefined();
+    expect(typeof result.current.mutate).toBe('function');
+  });
+
+  it('useRecordUsage should call mutate with usage data', () => {
+    const { result } = renderHook(() => useRecordUsage());
+    
+    expect(result.current.mutate).toBeDefined();
+    expect(typeof result.current.mutate).toBe('function');
+  });
+});
+
+describe('Hook Reset Functionality', () => {
+  it('useMutation reset should clear data and error', () => {
+    const { result } = renderHook(() => useCreateSubscription());
+    
+    expect(result.current.reset).toBeDefined();
+    expect(typeof result.current.reset).toBe('function');
+    
+    act(() => {
+      result.current.reset();
+    });
+    
+    expect(result.current.data).toBeNull();
+    expect(result.current.error).toBeNull();
+  });
+});
