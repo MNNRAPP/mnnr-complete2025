@@ -1,0 +1,143 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#skip"
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link "Logo" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e9]:
+            - img [ref=e10]:
+              - generic [ref=e12]: $
+            - generic [ref=e25]: MNNR
+        - navigation [ref=e26]:
+          - link "Pricing" [ref=e27] [cursor=pointer]:
+            - /url: /#pricing
+          - link "Documentation" [ref=e28] [cursor=pointer]:
+            - /url: /docs/quick-start
+      - generic [ref=e29]:
+        - link "Sign In" [ref=e30] [cursor=pointer]:
+          - /url: /signin
+        - link "Start Building" [ref=e31] [cursor=pointer]:
+          - /url: /signup
+  - main [ref=e32]:
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - heading "Simple, transparent pricing" [level=2] [ref=e36]
+        - paragraph [ref=e37]: Start free, scale as you grow. No hidden fees.
+      - generic [ref=e38]:
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - heading "Free" [level=3] [ref=e41]
+            - generic [ref=e42]:
+              - generic [ref=e43]: $0
+              - generic [ref=e44]: /month
+          - list [ref=e45]:
+            - listitem [ref=e46]:
+              - generic [ref=e47]: ✓
+              - generic [ref=e48]: 10,000 API calls/month
+            - listitem [ref=e49]:
+              - generic [ref=e50]: ✓
+              - generic [ref=e51]: Basic usage analytics
+            - listitem [ref=e52]:
+              - generic [ref=e53]: ✓
+              - generic [ref=e54]: API key management
+            - listitem [ref=e55]:
+              - generic [ref=e56]: ✓
+              - generic [ref=e57]: Community support
+          - link "Start Free" [ref=e58] [cursor=pointer]:
+            - /url: /signup
+        - generic [ref=e59]:
+          - generic [ref=e60]: MOST POPULAR
+          - generic [ref=e61]:
+            - heading "Pro" [level=3] [ref=e62]
+            - generic [ref=e63]:
+              - generic [ref=e64]: $49
+              - generic [ref=e65]: /month
+          - list [ref=e66]:
+            - listitem [ref=e67]:
+              - generic [ref=e68]: ✓
+              - generic [ref=e69]: 1M API calls/month
+            - listitem [ref=e70]:
+              - generic [ref=e71]: ✓
+              - generic [ref=e72]: Advanced analytics & insights
+            - listitem [ref=e73]:
+              - generic [ref=e74]: ✓
+              - generic [ref=e75]: Custom rate limits
+            - listitem [ref=e76]:
+              - generic [ref=e77]: ✓
+              - generic [ref=e78]: Stripe billing integration
+            - listitem [ref=e79]:
+              - generic [ref=e80]: ✓
+              - generic [ref=e81]: Email support
+          - link "Start Pro Trial" [ref=e82] [cursor=pointer]:
+            - /url: /signup
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - heading "Enterprise" [level=3] [ref=e85]
+            - generic [ref=e87]: Custom
+          - list [ref=e88]:
+            - listitem [ref=e89]:
+              - generic [ref=e90]: ✓
+              - generic [ref=e91]: Unlimited API calls
+            - listitem [ref=e92]:
+              - generic [ref=e93]: ✓
+              - generic [ref=e94]: Dedicated infrastructure
+            - listitem [ref=e95]:
+              - generic [ref=e96]: ✓
+              - generic [ref=e97]: SSO & advanced security
+            - listitem [ref=e98]:
+              - generic [ref=e99]: ✓
+              - generic [ref=e100]: Custom SLA
+            - listitem [ref=e101]:
+              - generic [ref=e102]: ✓
+              - generic [ref=e103]: Dedicated support
+          - link "Contact Sales" [ref=e104] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app
+      - generic [ref=e105]:
+        - paragraph [ref=e106]: All plans include 99.9% uptime SLA • Cancel anytime • No credit card required for free tier
+        - paragraph [ref=e107]:
+          - text: Need to set up Stripe products?
+          - link "Configure in Stripe Dashboard →" [ref=e108] [cursor=pointer]:
+            - /url: https://dashboard.stripe.com/products
+  - contentinfo [ref=e109]:
+    - generic [ref=e110]:
+      - link "MNNR" [ref=e112] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e114]:
+          - img [ref=e115]:
+            - generic [ref=e117]: $
+          - generic [ref=e130]: MNNR
+      - list [ref=e132]:
+        - listitem [ref=e133]:
+          - link "Home" [ref=e134] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e135]:
+          - link "Documentation" [ref=e136] [cursor=pointer]:
+            - /url: /docs
+        - listitem [ref=e137]:
+          - link "Pilot Program" [ref=e138] [cursor=pointer]:
+            - /url: /partners/register
+      - list [ref=e140]:
+        - listitem [ref=e141]:
+          - paragraph [ref=e142]: SUPPORT
+        - listitem [ref=e143]:
+          - link "📧 Contact Support" [ref=e144] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app
+        - listitem [ref=e145]:
+          - link "Documentation" [ref=e146] [cursor=pointer]:
+            - /url: /docs
+      - link "Security Documentation" [ref=e149] [cursor=pointer]:
+        - /url: /docs/security
+        - img [ref=e150]
+    - generic [ref=e152]:
+      - generic [ref=e154]: © 2025 MNNR. All rights reserved.
+      - generic [ref=e156]: Payments for Machines
+  - region "Notifications (F8)":
+    - list
+```

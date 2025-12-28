@@ -1,0 +1,67 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#skip"
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link "Logo" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e9]:
+            - img [ref=e10]:
+              - generic [ref=e12]: $
+            - generic [ref=e25]: MNNR
+        - navigation [ref=e26]:
+          - link "Pricing" [ref=e27] [cursor=pointer]:
+            - /url: /#pricing
+          - link "Documentation" [ref=e28] [cursor=pointer]:
+            - /url: /docs/quick-start
+      - generic [ref=e29]:
+        - link "Sign In" [ref=e30] [cursor=pointer]:
+          - /url: /signin
+        - link "Start Building" [ref=e31] [cursor=pointer]:
+          - /url: /signup
+  - main [ref=e32]:
+    - generic [ref=e34]:
+      - generic [ref=e36]: Loading...
+      - paragraph [ref=e37]: Loading...
+  - contentinfo [ref=e38]:
+    - generic [ref=e39]:
+      - link "MNNR" [ref=e41] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e43]:
+          - img [ref=e44]:
+            - generic [ref=e46]: $
+          - generic [ref=e59]: MNNR
+      - list [ref=e61]:
+        - listitem [ref=e62]:
+          - link "Home" [ref=e63] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e64]:
+          - link "Documentation" [ref=e65] [cursor=pointer]:
+            - /url: /docs
+        - listitem [ref=e66]:
+          - link "Pilot Program" [ref=e67] [cursor=pointer]:
+            - /url: /partners/register
+      - list [ref=e69]:
+        - listitem [ref=e70]:
+          - paragraph [ref=e71]: SUPPORT
+        - listitem [ref=e72]:
+          - link "📧 Contact Support" [ref=e73] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app
+        - listitem [ref=e74]:
+          - link "Documentation" [ref=e75] [cursor=pointer]:
+            - /url: /docs
+      - link "Security Documentation" [ref=e78] [cursor=pointer]:
+        - /url: /docs/security
+        - img [ref=e79]
+    - generic [ref=e81]:
+      - generic [ref=e83]: © 2025 MNNR. All rights reserved.
+      - generic [ref=e85]: Payments for Machines
+  - region "Notifications (F8)":
+    - list
+```
