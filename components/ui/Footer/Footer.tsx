@@ -1,93 +1,156 @@
-import Image from 'next/image';
 import Link from 'next/link';
-
 import Logo from '@/components/icons/Logo';
-import GitHub from '@/components/icons/GitHub';
-import ContactButton from '@/components/ui/ContactButton/ContactButton';
 
 export default function Footer() {
   return (
-    <footer className="mx-auto max-w-[1920px] px-6 bg-zinc-900">
-      <div className="grid grid-cols-1 gap-8 py-12 text-white transition-colors duration-150 border-b lg:grid-cols-12 border-zinc-600 bg-zinc-900">
-        <div className="col-span-1 lg:col-span-2">
-          <Link
-            href="/"
-            className="flex items-center flex-initial font-bold md:mr-24"
-          >
-            <span className="mr-3">
+    <footer className="bg-[#0a0a0f] border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
+          {/* Logo & Description */}
+          <div className="col-span-2 md:col-span-4 lg:col-span-1">
+            <Link href="/" className="flex items-center gap-2 mb-4">
               <Logo />
-            </span>
-          </Link>
-        </div>
-        <div className="col-span-1 lg:col-span-2">
-          <ul className="flex flex-col flex-initial md:flex-1">
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/docs"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Documentation
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/partners/register"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Pilot Program
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="col-span-1 lg:col-span-2">
-          <ul className="flex flex-col flex-initial md:flex-1">
-            <li className="py-3 md:py-0 md:pb-4">
-              <p className="font-bold text-white transition duration-150 ease-in-out hover:text-zinc-200">
-                SUPPORT
-              </p>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <ContactButton className="text-white transition duration-150 ease-in-out hover:text-zinc-200">
-                📧 Contact Support
-              </ContactButton>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/docs"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Documentation
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <div className="flex items-start col-span-1 text-white lg:col-span-6 lg:justify-end">
-          <div className="flex items-center h-10 space-x-6">
-            <a
-              aria-label="Security Documentation"
-              href="/docs/security"
-            >
-              <GitHub />
-            </a>
+              <span className="text-white font-bold text-xl">MNNR</span>
+            </Link>
+            <p className="text-white/50 text-sm leading-relaxed">
+              Billing infrastructure for the machine economy. Track usage, enforce limits, collect payments.
+            </p>
+          </div>
+
+          {/* Product */}
+          <div>
+            <h3 className="text-white font-semibold mb-4">Product</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/#features" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="/#pricing" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Documentation
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs/api" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  API Reference
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs/changelog" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Changelog
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h3 className="text-white font-semibold mb-4">Company</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/about" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/partners/register" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Pilot Program
+                </Link>
+              </li>
+              <li>
+                <a href="mailto:contact@mnnr.app" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="mailto:enterprise@mnnr.app" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Enterprise
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="text-white font-semibold mb-4">Legal</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/legal/terms" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/privacy" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/security" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Security
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Connect */}
+          <div>
+            <h3 className="text-white font-semibold mb-4">Connect</h3>
+            <ul className="space-y-3">
+              <li>
+                <a 
+                  href="https://github.com/mnnr-app" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/50 hover:text-emerald-400 transition-colors text-sm"
+                >
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://twitter.com/mnnr_app" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/50 hover:text-emerald-400 transition-colors text-sm"
+                >
+                  Twitter / X
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://discord.gg/mnnr" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/50 hover:text-emerald-400 transition-colors text-sm"
+                >
+                  Discord
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center justify-between py-12 space-y-4 md:flex-row bg-zinc-900">
-        <div>
-          <span>
+
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-white/40 text-sm">
             &copy; {new Date().getFullYear()} MNNR. All rights reserved.
-          </span>
-        </div>
-        <div className="flex items-center">
-          <span className="text-white">Payments for Machines</span>
+          </div>
+          <div className="flex items-center gap-2 text-white/40 text-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>All systems operational</span>
+          </div>
+          <div className="text-white/40 text-sm">
+            Billing Infrastructure for the Machine Economy
+          </div>
         </div>
       </div>
     </footer>
