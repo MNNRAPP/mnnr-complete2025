@@ -6,117 +6,233 @@ export const metadata: Metadata = {
   description: 'Comprehensive security documentation covering MNNR platform security implementation and best practices.',
 };
 
+const securityFeatures = [
+  {
+    title: 'Authentication',
+    icon: '🔐',
+    gradient: 'from-green-500/20 to-emerald-500/20',
+    borderColor: 'border-green-500/30',
+    items: [
+      'WebAuthn passkey authentication',
+      'Multi-factor authentication support',
+      'Secure session management',
+      'Rate limiting on auth endpoints',
+    ],
+  },
+  {
+    title: 'Data Protection',
+    icon: '🛡️',
+    gradient: 'from-blue-500/20 to-cyan-500/20',
+    borderColor: 'border-blue-500/30',
+    items: [
+      'AES-256 encryption at rest',
+      'TLS 1.3 encryption in transit',
+      'Database field-level encryption',
+      'Secure key management',
+    ],
+  },
+  {
+    title: 'Infrastructure',
+    icon: '⚡',
+    gradient: 'from-purple-500/20 to-pink-500/20',
+    borderColor: 'border-purple-500/30',
+    items: [
+      'Redis-based rate limiting',
+      'Sentry error monitoring',
+      'Comprehensive logging',
+      'Automated security updates',
+    ],
+  },
+  {
+    title: 'Compliance',
+    icon: '📋',
+    gradient: 'from-orange-500/20 to-amber-500/20',
+    borderColor: 'border-orange-500/30',
+    items: [
+      'SOC 2 Type II ready',
+      'GDPR compliant',
+      'PCI DSS considerations',
+      'Regular security audits',
+    ],
+  },
+];
+
+const securityMetrics = [
+  { label: 'Uptime SLA', value: '99.9%', icon: '⏱️' },
+  { label: 'Encryption', value: 'AES-256', icon: '🔒' },
+  { label: 'TLS Version', value: '1.3', icon: '🌐' },
+  { label: 'Audit Score', value: '10/10', icon: '✅' },
+];
+
 export default function SecurityPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🔒 Security Guide
-          </h1>
-          <p className="text-xl text-gray-600">
-            Enterprise-grade security implementation with 10/10 security score
-          </p>
-        </div>
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-green-500/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(34,197,94,0.1),transparent_50%)]" />
+        
+        <div className="max-w-6xl mx-auto px-6 py-20 relative">
+          {/* Breadcrumb */}
+          <div className="mb-8">
+            <Link href="/docs" className="text-gray-400 hover:text-emerald-400 transition-colors text-sm">
+              ← Back to Documentation
+            </Link>
+          </div>
 
-        {/* Security Features */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+          {/* Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2 mb-6">
+              <span className="text-green-400 text-sm font-medium">🔒 Security Guide</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Enterprise-Grade{' '}
+              <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                Security
+              </span>
+            </h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Protecting the machine economy with bank-level security, comprehensive compliance, 
+              and zero-trust architecture.
+            </p>
+          </div>
+
+          {/* Security Metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            {securityMetrics.map((metric) => (
+              <div
+                key={metric.label}
+                className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center"
+              >
+                <div className="text-2xl mb-2">{metric.icon}</div>
+                <div className="text-2xl font-bold text-white mb-1">{metric.value}</div>
+                <div className="text-sm text-gray-400">{metric.label}</div>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Authentication</h2>
-            </div>
-            <ul className="text-gray-600 space-y-2">
-              <li>• WebAuthn passkey authentication</li>
-              <li>• Multi-factor authentication support</li>
-              <li>• Secure session management</li>
-              <li>• Rate limiting on auth endpoints</li>
-            </ul>
+            ))}
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+          {/* Security Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+            {securityFeatures.map((feature) => (
+              <div
+                key={feature.title}
+                className={`relative bg-gradient-to-br ${feature.gradient} border ${feature.borderColor} rounded-2xl p-6 overflow-hidden`}
+              >
+                <div className="absolute inset-0 bg-black/60 rounded-2xl" />
+                <div className="relative">
+                  <div className="flex items-center mb-4">
+                    <div className="text-3xl mr-3">{feature.icon}</div>
+                    <h2 className="text-xl font-semibold text-white">{feature.title}</h2>
+                  </div>
+                  <ul className="space-y-3">
+                    {feature.items.map((item, index) => (
+                      <li key={index} className="flex items-center text-gray-300">
+                        <span className="w-2 h-2 bg-emerald-400 rounded-full mr-3" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Data Protection</h2>
-            </div>
-            <ul className="text-gray-600 space-y-2">
-              <li>• AES-256 encryption at rest</li>
-              <li>• TLS 1.3 encryption in transit</li>
-              <li>• Database field-level encryption</li>
-              <li>• Secure key management</li>
-            </ul>
+            ))}
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+          {/* Security Score Banner */}
+          <div className="relative bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-8 text-center overflow-hidden mb-16">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.15),transparent_70%)]" />
+            <div className="relative">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-500/20 rounded-full mb-4">
+                <span className="text-4xl">🛡️</span>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Infrastructure</h2>
-            </div>
-            <ul className="text-gray-600 space-y-2">
-              <li>• Redis-based rate limiting</li>
-              <li>• Sentry error monitoring</li>
-              <li>• Comprehensive logging</li>
-              <li>• Automated security updates</li>
-            </ul>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+              <h3 className="text-3xl font-bold text-white mb-2">
+                Security Score: <span className="text-green-400">10/10</span>
+              </h3>
+              <p className="text-gray-400 max-w-xl mx-auto mb-6">
+                Our comprehensive security implementation ensures your data and transactions 
+                are protected at all times with industry-leading practices.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <span className="inline-flex items-center gap-2 bg-black/40 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-300">
+                  <span className="w-2 h-2 bg-green-400 rounded-full" />
+                  SOC 2 Ready
+                </span>
+                <span className="inline-flex items-center gap-2 bg-black/40 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-300">
+                  <span className="w-2 h-2 bg-green-400 rounded-full" />
+                  GDPR Compliant
+                </span>
+                <span className="inline-flex items-center gap-2 bg-black/40 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-300">
+                  <span className="w-2 h-2 bg-green-400 rounded-full" />
+                  PCI DSS Ready
+                </span>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Compliance</h2>
-            </div>
-            <ul className="text-gray-600 space-y-2">
-              <li>• SOC 2 Type II ready</li>
-              <li>• GDPR compliant</li>
-              <li>• PCI DSS considerations</li>
-              <li>• Regular security audits</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Security Score */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
             </div>
           </div>
-          <h3 className="text-3xl font-bold text-green-800 mb-2">Security Score: 10/10</h3>
-          <p className="text-green-700 mb-4">
-            Our comprehensive security implementation ensures your data and transactions are protected at all times.
-          </p>
-          <p className="text-sm text-green-600">
-            For security-related questions or concerns, please contact our security team.
-          </p>
-        </div>
 
-        {/* Back to Docs */}
-        <div className="text-center mt-12">
-          <Link
-            href="/docs"
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-          >
-            ← Back to Documentation
-          </Link>
+          {/* Agent Security Section */}
+          <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 mb-16">
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+              <span className="text-3xl mr-3">🤖</span>
+              Agent-Specific Security
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-emerald-400">Identity & Access</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Cryptographic agent identity verification
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Spending limits and budget controls
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Reputation-based trust scoring
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Hierarchical permission inheritance
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-emerald-400">Transaction Security</h4>
+                <ul className="space-y-2 text-gray-300">
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Programmable escrow with conditions
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Real-time fraud detection
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Automatic dispute resolution
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-emerald-400 mr-2">→</span>
+                    Complete audit trail for all transactions
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Security Team */}
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
+            <h3 className="text-lg font-semibold text-white mb-2">Security Questions?</h3>
+            <p className="text-gray-400 mb-4">
+              For security-related questions, vulnerability reports, or compliance inquiries.
+            </p>
+            <a
+              href="mailto:security@mnnr.app"
+              className="inline-flex items-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-lg transition-colors"
+            >
+              <span>📧</span> Contact Security Team
+            </a>
+          </div>
         </div>
       </div>
     </div>
