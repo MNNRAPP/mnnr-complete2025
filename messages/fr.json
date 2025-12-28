@@ -1,0 +1,139 @@
+{
+  "common": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "signOut": "Se déconnecter",
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "documentation": "Documentation",
+    "pricing": "Tarifs",
+    "contact": "Contact",
+    "support": "Support",
+    "dashboard": "Tableau de bord",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "copy": "Copier",
+    "copied": "Copié"
+  },
+  "hero": {
+    "title": "Infrastructure de paiement pour l'économie des machines",
+    "subtitle": "La couche de facturation universelle pour les systèmes autonomes.",
+    "description": "Une API pour suivre l'utilisation, appliquer les limites et collecter les paiements de toute machine, agent ou protocole.",
+    "cta": "Commencer à construire",
+    "secondaryCta": "Voir la documentation",
+    "monetize": "Monétiser",
+    "aiAgents": "Agents IA",
+    "llmApis": "APIs LLM",
+    "cryptoProtocols": "Protocoles crypto",
+    "iotDevices": "Appareils IoT",
+    "smartContracts": "Contrats intelligents",
+    "robotics": "Robotique",
+    "edgeComputing": "Edge Computing",
+    "autonomousVehicles": "Véhicules autonomes"
+  },
+  "features": {
+    "title": "Fonctionnalités principales",
+    "subtitle": "Tout pour monétiser les systèmes autonomes",
+    "description": "Une infrastructure de facturation complète conçue pour l'économie des machines. Des agents IA aux réseaux IoT, nous gérons la complexité.",
+    "usageTracking": {
+      "title": "Suivi d'utilisation en temps réel",
+      "description": "Suivez les appels API, les tokens, les cycles de calcul ou toute métrique personnalisée. Latence sub-milliseconde avec déploiement edge mondial."
+    },
+    "billing": {
+      "title": "Facturation programmable",
+      "description": "Basée sur l'utilisation, abonnement, crédits prépayés ou modèles hybrides. Alimenté par Stripe avec facturation automatique et gestion fiscale."
+    },
+    "apiKeys": {
+      "title": "Gestion des clés API",
+      "description": "Générez, faites tourner et révoquez les clés instantanément. Permissions délimitées, limites d'utilisation et politiques d'expiration par clé."
+    },
+    "rateLimiting": {
+      "title": "Limitation de débit distribuée",
+      "description": "Limitation de débit basée sur Redis sur les nœuds edge mondiaux. Protégez l'infrastructure et appliquez une utilisation équitable à grande échelle."
+    },
+    "security": {
+      "title": "Sécurité entreprise",
+      "description": "Prêt pour SOC 2 Type II. Chiffrement de bout en bout, journaux d'audit, SSO et contrôles de conformité intégrés."
+    },
+    "web3": {
+      "title": "Web3 natif",
+      "description": "Support de première classe pour les paiements crypto, l'intégration de contrats intelligents et la vérification d'identité décentralisée."
+    }
+  },
+  "pricing": {
+    "title": "Tarification simple et transparente",
+    "subtitle": "Commencez gratuitement, évoluez en grandissant. Pas de frais cachés.",
+    "free": {
+      "name": "Gratuit",
+      "price": "0 €",
+      "period": "/mois",
+      "features": [
+        "10 000 appels API/mois",
+        "Analyses d'utilisation de base",
+        "Gestion des clés API",
+        "Support communautaire"
+      ],
+      "cta": "Commencer gratuitement"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "45 €",
+      "period": "/mois",
+      "popular": "Le plus populaire",
+      "features": [
+        "1M appels API/mois",
+        "Analyses avancées et insights",
+        "Limites de débit personnalisées",
+        "Intégration facturation Stripe",
+        "Support par email"
+      ],
+      "cta": "Essayer Pro"
+    },
+    "enterprise": {
+      "name": "Entreprise",
+      "price": "Sur mesure",
+      "features": [
+        "Appels API illimités",
+        "Infrastructure dédiée",
+        "SSO & sécurité avancée",
+        "SLA personnalisé",
+        "Support dédié"
+      ],
+      "cta": "Contacter les ventes"
+    },
+    "footer": "Tous les plans incluent un SLA de disponibilité de 99,9% • Annulez à tout moment • Pas de carte de crédit requise pour le niveau gratuit"
+  },
+  "integrations": {
+    "title": "Intégrations",
+    "subtitle": "Fonctionne avec toute votre stack",
+    "description": "Branchez-vous sur votre infrastructure existante. Pas de migration requise. Des fournisseurs d'IA aux réseaux blockchain."
+  },
+  "cta": {
+    "title": "Prêt à monétiser l'économie des machines ?",
+    "description": "Rejoignez les pionniers qui construisent des systèmes autonomes qui se financent eux-mêmes. Zéro frais de plateforme pendant la bêta. Onboarding personnalisé inclus.",
+    "primaryCta": "Commencer à construire gratuitement",
+    "secondaryCta": "Lire la documentation",
+    "features": [
+      "Pas de carte de crédit requise",
+      "Intégration en 5 minutes",
+      "Annulez à tout moment"
+    ]
+  },
+  "footer": {
+    "tagline": "Paiements pour les machines",
+    "copyright": "© 2025 MNNR. Tous droits réservés.",
+    "links": {
+      "home": "Accueil",
+      "documentation": "Documentation",
+      "pilot": "Programme pilote",
+      "support": "Contacter le support"
+    }
+  }
+}
