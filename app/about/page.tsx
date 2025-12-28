@@ -27,7 +27,7 @@ export default function AboutPage() {
             </span>
           </h1>
           <p className="text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
-            We believe the next trillion-dollar economy will be powered by machines transacting with machines. 
+            We believe the next major economic shift will be powered by machines transacting with machines. 
             MNNR provides the infrastructure to make that possible.
           </p>
         </div>
@@ -46,7 +46,7 @@ export default function AboutPage() {
             </p>
             
             <p>
-              We needed <strong className="text-white">sub-millisecond billing decisions</strong> at global edge locations. 
+              We needed <strong className="text-white">fast billing decisions</strong> at global edge locations. 
               We needed <strong className="text-white">API key management</strong> with granular permissions. 
               We needed <strong className="text-white">crypto payment support</strong> for Web3 applications. 
               None of the existing tools could handle it.
@@ -54,7 +54,7 @@ export default function AboutPage() {
             
             <p>
               So we built MNNR. What started as internal infrastructure became the foundation for how 
-              autonomous systems should handle billing. We're not building another payment processor—we're 
+              autonomous systems should handle billing. We&apos;re not building another payment processor—we&apos;re 
               building the <strong className="text-white">payments infrastructure for the machine economy</strong>.
             </p>
           </div>
@@ -64,24 +64,24 @@ export default function AboutPage() {
       {/* The Machine Economy */}
       <section className="py-24 px-6 bg-white/[0.02]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">The Machine Economy is Coming</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">The Machine Economy is Emerging</h2>
           
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-              <div className="text-4xl font-bold text-emerald-400 mb-2">$15.7T</div>
-              <div className="text-white/50">Projected AI market by 2030</div>
+              <div className="text-4xl font-bold text-emerald-400 mb-2">AI Agents</div>
+              <div className="text-white/50">Autonomous systems that need to transact</div>
             </div>
             <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-              <div className="text-4xl font-bold text-cyan-400 mb-2">75B</div>
-              <div className="text-white/50">IoT devices by 2025</div>
+              <div className="text-4xl font-bold text-cyan-400 mb-2">IoT Networks</div>
+              <div className="text-white/50">Billions of connected devices</div>
             </div>
             <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-              <div className="text-4xl font-bold text-purple-400 mb-2">$2.2T</div>
-              <div className="text-white/50">Web3 market potential</div>
+              <div className="text-4xl font-bold text-purple-400 mb-2">Web3 Protocols</div>
+              <div className="text-white/50">Decentralized applications</div>
             </div>
             <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-              <div className="text-4xl font-bold text-yellow-400 mb-2">∞</div>
-              <div className="text-white/50">Agent-to-agent transactions</div>
+              <div className="text-4xl font-bold text-yellow-400 mb-2">M2M Commerce</div>
+              <div className="text-white/50">Machine-to-machine transactions</div>
             </div>
           </div>
           
@@ -89,7 +89,7 @@ export default function AboutPage() {
             <p>
               AI agents are already hiring other AI agents. IoT devices are negotiating with each other. 
               Smart contracts are executing autonomous transactions. The infrastructure for this new economy 
-              doesn't exist yet—<strong className="text-white">we're building it</strong>.
+              is still being built—<strong className="text-white">we&apos;re building it</strong>.
             </p>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-xl font-semibold text-white mb-2">Real-Time by Default</h3>
                 <p className="text-white/60">
-                  Sub-millisecond latency. Global edge deployment. Billing decisions at the speed of machines.
+                  Low latency design. Global infrastructure. Billing decisions at the speed your applications need.
                 </p>
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function AboutPage() {
                 <span className="text-purple-400 text-xl font-bold">3</span>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-white mb-2">Web3 Native</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">Web3 Compatible</h3>
                 <p className="text-white/60">
                   Crypto payments, smart contracts, and decentralized identity are first-class citizens.
                 </p>
@@ -142,9 +142,9 @@ export default function AboutPage() {
                 <span className="text-yellow-400 text-xl font-bold">4</span>
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-white mb-2">Enterprise Ready</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">Security Focused</h3>
                 <p className="text-white/60">
-                  SOC 2 Type II, GDPR compliant, 99.99% uptime SLA. Built for scale from day one.
+                  Bank-level encryption, security best practices, and compliance controls in progress. Built for scale from day one.
                 </p>
               </div>
             </div>
@@ -157,8 +157,8 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">The Team</h2>
           <p className="text-lg text-white/60 mb-12">
-            We're a small team of engineers who've built billing systems at scale. 
-            We've seen what works and what doesn't—and we're building what should exist.
+            We&apos;re a small team of engineers who&apos;ve built billing systems at scale. 
+            We&apos;ve seen what works and what doesn&apos;t—and we&apos;re building what should exist.
           </p>
           
           <div className="p-8 rounded-2xl bg-white/[0.03] border border-white/10 text-center">
@@ -171,7 +171,7 @@ export default function AboutPage() {
             </p>
             <div className="flex justify-center gap-4">
               <a 
-                href="https://github.com/mnnr-app" 
+                href="https://github.com/MNNRAPP" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
@@ -181,13 +181,11 @@ export default function AboutPage() {
                 </svg>
               </a>
               <a 
-                href="https://twitter.com/mnnr_app" 
-                target="_blank"
-                rel="noopener noreferrer"
+                href="mailto:hello@mnnr.app"
                 className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
               >
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </a>
             </div>
@@ -202,8 +200,8 @@ export default function AboutPage() {
             Ready to Build the Future?
           </h2>
           <p className="text-lg text-white/60 mb-10 max-w-2xl mx-auto">
-            Whether you're building AI agents, IoT networks, or Web3 applications, 
-            we'd love to help you monetize your autonomous systems.
+            Whether you&apos;re building AI agents, IoT networks, or Web3 applications, 
+            we&apos;d love to help you monetize your autonomous systems.
           </p>
           
           <div className="flex flex-wrap justify-center gap-4">
@@ -222,7 +220,7 @@ export default function AboutPage() {
           </div>
           
           <div className="mt-12 flex flex-wrap justify-center gap-8 text-white/40">
-            <a href="mailto:contact@mnnr.app" className="hover:text-white transition-colors">contact@mnnr.app</a>
+            <a href="mailto:support@mnnr.app" className="hover:text-white transition-colors">support@mnnr.app</a>
             <a href="mailto:pilot@mnnr.app" className="hover:text-white transition-colors">pilot@mnnr.app</a>
             <a href="mailto:enterprise@mnnr.app" className="hover:text-white transition-colors">enterprise@mnnr.app</a>
           </div>

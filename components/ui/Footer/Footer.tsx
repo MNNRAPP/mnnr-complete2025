@@ -16,7 +16,6 @@ export default function Footer() {
               Billing infrastructure for the machine economy. Track usage, enforce limits, collect payments.
             </p>
           </div>
-
           {/* Product */}
           <div>
             <h3 className="text-white font-semibold mb-4">Product</h3>
@@ -48,7 +47,6 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
           {/* Company */}
           <div>
             <h3 className="text-white font-semibold mb-4">Company</h3>
@@ -59,13 +57,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/partners/register" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                <a href="mailto:pilot@mnnr.app" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
                   Pilot Program
-                </Link>
+                </a>
               </li>
               <li>
-                <a href="mailto:contact@mnnr.app" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
-                  Contact
+                <a href="mailto:support@mnnr.app" className="text-white/50 hover:text-emerald-400 transition-colors text-sm">
+                  Contact Support
                 </a>
               </li>
               <li>
@@ -75,7 +73,6 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
           {/* Legal */}
           <div>
             <h3 className="text-white font-semibold mb-4">Legal</h3>
@@ -97,14 +94,13 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
           {/* Connect */}
           <div>
             <h3 className="text-white font-semibold mb-4">Connect</h3>
             <ul className="space-y-3">
               <li>
                 <a 
-                  href="https://github.com/mnnr-app" 
+                  href="https://github.com/MNNRAPP" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-white/50 hover:text-emerald-400 transition-colors text-sm"
@@ -114,39 +110,30 @@ export default function Footer() {
               </li>
               <li>
                 <a 
-                  href="https://twitter.com/mnnr_app" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                  href="mailto:hello@mnnr.app"
                   className="text-white/50 hover:text-emerald-400 transition-colors text-sm"
                 >
-                  Twitter / X
+                  Email Us
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://discord.gg/mnnr" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <Link 
+                  href="/docs"
                   className="text-white/50 hover:text-emerald-400 transition-colors text-sm"
                 >
-                  Discord
-                </a>
+                  Developer Docs
+                </Link>
               </li>
             </ul>
           </div>
         </div>
-
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-white/40 text-sm">
             &copy; {new Date().getFullYear()} MNNR. All rights reserved.
           </div>
-          <div className="flex items-center gap-2 text-white/40 text-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span>All systems operational</span>
+          <div className="text-white/40 text-xs text-center max-w-md">
+            Third-party logos are trademarks of their respective owners. No endorsement implied.
           </div>
           <div className="text-white/40 text-sm">
             Billing Infrastructure for the Machine Economy

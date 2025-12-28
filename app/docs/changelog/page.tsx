@@ -41,10 +41,10 @@ const releases = [
         icon: '⚡',
         title: 'Performance',
         items: [
-          'Lighthouse score improved to 90/100',
-          'FCP/LCP reduced from 7.7s to 1.1s',
+          'Improved page load times',
           'Edge function optimization',
           'Database query optimization',
+          'Reduced bundle size',
         ],
       },
     ],
@@ -193,7 +193,7 @@ export default function ChangelogPage() {
               <span className="text-gray-400 text-sm font-medium">📋 Changelog</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              What's{' '}
+              What&apos;s{' '}
               <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
                 New
               </span>
@@ -276,12 +276,12 @@ export default function ChangelogPage() {
               <div className="bg-black/40 rounded-lg p-4">
                 <span className="text-2xl mb-2 block">🔄</span>
                 <div className="text-white font-medium">Auto-Updates</div>
-                <div className="text-gray-400 text-sm">Zero downtime</div>
+                <div className="text-gray-400 text-sm">Minimal downtime</div>
               </div>
               <div className="bg-black/40 rounded-lg p-4">
                 <span className="text-2xl mb-2 block">📊</span>
-                <div className="text-white font-medium">Uptime</div>
-                <div className="text-gray-400 text-sm">99.9% SLA</div>
+                <div className="text-white font-medium">Availability</div>
+                <div className="text-gray-400 text-sm">High availability target</div>
               </div>
             </div>
           </div>
