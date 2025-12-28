@@ -6,164 +6,205 @@ export const metadata: Metadata = {
   description: 'Complete documentation for MNNR platform features, security, and deployment guides.',
 };
 
+const docSections = [
+  {
+    title: 'Quick Start',
+    description: 'Get up and running in under 5 minutes with our step-by-step integration guide.',
+    href: '/docs/quick-start',
+    icon: '⚡',
+    gradient: 'from-emerald-500/20 to-cyan-500/20',
+    borderColor: 'border-emerald-500/30',
+  },
+  {
+    title: 'API Reference',
+    description: 'Complete API documentation for usage tracking, billing, and key management.',
+    href: '/docs/api',
+    icon: '🔌',
+    gradient: 'from-purple-500/20 to-pink-500/20',
+    borderColor: 'border-purple-500/30',
+  },
+  {
+    title: 'Security Guide',
+    description: 'Enterprise-grade security with SOC 2 readiness and comprehensive audit logging.',
+    href: '/docs/security',
+    icon: '🔐',
+    gradient: 'from-green-500/20 to-emerald-500/20',
+    borderColor: 'border-green-500/30',
+  },
+  {
+    title: 'Deployment',
+    description: 'Production deployment guides for Vercel, AWS, and self-hosted environments.',
+    href: '/docs/deployment',
+    icon: '🚀',
+    gradient: 'from-blue-500/20 to-indigo-500/20',
+    borderColor: 'border-blue-500/30',
+  },
+  {
+    title: 'Enterprise',
+    description: 'Advanced features including SSO, custom SLAs, and dedicated infrastructure.',
+    href: '/docs/enterprise',
+    icon: '🏢',
+    gradient: 'from-orange-500/20 to-amber-500/20',
+    borderColor: 'border-orange-500/30',
+  },
+  {
+    title: 'Changelog',
+    description: 'Track all updates, security improvements, and new feature releases.',
+    href: '/docs/changelog',
+    icon: '📋',
+    gradient: 'from-gray-500/20 to-slate-500/20',
+    borderColor: 'border-gray-500/30',
+  },
+];
+
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            MNNR Documentation
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Everything you need to know about using, securing, and deploying the MNNR platform.
-          </p>
-        </div>
-
-        {/* Documentation Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          
-          {/* Security Documentation */}
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Security Guide</h2>
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.1),transparent_50%)]" />
+        
+        <div className="max-w-6xl mx-auto px-6 py-20 relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2 mb-6">
+              <span className="text-emerald-400 text-sm font-medium">📚 Documentation</span>
             </div>
-            <p className="text-gray-600 mb-4">
-              Comprehensive security documentation covering our 10/10 security implementation.
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Build with{' '}
+              <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                confidence
+              </span>
+            </h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Everything you need to integrate MNNR into your autonomous systems. 
+              From quick start to enterprise deployment.
             </p>
-            <Link 
-              href="/docs/security" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Read Security Docs →
-            </Link>
           </div>
 
-          {/* Deployment Guide */}
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Deployment</h2>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Step-by-step production deployment guide with Vercel, Supabase, and monitoring setup.
-            </p>
-            <Link 
-              href="/docs/deployment" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              View Deployment Guide →
-            </Link>
-          </div>
-
-          {/* API Reference */}
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">API Reference</h2>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Complete API documentation for webhooks, authentication, and subscription management.
-            </p>
-            <Link 
-              href="/docs/api" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Explore API →
-            </Link>
-          </div>
-
-          {/* Enterprise Features */}
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Enterprise</h2>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Enterprise-grade features including monitoring, logging, and advanced security configurations.
-            </p>
-            <Link 
-              href="/docs/enterprise" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Enterprise Features →
-            </Link>
-          </div>
-
-          {/* Changelog */}
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Changelog</h2>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Track all updates, security improvements, and new features in our detailed changelog.
-            </p>
-            <Link 
-              href="/docs/changelog" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              View Changelog →
-            </Link>
-          </div>
-
-          {/* Quick Start */}
-          <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900 ml-3">Quick Start</h2>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Get up and running quickly with our step-by-step quick start guide.
-            </p>
-            <Link 
-              href="/docs/quick-start" 
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Quick Start Guide →
-            </Link>
-          </div>
-          
-        </div>
-
-        {/* Security Badge */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-          <div className="flex items-center justify-center mb-3">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto mb-16">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search documentation..."
+                className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-6 py-4 pl-14 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+              />
+              <svg className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-green-800 mb-2">🔒 Security Score: 10/10</h3>
-          <p className="text-green-700">
-            Enterprise-grade security with Redis rate limiting, Sentry monitoring, and comprehensive logging
-          </p>
+
+          {/* Documentation Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {docSections.map((section) => (
+              <Link
+                key={section.href}
+                href={section.href}
+                className={`group relative bg-gradient-to-br ${section.gradient} border ${section.borderColor} rounded-2xl p-6 hover:scale-[1.02] transition-all duration-300`}
+              >
+                <div className="absolute inset-0 bg-black/60 rounded-2xl" />
+                <div className="relative">
+                  <div className="text-4xl mb-4">{section.icon}</div>
+                  <h2 className="text-xl font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                    {section.title}
+                  </h2>
+                  <p className="text-gray-400 text-sm mb-4">
+                    {section.description}
+                  </p>
+                  <span className="inline-flex items-center text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
+                    Read docs
+                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Security Badge */}
+          <div className="relative bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 rounded-2xl p-8 text-center overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.1),transparent_70%)]" />
+            <div className="relative">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-500/20 rounded-full mb-4">
+                <span className="text-3xl">🛡️</span>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Security Score: <span className="text-emerald-400">10/10</span>
+              </h3>
+              <p className="text-gray-400 max-w-xl mx-auto">
+                Enterprise-grade security with SOC 2 readiness, Redis rate limiting, 
+                Sentry monitoring, and comprehensive audit logging.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mt-6">
+                <span className="inline-flex items-center gap-2 bg-black/40 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-300">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full" />
+                  SOC 2 Ready
+                </span>
+                <span className="inline-flex items-center gap-2 bg-black/40 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-300">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full" />
+                  GDPR Compliant
+                </span>
+                <span className="inline-flex items-center gap-2 bg-black/40 border border-gray-800 rounded-full px-4 py-2 text-sm text-gray-300">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full" />
+                  PCI DSS Ready
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Popular Topics</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link href="/docs/quick-start#authentication" className="text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                    <span className="text-emerald-400">→</span> Authentication Setup
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/docs/api#usage-tracking" className="text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                    <span className="text-emerald-400">→</span> Usage Tracking API
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/docs/api#webhooks" className="text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                    <span className="text-emerald-400">→</span> Webhook Integration
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/docs/deployment#vercel" className="text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                    <span className="text-emerald-400">→</span> Vercel Deployment
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Need Help?</h3>
+              <p className="text-gray-400 mb-4">
+                Can't find what you're looking for? Our team is here to help.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="mailto:support@mnnr.app"
+                  className="inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  <span>📧</span> Email Support
+                </a>
+                <a
+                  href="https://github.com/MNNRAPP/mnnr-complete2025/discussions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  <span>💬</span> Community
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
