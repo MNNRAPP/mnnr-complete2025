@@ -9,6 +9,96 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          key_prefix: string
+          key_hash: string
+          last_used_at: string | null
+          created_at: string
+          expires_at: string | null
+          is_active: boolean
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          key_prefix: string
+          key_hash: string
+          last_used_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          is_active?: boolean
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          key_prefix?: string
+          key_hash?: string
+          last_used_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          is_active?: boolean
+        }
+        Relationships: []
+      }
+      api_usage: {
+        Row: {
+          id: string
+          api_key_id: string
+          endpoint: string
+          method: string
+          status_code: number
+          response_time_ms: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          api_key_id: string
+          endpoint: string
+          method: string
+          status_code: number
+          response_time_ms: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          api_key_id?: string
+          endpoint?: string
+          method?: string
+          status_code?: number
+          response_time_ms?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
+      usage_events: {
+        Row: {
+          id: string
+          user_id: string
+          metric: string
+          value: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          metric: string
+          value: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          metric?: string
+          value?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           id: string

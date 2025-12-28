@@ -39,9 +39,9 @@ export async function GET() {
     }
 
     return NextResponse.json({
+      ...profile,
       id: user.id,
       email: user.email,
-      ...profile,
     });
   } catch (error) {
     console.error('Profile fetch error:', error);
