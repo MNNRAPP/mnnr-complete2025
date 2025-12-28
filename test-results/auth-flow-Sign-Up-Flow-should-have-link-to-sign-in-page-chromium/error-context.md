@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#skip"
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link "Logo" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e9]:
+            - img [ref=e10]:
+              - generic [ref=e12]: $
+            - generic [ref=e25]: MNNR
+        - navigation [ref=e26]:
+          - link "Pricing" [ref=e27] [cursor=pointer]:
+            - /url: /#pricing
+          - link "Documentation" [ref=e28] [cursor=pointer]:
+            - /url: /docs/quick-start
+      - generic [ref=e29]:
+        - link "Sign In" [ref=e30] [cursor=pointer]:
+          - /url: /signin
+        - link "Start Building" [ref=e31] [cursor=pointer]:
+          - /url: /signup
+  - main [ref=e32]:
+    - generic [ref=e34]:
+      - generic [ref=e36]:
+        - img [ref=e37]:
+          - generic [ref=e39]: $
+        - generic [ref=e52]: MNNR
+      - generic "Sign Up" [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e56]:
+            - generic [ref=e57]:
+              - generic [ref=e58]: Email
+              - textbox "Email" [ref=e59]:
+                - /placeholder: name@example.com
+              - generic [ref=e60]: Password
+              - textbox "Password" [ref=e61]
+            - button "Sign up" [ref=e62] [cursor=pointer]
+          - paragraph [ref=e63]: Already have an account?
+          - paragraph [ref=e64]:
+            - link "Sign in with email and password" [ref=e65] [cursor=pointer]:
+              - /url: /signin/password_signin
+          - paragraph [ref=e66]:
+            - link "Sign in via magic link" [ref=e67] [cursor=pointer]:
+              - /url: /signin/email_signin
+  - contentinfo [ref=e68]:
+    - generic [ref=e69]:
+      - link "MNNR" [ref=e71] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e73]:
+          - img [ref=e74]:
+            - generic [ref=e76]: $
+          - generic [ref=e89]: MNNR
+      - list [ref=e91]:
+        - listitem [ref=e92]:
+          - link "Home" [ref=e93] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e94]:
+          - link "Documentation" [ref=e95] [cursor=pointer]:
+            - /url: /docs
+        - listitem [ref=e96]:
+          - link "Pilot Program" [ref=e97] [cursor=pointer]:
+            - /url: /partners/register
+      - list [ref=e99]:
+        - listitem [ref=e100]:
+          - paragraph [ref=e101]: SUPPORT
+        - listitem [ref=e102]:
+          - link "📧 Contact Support" [ref=e103] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app?subject=MNNR%20Platform%20Support%20Request&body=Hello%20MNNR%20Team%2C%0A%0AI%20need%20assistance%20with%20the%20MNNR%20platform.%0A%0ADetails%3A%0A-%20Current%20Page%3A%20https%3A%2F%2Fmnnr.app%2Fsignin%2Fsignup%0A-%20Browser%3A%20Mozilla%2F5.0%20(Windows%20NT%2010.0%3B%20Win64%3B%20x64)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F143.0.7499.4%20Safari%2F537.36%0A-%20Timestamp%3A%202025-12-28T08%3A47%3A38.178Z%0A%0AIssue%20Description%3A%0A%5BPlease%20describe%20your%20issue%20or%20question%20here%5D%0A%0ABest%20regards
+        - listitem [ref=e104]:
+          - link "Documentation" [ref=e105] [cursor=pointer]:
+            - /url: /docs
+      - link "Security Documentation" [ref=e108] [cursor=pointer]:
+        - /url: /docs/security
+        - img [ref=e109]
+    - generic [ref=e111]:
+      - generic [ref=e113]: © 2025 MNNR. All rights reserved.
+      - generic [ref=e115]: Payments for Machines
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e116]
+```

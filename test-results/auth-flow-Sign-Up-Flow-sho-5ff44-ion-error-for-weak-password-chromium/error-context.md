@@ -1,0 +1,86 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - navigation [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#skip"
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - link "Logo" [ref=e8] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e9]:
+            - img [ref=e10]:
+              - generic [ref=e12]: $
+            - text: MNNR
+        - navigation [ref=e25]:
+          - link "Pricing" [ref=e26] [cursor=pointer]:
+            - /url: /#pricing
+          - link "Documentation" [ref=e27] [cursor=pointer]:
+            - /url: /docs/quick-start
+      - generic [ref=e28]:
+        - link "Sign In" [ref=e29] [cursor=pointer]:
+          - /url: /signin
+        - link "Start Building" [ref=e30] [cursor=pointer]:
+          - /url: /signup
+  - main [ref=e31]:
+    - generic [ref=e33]:
+      - generic [ref=e35]:
+        - img [ref=e36]:
+          - generic [ref=e38]: $
+        - text: MNNR
+      - generic "Sign Up" [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - text: Email
+              - textbox "Email" [ref=e56]:
+                - /placeholder: name@example.com
+              - text: Password
+              - textbox "Password" [ref=e57]
+            - button "Sign up" [ref=e58] [cursor=pointer]
+          - paragraph [ref=e59]: Already have an account?
+          - paragraph [ref=e60]:
+            - link "Sign in with email and password" [ref=e61] [cursor=pointer]:
+              - /url: /signin/password_signin
+          - paragraph [ref=e62]:
+            - link "Sign in via magic link" [ref=e63] [cursor=pointer]:
+              - /url: /signin/email_signin
+  - contentinfo [ref=e64]:
+    - generic [ref=e65]:
+      - link "MNNR" [ref=e67] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e69]:
+          - img [ref=e70]:
+            - generic [ref=e72]: $
+          - text: MNNR
+      - list [ref=e86]:
+        - listitem [ref=e87]:
+          - link "Home" [ref=e88] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e89]:
+          - link "Documentation" [ref=e90] [cursor=pointer]:
+            - /url: /docs
+        - listitem [ref=e91]:
+          - link "Pilot Program" [ref=e92] [cursor=pointer]:
+            - /url: /partners/register
+      - list [ref=e94]:
+        - listitem [ref=e95]:
+          - paragraph [ref=e96]: SUPPORT
+        - listitem [ref=e97]:
+          - link "📧 Contact Support" [ref=e98] [cursor=pointer]:
+            - /url: mailto:pilot@mnnr.app
+        - listitem [ref=e99]:
+          - link "Documentation" [ref=e100] [cursor=pointer]:
+            - /url: /docs
+      - link "Security Documentation" [ref=e103] [cursor=pointer]:
+        - /url: /docs/security
+        - img [ref=e104]
+    - generic [ref=e106]:
+      - generic [ref=e108]: © 2025 MNNR. All rights reserved.
+      - generic [ref=e109]: Payments for Machines
+  - region "Notifications (F8)":
+    - list
+```
