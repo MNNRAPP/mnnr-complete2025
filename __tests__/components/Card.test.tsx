@@ -2,11 +2,12 @@
  * Card Component Tests
  * 
  * Created: 2025-12-27 00:31:00 EST
+ * Updated: 2025-12-28 - Fixed for dark theme styles
  * Part of 2-hour completion plan - Phase 4
  */
 
 import { render, screen } from '@testing-library/react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
 
 describe('Card Component', () => {
   it('renders children correctly', () => {
@@ -26,10 +27,11 @@ describe('Card Component', () => {
     expect(card).toHaveClass('custom-card');
   });
 
-  it('renders with default styles', () => {
+  it('renders with default dark theme styles', () => {
     const { container } = render(<Card>Content</Card>);
     const card = container.firstChild as HTMLElement;
-    expect(card).toHaveClass('bg-white', 'rounded-lg', 'shadow');
+    // Updated to match dark theme classes
+    expect(card).toHaveClass('rounded-lg', 'border', 'shadow-sm');
   });
 
   it('renders CardHeader correctly', () => {
@@ -52,6 +54,17 @@ describe('Card Component', () => {
       </Card>
     );
     expect(screen.getByText('Card Title')).toBeInTheDocument();
+  });
+
+  it('renders CardDescription correctly', () => {
+    render(
+      <Card>
+        <CardHeader>
+          <CardDescription>Card Description</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+    expect(screen.getByText('Card Description')).toBeInTheDocument();
   });
 
   it('renders CardContent correctly', () => {
@@ -81,6 +94,7 @@ describe('Card Component', () => {
       <Card>
         <CardHeader>
           <CardTitle>Title</CardTitle>
+          <CardDescription>Description</CardDescription>
         </CardHeader>
         <CardContent>Content</CardContent>
         <CardFooter>Footer</CardFooter>
@@ -88,6 +102,7 @@ describe('Card Component', () => {
     );
     
     expect(screen.getByText('Title')).toBeInTheDocument();
+    expect(screen.getByText('Description')).toBeInTheDocument();
     expect(screen.getByText('Content')).toBeInTheDocument();
     expect(screen.getByText('Footer')).toBeInTheDocument();
   });
@@ -110,6 +125,17 @@ describe('Card Component', () => {
       </Card>
     );
     expect(container.querySelector('.custom-title')).toBeInTheDocument();
+  });
+
+  it('applies custom className to CardDescription', () => {
+    const { container } = render(
+      <Card>
+        <CardHeader>
+          <CardDescription className="custom-desc">Description</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+    expect(container.querySelector('.custom-desc')).toBeInTheDocument();
   });
 
   it('applies custom className to CardContent', () => {
@@ -151,5 +177,55 @@ describe('Card Component', () => {
     
     expect(screen.getByText('Title')).toBeInTheDocument();
     expect(screen.getByText('Content')).toBeInTheDocument();
+  });
+
+  it('forwards ref to Card', () => {
+    const ref = { current: null } as React.RefObject<HTMLDivElement>;
+    render(<Card ref={ref}>Content</Card>);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('forwards ref to CardHeader', () => {
+    const ref = { current: null } as React.RefObject<HTMLDivElement>;
+    render(
+      <Card>
+        <CardHeader ref={ref}>Header</CardHeader>
+      </Card>
+    );
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('forwards ref to CardContent', () => {
+    const ref = { current: null } as React.RefObject<HTMLDivElement>;
+    render(
+      <Card>
+        <CardContent ref={ref}>Content</CardContent>
+      </Card>
+    );
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('forwards ref to CardFooter', () => {
+    const ref = { current: null } as React.RefObject<HTMLDivElement>;
+    render(
+      <Card>
+        <CardFooter ref={ref}>Footer</CardFooter>
+      </Card>
+    );
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('passes additional props to Card', () => {
+    render(<Card data-testid="test-card">Content</Card>);
+    expect(screen.getByTestId('test-card')).toBeInTheDocument();
+  });
+
+  it('passes additional props to CardHeader', () => {
+    render(
+      <Card>
+        <CardHeader data-testid="test-header">Header</CardHeader>
+      </Card>
+    );
+    expect(screen.getByTestId('test-header')).toBeInTheDocument();
   });
 });

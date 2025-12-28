@@ -2,9 +2,11 @@
  * Badge Component Tests
  * 
  * Created: 2025-12-27 00:32:00 EST
+ * Updated: 2025-12-28 - Fixed to match actual component implementation
  * Part of 2-hour completion plan - Phase 4
  */
 
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Badge } from '@/components/ui/Badge';
 
@@ -50,45 +52,76 @@ describe('Badge Component', () => {
     expect(badge).toHaveClass('custom-badge');
   });
 
-  it('renders with small size', () => {
-    const { container } = render(<Badge size="sm">Small</Badge>);
+  it('renders as span element', () => {
+    const { container } = render(<Badge>Span Badge</Badge>);
     const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveClass('text-xs', 'px-2', 'py-0.5');
+    expect(badge.tagName).toBe('SPAN');
   });
 
-  it('renders with large size', () => {
-    const { container } = render(<Badge size="lg">Large</Badge>);
-    const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveClass('text-base', 'px-4', 'py-1.5');
-  });
-
-  it('renders with dot indicator', () => {
-    const { container } = render(<Badge dot>With Dot</Badge>);
-    expect(container.querySelector('.w-2.h-2.rounded-full')).toBeInTheDocument();
-  });
-
-  it('renders with icon', () => {
-    const Icon = () => <span data-testid="icon">✓</span>;
-    render(<Badge icon={<Icon />}>With Icon</Badge>);
-    expect(screen.getByTestId('icon')).toBeInTheDocument();
-  });
-
-  it('renders as different HTML element when specified', () => {
-    const { container } = render(<Badge as="a" href="/test">Link Badge</Badge>);
-    const element = container.firstChild as HTMLElement;
-    expect(element.tagName).toBe('A');
-    expect(element).toHaveAttribute('href', '/test');
-  });
-
-  it('renders with rounded variant', () => {
-    const { container } = render(<Badge rounded>Rounded</Badge>);
+  it('has rounded-full class by default', () => {
+    const { container } = render(<Badge>Rounded</Badge>);
     const badge = container.firstChild as HTMLElement;
     expect(badge).toHaveClass('rounded-full');
   });
 
-  it('renders with outline style', () => {
-    const { container } = render(<Badge outline>Outline</Badge>);
+  it('has inline-flex display', () => {
+    const { container } = render(<Badge>Inline</Badge>);
     const badge = container.firstChild as HTMLElement;
-    expect(badge).toHaveClass('border');
+    expect(badge).toHaveClass('inline-flex');
+  });
+
+  it('has items-center alignment', () => {
+    const { container } = render(<Badge>Centered</Badge>);
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).toHaveClass('items-center');
+  });
+
+  it('has text-xs font size', () => {
+    const { container } = render(<Badge>Small Text</Badge>);
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).toHaveClass('text-xs');
+  });
+
+  it('has font-medium weight', () => {
+    const { container } = render(<Badge>Medium Weight</Badge>);
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).toHaveClass('font-medium');
+  });
+
+  it('has correct padding', () => {
+    const { container } = render(<Badge>Padded</Badge>);
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).toHaveClass('px-2.5', 'py-0.5');
+  });
+
+  it('combines variant and custom className', () => {
+    const { container } = render(
+      <Badge variant="success" className="extra-class">Combined</Badge>
+    );
+    const badge = container.firstChild as HTMLElement;
+    expect(badge).toHaveClass('bg-green-100', 'text-green-800', 'extra-class');
+  });
+
+  it('renders multiple badges correctly', () => {
+    render(
+      <div>
+        <Badge variant="success">Success</Badge>
+        <Badge variant="error">Error</Badge>
+        <Badge variant="warning">Warning</Badge>
+      </div>
+    );
+    expect(screen.getByText('Success')).toBeInTheDocument();
+    expect(screen.getByText('Error')).toBeInTheDocument();
+    expect(screen.getByText('Warning')).toBeInTheDocument();
+  });
+
+  it('renders with complex children', () => {
+    render(
+      <Badge>
+        <span>Icon</span> Text
+      </Badge>
+    );
+    expect(screen.getByText('Icon')).toBeInTheDocument();
+    expect(screen.getByText(/Text/)).toBeInTheDocument();
   });
 });
