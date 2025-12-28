@@ -337,3 +337,41 @@ describe('Stripe Secret Key Alternatives', () => {
     expect(result.warnings.some(w => w.includes('Stripe secret key not set'))).toBe(false);
   });
 });
+
+
+describe('Additional env Object Coverage', () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    vi.resetModules();
+    process.env = { ...originalEnv };
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+  });
+
+  it('should access supabase anon key', async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+    const { env } = await import('@/utils/env-validation');
+    expect(env.supabase.anonKey()).toBe('test-anon-key');
+  });
+
+  it('should access supabase service role key', async () => {
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+    const { env } = await import('@/utils/env-validation');
+    expect(env.supabase.serviceRoleKey()).toBe('test-service-role-key');
+  });
+
+  it('should access stripe secret key', async () => {
+    process.env.STRIPE_SECRET_KEY = 'sk_test_123';
+    const { env } = await import('@/utils/env-validation');
+    expect(env.stripe.secretKey()).toBe('sk_test_123');
+  });
+
+  it('should access stripe webhook secret', async () => {
+    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123';
+    const { env } = await import('@/utils/env-validation');
+    expect(env.stripe.webhookSecret()).toBe('whsec_test123');
+  });
+});

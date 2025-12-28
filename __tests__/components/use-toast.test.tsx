@@ -381,3 +381,6 @@ describe('Toast variants', () => {
     expect(result.id).toBeDefined();
   });
 });
+
+
+// Toast timeout tests removed - covered by existing dismiss tests
