@@ -1,0 +1,114 @@
+{
+  "common": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar Sesión",
+    "getStarted": "Comenzar",
+    "startBuilding": "Empezar a Construir",
+    "viewDocs": "Ver Documentación",
+    "pricing": "Precios",
+    "documentation": "Documentación",
+    "dashboard": "Panel de Control",
+    "settings": "Configuración",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito"
+  },
+  "hero": {
+    "title": "Infraestructura de Pagos para la Economía de Máquinas",
+    "subtitle": "La capa de facturación universal para sistemas autónomos.",
+    "description": "Una API para rastrear uso, aplicar límites y cobrar pagos de cualquier máquina, agente o protocolo.",
+    "monetize": "Monetiza",
+    "aiAgents": "Agentes IA",
+    "llmApis": "APIs de LLM",
+    "cryptoProtocols": "Protocolos Cripto",
+    "iotNetworks": "Redes IoT",
+    "robotics": "Robótica",
+    "edgeComputing": "Computación Edge",
+    "smartContracts": "Contratos Inteligentes",
+    "autonomousVehicles": "Vehículos Autónomos"
+  },
+  "features": {
+    "title": "Capacidades Principales",
+    "usageTracking": {
+      "title": "Seguimiento de Uso",
+      "description": "Rastrea cada llamada API, token y unidad de cómputo en tiempo real con precisión submilisegundo."
+    },
+    "rateLimiting": {
+      "title": "Limitación Inteligente",
+      "description": "Aplica límites de uso automáticamente. Protege tus APIs del abuso mientras maximizas ingresos."
+    },
+    "billing": {
+      "title": "Facturación Flexible",
+      "description": "Por solicitud, por token, suscripción o basado en resultados. Factura como tus clientes quieran."
+    },
+    "analytics": {
+      "title": "Análisis en Tiempo Real",
+      "description": "Comprende tus patrones de uso, identifica clientes principales y optimiza precios en tiempo real."
+    },
+    "security": {
+      "title": "Seguridad Empresarial",
+      "description": "Listo para SOC 2, compatible con GDPR, con auditorías y control de acceso basado en roles."
+    },
+    "global": {
+      "title": "Escala Global",
+      "description": "Desplegado en más de 50 ubicaciones edge. Latencia menor a 5ms en cualquier parte del mundo."
+    }
+  },
+  "stats": {
+    "integration": "Integración",
+    "uptime": "Tiempo Activo",
+    "toStart": "Para Empezar",
+    "latency": "Latencia API"
+  },
+  "badges": {
+    "soc2": "SOC 2 Listo",
+    "edge": "Optimizado Edge",
+    "cdn": "CDN Global",
+    "web3": "Web3 Nativo"
+  },
+  "pricing": {
+    "title": "Precios Simples y Transparentes",
+    "subtitle": "Comienza gratis, escala a medida que creces",
+    "free": {
+      "name": "Gratis",
+      "price": "$0",
+      "period": "para siempre",
+      "description": "Perfecto para comenzar",
+      "features": ["1,000 llamadas API/mes", "Análisis básico", "Soporte comunitario", "1 proyecto"]
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$49",
+      "period": "/mes",
+      "description": "Para equipos en crecimiento",
+      "features": ["50,000 llamadas API/mes", "Análisis avanzado", "Soporte prioritario", "Proyectos ilimitados", "Límites personalizados", "Webhooks"]
+    },
+    "enterprise": {
+      "name": "Empresarial",
+      "price": "Personalizado",
+      "period": "",
+      "description": "Para grandes organizaciones",
+      "features": ["Llamadas API ilimitadas", "Soporte dedicado", "Garantía SLA", "Integraciones personalizadas", "Opción on-premise", "Cumplimiento SOC 2"]
+    }
+  },
+  "cta": {
+    "title": "¿Listo para monetizar la economía de máquinas?",
+    "subtitle": "Únete a miles de desarrolladores construyendo el futuro del comercio autónomo.",
+    "button": "Comienza a Construir Gratis"
+  },
+  "footer": {
+    "product": "Producto",
+    "company": "Empresa",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "copyright": "© 2025 MNNR. Todos los derechos reservados."
+  },
+  "currency": {
+    "usd": "USD",
+    "eur": "EUR",
+    "gbp": "GBP",
+    "jpy": "JPY",
+    "cny": "CNY"
+  }
+}

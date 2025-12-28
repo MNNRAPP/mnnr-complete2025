@@ -1,0 +1,114 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "getStarted": "Get Started",
+    "startBuilding": "Start Building",
+    "viewDocs": "View Documentation",
+    "pricing": "Pricing",
+    "documentation": "Documentation",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "hero": {
+    "title": "Payments Infrastructure for the Machine Economy",
+    "subtitle": "The universal billing layer for autonomous systems.",
+    "description": "One API to track usage, enforce limits, and collect payments from any machine, agent, or protocol.",
+    "monetize": "Monetize",
+    "aiAgents": "AI Agents",
+    "llmApis": "LLM APIs",
+    "cryptoProtocols": "Crypto Protocols",
+    "iotNetworks": "IoT Networks",
+    "robotics": "Robotics",
+    "edgeComputing": "Edge Computing",
+    "smartContracts": "Smart Contracts",
+    "autonomousVehicles": "Autonomous Vehicles"
+  },
+  "features": {
+    "title": "Core Capabilities",
+    "usageTracking": {
+      "title": "Usage Tracking",
+      "description": "Track every API call, token, and compute unit in real-time with sub-millisecond precision."
+    },
+    "rateLimiting": {
+      "title": "Smart Rate Limiting",
+      "description": "Enforce usage limits automatically. Protect your APIs from abuse while maximizing revenue."
+    },
+    "billing": {
+      "title": "Flexible Billing",
+      "description": "Per-request, per-token, subscription, or outcome-based. Bill the way your customers want."
+    },
+    "analytics": {
+      "title": "Real-time Analytics",
+      "description": "Understand your usage patterns, identify top customers, and optimize pricing in real-time."
+    },
+    "security": {
+      "title": "Enterprise Security",
+      "description": "SOC 2 ready, GDPR compliant, with audit trails and role-based access control."
+    },
+    "global": {
+      "title": "Global Scale",
+      "description": "Edge-deployed across 50+ locations. Sub-5ms latency anywhere in the world."
+    }
+  },
+  "stats": {
+    "integration": "Integration",
+    "uptime": "Uptime",
+    "toStart": "To Start",
+    "latency": "API Latency"
+  },
+  "badges": {
+    "soc2": "SOC 2 Ready",
+    "edge": "Edge Optimized",
+    "cdn": "Global CDN",
+    "web3": "Web3 Native"
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Start free, scale as you grow",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "period": "forever",
+      "description": "Perfect for getting started",
+      "features": ["1,000 API calls/month", "Basic analytics", "Community support", "1 project"]
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$49",
+      "period": "/month",
+      "description": "For growing teams",
+      "features": ["50,000 API calls/month", "Advanced analytics", "Priority support", "Unlimited projects", "Custom rate limits", "Webhooks"]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Custom",
+      "period": "",
+      "description": "For large organizations",
+      "features": ["Unlimited API calls", "Dedicated support", "SLA guarantee", "Custom integrations", "On-premise option", "SOC 2 compliance"]
+    }
+  },
+  "cta": {
+    "title": "Ready to monetize the machine economy?",
+    "subtitle": "Join thousands of developers building the future of autonomous commerce.",
+    "button": "Start Building for Free"
+  },
+  "footer": {
+    "product": "Product",
+    "company": "Company",
+    "resources": "Resources",
+    "legal": "Legal",
+    "copyright": "© 2025 MNNR. All rights reserved."
+  },
+  "currency": {
+    "usd": "USD",
+    "eur": "EUR",
+    "gbp": "GBP",
+    "jpy": "JPY",
+    "cny": "CNY"
+  }
+}
