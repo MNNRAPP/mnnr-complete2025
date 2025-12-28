@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * Subscription Flow Integration Tests
  * 
@@ -8,11 +9,11 @@
 import { apiClient } from '@/utils/api-client';
 
 // Mock API client
-jest.mock('@/utils/api-client');
+vi.mock('@/utils/api-client');
 
 describe('Subscription Flow', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Create Subscription', () => {

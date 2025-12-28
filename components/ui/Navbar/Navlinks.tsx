@@ -26,11 +26,11 @@ export default function Navlinks({ user }: NavlinksProps) {
         <Link href="/" className={s.logo} aria-label="Logo">
           <Logo />
         </Link>
-        <nav className="ml-6 space-x-2 lg:block">
-          <Link href="/" className={s.link}>
+        <nav className="ml-6 space-x-1 lg:block hidden md:flex">
+          <Link href="/#pricing" className={s.link}>
             Pricing
           </Link>
-          <Link href="/docs" className={s.link}>
+          <Link href="/docs/quick-start" className={s.link}>
             Documentation
           </Link>
           {user && (
@@ -40,7 +40,7 @@ export default function Navlinks({ user }: NavlinksProps) {
           )}
         </nav>
       </div>
-      <div className="flex justify-end space-x-8">
+      <div className="flex justify-end items-center space-x-4">
         {user ? (
           <form onSubmit={(e) => handleRequest(e, SignOut, activeRouter)}>
             <input type="hidden" name="pathName" value={pathname} />
@@ -49,9 +49,17 @@ export default function Navlinks({ user }: NavlinksProps) {
             </button>
           </form>
         ) : (
-          <Link href="/signin" className={s.link}>
-            Sign In
-          </Link>
+          <>
+            <Link href="/signin" className={s.link}>
+              Sign In
+            </Link>
+            <Link 
+              href="/signup" 
+              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+            >
+              Start Building
+            </Link>
+          </>
         )}
       </div>
     </div>

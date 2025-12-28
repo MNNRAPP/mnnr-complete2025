@@ -1,19 +1,30 @@
 .root {
-  @apply sticky top-0 bg-black z-40 transition-all duration-150 h-16 md:h-20;
+  @apply sticky top-0 z-40 transition-all duration-300 h-16 md:h-20;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .link {
-  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-zinc-200 rounded-md p-1;
+  @apply inline-flex items-center leading-6 font-medium transition-all duration-200 cursor-pointer rounded-lg px-4 py-2;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .link:hover {
-  @apply text-zinc-100;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .link:focus {
-  @apply outline-none text-zinc-100 ring-2 ring-pink-500 ring-opacity-50;
+  @apply outline-none ring-2 ring-emerald-500 ring-opacity-50;
+  color: rgba(255, 255, 255, 1);
 }
 
 .logo {
-  @apply cursor-pointer rounded-full transform duration-100 ease-in-out;
+  @apply cursor-pointer rounded-full transform duration-200 ease-in-out;
+}
+
+.logo:hover {
+  @apply scale-105;
 }
