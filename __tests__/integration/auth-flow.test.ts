@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * Authentication Flow Integration Tests
  * 
@@ -8,7 +9,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Mock Supabase client
-jest.mock('@supabase/supabase-js');
+vi.mock('@supabase/supabase-js');
 
 describe('Authentication Flow', () => {
   let supabase: any;
@@ -16,18 +17,18 @@ describe('Authentication Flow', () => {
   beforeEach(() => {
     supabase = {
       auth: {
-        signUp: jest.fn(),
-        signInWithPassword: jest.fn(),
-        signOut: jest.fn(),
-        getUser: jest.fn(),
-        resetPasswordForEmail: jest.fn(),
+        signUp: vi.fn(),
+        signInWithPassword: vi.fn(),
+        signOut: vi.fn(),
+        getUser: vi.fn(),
+        resetPasswordForEmail: vi.fn(),
       },
     };
     (createClient as jest.Mock).mockReturnValue(supabase);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Sign Up Flow', () => {

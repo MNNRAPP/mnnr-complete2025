@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * Button Component Tests
  * 
@@ -15,7 +16,7 @@ describe('Button Component', () => {
   });
 
   it('handles click events', () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
     
     fireEvent.click(screen.getByText('Click me'));
@@ -66,7 +67,7 @@ describe('Button Component', () => {
   });
 
   it('does not call onClick when disabled', () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<Button disabled onClick={handleClick}>Disabled</Button>);
     
     fireEvent.click(screen.getByText('Disabled'));

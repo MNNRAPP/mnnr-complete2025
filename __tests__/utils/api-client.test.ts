@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * API Client Tests
  * 
@@ -10,11 +11,11 @@
 import { apiClient, api } from '@/utils/api-client';
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 describe('ApiClient', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
   });
 

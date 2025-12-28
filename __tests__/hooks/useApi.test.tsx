@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * React Hooks Tests
  * 
@@ -10,16 +11,16 @@ import { useApi, useMutation, useProfile } from '@/hooks/useApi';
 import * as apiClient from '@/utils/api-client';
 
 // Mock API client
-jest.mock('@/utils/api-client');
+vi.mock('@/utils/api-client');
 
 describe('useApi hook', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should fetch data on mount when immediate is true', async () => {
     const mockData = { id: 1, name: 'Test' };
-    const mockFetcher = jest.fn().mockResolvedValue({
+    const mockFetcher = vi.fn().mockResolvedValue({
       success: true,
       data: mockData,
     });
@@ -39,7 +40,7 @@ describe('useApi hook', () => {
   });
 
   it('should not fetch data on mount when immediate is false', () => {
-    const mockFetcher = jest.fn();
+    const mockFetcher = vi.fn();
 
     const { result } = renderHook(() => useApi(mockFetcher, { immediate: false }));
 
@@ -50,7 +51,7 @@ describe('useApi hook', () => {
 
   it('should handle fetch errors', async () => {
     const mockError = 'Failed to fetch';
-    const mockFetcher = jest.fn().mockResolvedValue({
+    const mockFetcher = vi.fn().mockResolvedValue({
       success: false,
       error: mockError,
     });
@@ -67,11 +68,11 @@ describe('useApi hook', () => {
 
   it('should call onSuccess callback', async () => {
     const mockData = { id: 1 };
-    const mockFetcher = jest.fn().mockResolvedValue({
+    const mockFetcher = vi.fn().mockResolvedValue({
       success: true,
       data: mockData,
     });
-    const onSuccess = jest.fn();
+    const onSuccess = vi.fn();
 
     renderHook(() => useApi(mockFetcher, { onSuccess }));
 
@@ -82,11 +83,11 @@ describe('useApi hook', () => {
 
   it('should call onError callback', async () => {
     const mockError = 'Error message';
-    const mockFetcher = jest.fn().mockResolvedValue({
+    const mockFetcher = vi.fn().mockResolvedValue({
       success: false,
       error: mockError,
     });
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     renderHook(() => useApi(mockFetcher, { onError }));
 
@@ -97,7 +98,7 @@ describe('useApi hook', () => {
 
   it('should refetch data when refetch is called', async () => {
     const mockData = { id: 1 };
-    const mockFetcher = jest.fn().mockResolvedValue({
+    const mockFetcher = vi.fn().mockResolvedValue({
       success: true,
       data: mockData,
     });
@@ -120,11 +121,11 @@ describe('useApi hook', () => {
 
 describe('useMutation hook', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should not execute mutation on mount', () => {
-    const mockMutator = jest.fn();
+    const mockMutator = vi.fn();
 
     const { result } = renderHook(() => useMutation(mockMutator));
 
@@ -135,7 +136,7 @@ describe('useMutation hook', () => {
 
   it('should execute mutation when mutate is called', async () => {
     const mockData = { id: 1, created: true };
-    const mockMutator = jest.fn().mockResolvedValue({
+    const mockMutator = vi.fn().mockResolvedValue({
       success: true,
       data: mockData,
     });
@@ -155,7 +156,7 @@ describe('useMutation hook', () => {
 
   it('should handle mutation errors', async () => {
     const mockError = 'Mutation failed';
-    const mockMutator = jest.fn().mockResolvedValue({
+    const mockMutator = vi.fn().mockResolvedValue({
       success: false,
       error: mockError,
     });
@@ -173,7 +174,7 @@ describe('useMutation hook', () => {
 
   it('should reset state when reset is called', async () => {
     const mockData = { id: 1 };
-    const mockMutator = jest.fn().mockResolvedValue({
+    const mockMutator = vi.fn().mockResolvedValue({
       success: true,
       data: mockData,
     });
@@ -197,7 +198,7 @@ describe('useProfile hook', () => {
   it('should fetch user profile', async () => {
     const mockProfile = { id: 1, name: 'User', email: 'user@example.com' };
     
-    jest.spyOn(apiClient.apiClient, 'get').mockResolvedValue({
+    vi.spyOn(apiClient.apiClient, 'get').mockResolvedValue({
       success: true,
       data: mockProfile,
     });

@@ -1,16 +1,17 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import { logger } from '@/utils/logger';
 
 describe('Logger Security', () => {
-  let consoleInfoSpy: jest.SpyInstance;
-  let consoleErrorSpy: jest.SpyInstance;
+  let consoleInfoSpy: MockInstance;
+  let consoleErrorSpy: MockInstance;
 
   beforeEach(() => {
-    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation();
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
