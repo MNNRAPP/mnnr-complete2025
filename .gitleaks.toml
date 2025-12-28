@@ -1,0 +1,262 @@
+# Gitleaks Configuration for MNNR Complete 2025
+# Detects hardcoded secrets, API keys, and credentials
+# Documentation: https://github.com/gitleaks/gitleaks
+
+title = "Gitleaks Configuration for MNNR"
+
+# ============================================
+# Stripe Secrets
+# ============================================
+
+[[rules]]
+id = "stripe-secret-key"
+description = "Stripe Secret API Key"
+regex = '''sk_(test|live)_[0-9a-zA-Z]{24,}'''
+tags = ["stripe", "api-key", "secret"]
+[[rules.Entropies]]
+    Min = "3.5"
+    Max = "8"
+
+[[rules]]
+id = "stripe-publishable-key"
+description = "Stripe Publishable API Key"
+regex = '''pk_(test|live)_[0-9a-zA-Z]{24,}'''
+tags = ["stripe", "api-key"]
+
+[[rules]]
+id = "stripe-webhook-secret"
+description = "Stripe Webhook Secret"
+regex = '''whsec_[0-9a-zA-Z]{32,}'''
+tags = ["stripe", "webhook", "secret"]
+
+[[rules]]
+id = "stripe-restricted-key"
+description = "Stripe Restricted API Key"
+regex = '''rk_(test|live)_[0-9a-zA-Z]{24,}'''
+tags = ["stripe", "api-key"]
+
+# ============================================
+# Supabase Secrets
+# ============================================
+
+[[rules]]
+id = "supabase-service-key"
+description = "Supabase Service Role Key (JWT)"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'''
+tags = ["supabase", "jwt", "service-key", "critical"]
+[[rules.Entropies]]
+    Min = "4.5"
+    Max = "8"
+
+[[rules]]
+id = "supabase-anon-key"
+description = "Supabase Anonymous Key (JWT)"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'''
+tags = ["supabase", "jwt", "anon-key"]
+
+# ============================================
+# Sentry Secrets
+# ============================================
+
+[[rules]]
+id = "sentry-auth-token"
+description = "Sentry Auth Token"
+regex = '''sntrys_[A-Za-z0-9_-]{40,}'''
+tags = ["sentry", "auth-token"]
+
+[[rules]]
+id = "sentry-dsn"
+description = "Sentry DSN"
+regex = '''https://[a-f0-9]{32}@[a-z0-9]+\.ingest\.sentry\.io/[0-9]+'''
+tags = ["sentry", "dsn"]
+
+# ============================================
+# GitHub Secrets
+# ============================================
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[0-9a-zA-Z]{36}'''
+tags = ["github", "pat", "token"]
+
+[[rules]]
+id = "github-oauth"
+description = "GitHub OAuth Access Token"
+regex = '''gho_[0-9a-zA-Z]{36}'''
+tags = ["github", "oauth", "token"]
+
+[[rules]]
+id = "github-app-token"
+description = "GitHub App Token"
+regex = '''(ghu|ghs)_[0-9a-zA-Z]{36}'''
+tags = ["github", "app-token"]
+
+[[rules]]
+id = "github-refresh-token"
+description = "GitHub Refresh Token"
+regex = '''ghr_[0-9a-zA-Z]{36}'''
+tags = ["github", "refresh-token"]
+
+# ============================================
+# AWS Secrets
+# ============================================
+
+[[rules]]
+id = "aws-access-key-id"
+description = "AWS Access Key ID"
+regex = '''AKIA[0-9A-Z]{16}'''
+tags = ["aws", "access-key"]
+
+[[rules]]
+id = "aws-secret-access-key"
+description = "AWS Secret Access Key"
+regex = '''(?i)aws(.{0,20})?['\"][0-9a-zA-Z/+]{40}['\"]'''
+tags = ["aws", "secret-key"]
+
+[[rules]]
+id = "aws-session-token"
+description = "AWS Session Token"
+regex = '''(?i)aws(.{0,20})?session(.{0,20})?['\"][0-9a-zA-Z/+=]{100,}['\"]'''
+tags = ["aws", "session-token"]
+
+# ============================================
+# Generic Secrets
+# ============================================
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)(api[_-]?key|apikey)['"]?\s*[:=]\s*['"]?[0-9a-zA-Z\-_]{20,}'''
+tags = ["api-key", "generic"]
+[[rules.Entropies]]
+    Min = "3.5"
+    Max = "8"
+
+[[rules]]
+id = "generic-secret"
+description = "Generic Secret"
+regex = '''(?i)(secret|password|passwd|pwd)['"]?\s*[:=]\s*['"]?[0-9a-zA-Z\-_!@#$%^&*()]{12,}'''
+tags = ["secret", "password", "generic"]
+
+[[rules]]
+id = "private-key"
+description = "Private Key"
+regex = '''-----BEGIN (RSA|DSA|EC|OPENSSH|PGP) PRIVATE KEY-----'''
+tags = ["private-key", "critical"]
+
+[[rules]]
+id = "jwt-token"
+description = "JWT Token"
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+tags = ["jwt", "token"]
+
+# ============================================
+# Database Connection Strings
+# ============================================
+
+[[rules]]
+id = "postgres-connection-string"
+description = "PostgreSQL Connection String"
+regex = '''postgres(ql)?://[a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+@[a-zA-Z0-9.-]+:[0-9]+/[a-zA-Z0-9_-]+'''
+tags = ["database", "postgres", "connection-string"]
+
+[[rules]]
+id = "mysql-connection-string"
+description = "MySQL Connection String"
+regex = '''mysql://[a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+@[a-zA-Z0-9.-]+:[0-9]+/[a-zA-Z0-9_-]+'''
+tags = ["database", "mysql", "connection-string"]
+
+# ============================================
+# OAuth & Authentication
+# ============================================
+
+[[rules]]
+id = "oauth-client-secret"
+description = "OAuth Client Secret"
+regex = '''(?i)(client[_-]?secret|oauth[_-]?secret)['"]?\s*[:=]\s*['"]?[0-9a-zA-Z\-_]{20,}'''
+tags = ["oauth", "client-secret"]
+
+[[rules]]
+id = "bearer-token"
+description = "Bearer Token"
+regex = '''(?i)bearer\s+[a-zA-Z0-9\-_\.=]{20,}'''
+tags = ["bearer", "token", "auth"]
+
+# ============================================
+# Cloud Provider Tokens
+# ============================================
+
+[[rules]]
+id = "vercel-token"
+description = "Vercel Access Token"
+regex = '''(?i)vercel(.{0,20})?['\"][0-9a-zA-Z]{24}['\"]'''
+tags = ["vercel", "token"]
+
+[[rules]]
+id = "netlify-token"
+description = "Netlify Access Token"
+regex = '''(?i)netlify(.{0,20})?['\"][0-9a-zA-Z\-_]{40,}['\"]'''
+tags = ["netlify", "token"]
+
+[[rules]]
+id = "cloudflare-api-key"
+description = "Cloudflare API Key"
+regex = '''(?i)cloudflare(.{0,20})?['\"][0-9a-f]{37}['\"]'''
+tags = ["cloudflare", "api-key"]
+
+# ============================================
+# Allowlist (Files to Ignore)
+# ============================================
+
+[allowlist]
+description = "Files and patterns to ignore"
+paths = [
+    '''\.git/''',
+    '''node_modules/''',
+    '''\.next/''',
+    '''dist/''',
+    '''build/''',
+    '''\.env\.example$''',
+    '''\.env\.template$''',
+    '''package-lock\.json$''',
+    '''pnpm-lock\.yaml$''',
+    '''go\.sum$''',
+    '''\.min\.js$''',
+    '''\.map$''',
+    '''\.woff2?$''',
+    '''\.ttf$''',
+    '''\.eot$''',
+    '''\.png$''',
+    '''\.jpg$''',
+    '''\.jpeg$''',
+    '''\.gif$''',
+    '''\.svg$''',
+    '''\.ico$''',
+]
+
+# Regex patterns to ignore
+regexes = [
+    '''example\.com''',
+    '''localhost''',
+    '''127\.0\.0\.1''',
+    '''0\.0\.0\.0''',
+    '''your[_-]?key[_-]?here''',
+    '''your[_-]?secret[_-]?here''',
+    '''your[_-]?token[_-]?here''',
+    '''placeholder''',
+    '''dummy''',
+    '''test[_-]?key''',
+    '''fake[_-]?key''',
+]
+
+# ============================================
+# Global Settings
+# ============================================
+
+# Enable verbose output
+verbose = true
+
+# Report format
+[extend]
+useDefault = true

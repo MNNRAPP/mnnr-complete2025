@@ -26,25 +26,16 @@ const relevantEvents = new Set([
 ]);
 
 export async function POST(req: Request) {
-  const respondStripeNotConfigured = (reason: string) =>
-    new Response(
-      JSON.stringify({ received: false, reason }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
-
   // Skip during build time when env vars aren't available
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    logger.warn('Stripe webhook invoked without STRIPE_WEBHOOK_SECRET');
-    return respondStripeNotConfigured('Stripe webhook secret is not configured.');
+    return new Response('Webhook not configured', { status: 500 });
   }
 
   if (!isStripeConfigured()) {
     logger.error('Stripe webhook invoked without secret key configured');
-    return respondStripeNotConfigured(
-      'Stripe is not configured. Set STRIPE_SECRET_KEY to handle webhooks.'
+    return new Response(
+      'Stripe is not configured. Set STRIPE_SECRET_KEY to handle webhooks.',
+      { status: 500 }
     );
   }
 
@@ -73,11 +64,13 @@ export async function POST(req: Request) {
   } catch (err: unknown) {
     if (err instanceof StripeNotConfiguredError) {
       logger.error('Stripe client unavailable during webhook validation');
-      return respondStripeNotConfigured('Stripe is not configured on this deployment.');
+      return new Response('Stripe is not configured on this deployment.', {
+        status: 500
+      });
     }
     logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(`Webhook Error: ${errorMessage}`, { status: 400 });
+    // Return generic error message to prevent XSS (detailed error is logged above)
+    return new Response('Webhook validation failed', { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {

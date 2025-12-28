@@ -1,93 +1,85 @@
-import {
-  ActivitySquare,
-  Check,
-  GaugeCircle,
-  Layers3,
-  ShieldCheck,
-  Wallet2
-} from 'lucide-react';
-
-const FEATURES = [
-  {
-    title: 'Deterministic metering',
-    description: 'Every API call is signed, priced, and recorded in a tamper-evident ledger.',
-    icon: GaugeCircle
-  },
-  {
-    title: 'Programmable spend caps',
-    description: 'Set limits per agent wallet with soft and hard stops, alerts, and policy hooks.',
-    icon: Wallet2
-  },
-  {
-    title: 'Real-time enforcement',
-    description: 'Runtime guards throttle anomalies before they hit your models or downstream APIs.',
-    icon: ActivitySquare
-  },
-  {
-    title: 'Multi-rail settlement',
-    description: 'Stripe and USDC settle to the same customer ledger with unified reporting.',
-    icon: Layers3
-  },
-  {
-    title: 'Enterprise controls',
-    description: 'Granular roles, signed webhooks, and audit-ready exports for finance and security.',
-    icon: ShieldCheck
-  }
-];
-
-const OUTCOMES = [
-  'Launch usage-based agents with confidence in weeks instead of quarters.',
-  'Give finance real-time visibility into spend without rebuilding your stack.',
-  'Retain developer velocity with APIs, SDKs, and observability out of the box.'
-];
-
 export default function Features() {
   return (
-    <section className="relative py-24">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(100%_90%_at_0%_0%,rgba(59,130,246,0.12),rgba(15,23,42,0))]" />
-      <div className="mx-auto grid w-full max-w-6xl gap-16 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
-        <div className="flex flex-col gap-8">
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-200">
-            Why teams choose MNNR
-          </div>
-          <h2 className="text-3xl font-semibold text-white md:text-5xl md:leading-[1.1]">
-            Your command center for machine-to-machine commerce
+    <section className="bg-black text-white py-24 px-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            Everything you need to monetize AI
           </h2>
-          <p className="max-w-xl text-base leading-relaxed text-zinc-300 md:text-lg">
-            Replace brittle billing scripts and spreadsheets with a single platform that understands agents. We
-            instrument calls, enforce policy, and reconcile payments so your team can focus on intelligent
-            experiences—not financial plumbing.
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Usage tracking, billing, and rate limiting in one simple API
           </p>
-          <ul className="space-y-3 text-left text-sm text-zinc-300 md:text-base">
-            {OUTCOMES.map((item) => (
-              <li key={item} className="flex items-start gap-3">
-                <span className="mt-1 rounded-full bg-emerald-400/20 p-1">
-                  <Check className="h-4 w-4 text-emerald-300" />
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2">
-          {FEATURES.map((feature) => {
-            const Icon = feature.icon;
-            return (
-              <div
-                key={feature.title}
-                className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-black/55 p-6 shadow-[0_22px_70px_rgba(15,23,42,0.45)]"
-              >
-                <div>
-                  <span className="inline-flex items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-400/10 p-2">
-                    <Icon className="h-5 w-5 text-emerald-200" />
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold text-white">{feature.title}</h3>
-                  <p className="mt-2 text-sm text-zinc-300">{feature.description}</p>
-                </div>
-              </div>
-            );
-          })}
+        {/* Feature Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            {
+              icon: '📊',
+              title: 'Usage Tracking',
+              body: 'Track API calls, tokens, compute time, or any custom metric. Real-time dashboards included.'
+            },
+            {
+              icon: '💳',
+              title: 'Automatic Billing',
+              body: 'Stripe-powered invoicing. Usage-based, subscription, or hybrid pricing models.'
+            },
+            {
+              icon: '🔑',
+              title: 'API Key Management',
+              body: 'Generate, rotate, and revoke API keys. Scoped permissions and usage limits per key.'
+            },
+            {
+              icon: '⚡',
+              title: 'Rate Limiting',
+              body: 'Redis-backed rate limiting. Protect your infrastructure and enforce fair usage.'
+            },
+            {
+              icon: '📈',
+              title: 'Analytics Dashboard',
+              body: 'Real-time usage analytics, revenue tracking, and customer insights out of the box.'
+            },
+            {
+              icon: '🔒',
+              title: 'Enterprise Ready',
+              body: 'SOC 2 compliant infrastructure. SSO, audit logs, and dedicated support available.'
+            }
+          ].map((feature) => (
+            <div 
+              key={feature.title} 
+              className="group rounded-2xl border border-gray-800 p-8 bg-gradient-to-b from-gray-900/50 to-black hover:border-emerald-500/50 transition-all duration-300"
+            >
+              <div className="text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-emerald-400 transition-colors">
+                {feature.title}
+              </h3>
+              <p className="text-gray-400 leading-relaxed">
+                {feature.body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center">
+          <p className="text-gray-400 mb-6">
+            Join developers building the next generation of AI applications
+          </p>
+          <div className="flex justify-center gap-8 text-sm text-gray-500">
+            <div>
+              <span className="text-2xl font-bold text-emerald-400">5min</span>
+              <p>Integration time</p>
+            </div>
+            <div>
+              <span className="text-2xl font-bold text-emerald-400">99.9%</span>
+              <p>Uptime SLA</p>
+            </div>
+            <div>
+              <span className="text-2xl font-bold text-emerald-400">$0</span>
+              <p>To start</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

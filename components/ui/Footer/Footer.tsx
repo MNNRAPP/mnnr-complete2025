@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import Logo from '@/components/icons/Logo';
@@ -5,11 +6,9 @@ import GitHub from '@/components/icons/GitHub';
 import ContactButton from '@/components/ui/ContactButton/ContactButton';
 
 export default function Footer() {
-  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL ?? 'https://github.com/MNNRAPP/mnnr-complete2025';
-
   return (
-    <footer className="mx-auto max-w-[1920px] px-6">
-      <div className="grid grid-cols-1 gap-8 border-b border-white/10 bg-black/60 py-12 text-white transition-colors duration-150 backdrop-blur lg:grid-cols-12">
+    <footer className="mx-auto max-w-[1920px] px-6 bg-zinc-900">
+      <div className="grid grid-cols-1 gap-8 py-12 text-white transition-colors duration-150 border-b lg:grid-cols-12 border-zinc-600 bg-zinc-900">
         <div className="col-span-1 lg:col-span-2">
           <Link
             href="/"
@@ -71,21 +70,25 @@ export default function Footer() {
           </ul>
         </div>
         <div className="flex items-start col-span-1 text-white lg:col-span-6 lg:justify-end">
-          <div className="flex h-10 items-center space-x-6">
+          <div className="flex items-center h-10 space-x-6">
             <a
-              aria-label="GitHub link"
-              href={githubUrl}
-              target="_blank"
-              rel="noreferrer"
+              aria-label="Security Documentation"
+              href="/docs/security"
             >
               <GitHub />
             </a>
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-between space-y-4 bg-black/60 py-12 text-sm text-zinc-400 backdrop-blur md:flex-row">
-        <span>&copy; {new Date().getFullYear()} MNNR. All rights reserved.</span>
-        <span className="text-zinc-300">Payments for Machines</span>
+      <div className="flex flex-col items-center justify-between py-12 space-y-4 md:flex-row bg-zinc-900">
+        <div>
+          <span>
+            &copy; {new Date().getFullYear()} MNNR. All rights reserved.
+          </span>
+        </div>
+        <div className="flex items-center">
+          <span className="text-white">Payments for Machines</span>
+        </div>
       </div>
     </footer>
   );
