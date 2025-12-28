@@ -1,0 +1,139 @@
+{
+  "common": {
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "signOut": "Abmelden",
+    "getStarted": "Jetzt starten",
+    "learnMore": "Mehr erfahren",
+    "documentation": "Dokumentation",
+    "pricing": "Preise",
+    "contact": "Kontakt",
+    "support": "Support",
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen",
+    "profile": "Profil",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "copy": "Kopieren",
+    "copied": "Kopiert"
+  },
+  "hero": {
+    "title": "Zahlungsinfrastruktur für die Maschinenökonomie",
+    "subtitle": "Die universelle Abrechnungsschicht für autonome Systeme.",
+    "description": "Eine API zur Verfolgung der Nutzung, Durchsetzung von Limits und Einziehung von Zahlungen von jeder Maschine, jedem Agenten oder Protokoll.",
+    "cta": "Jetzt mit dem Bauen beginnen",
+    "secondaryCta": "Dokumentation ansehen",
+    "monetize": "Monetarisieren",
+    "aiAgents": "KI-Agenten",
+    "llmApis": "LLM-APIs",
+    "cryptoProtocols": "Krypto-Protokolle",
+    "iotDevices": "IoT-Geräte",
+    "smartContracts": "Smart Contracts",
+    "robotics": "Robotik",
+    "edgeComputing": "Edge Computing",
+    "autonomousVehicles": "Autonome Fahrzeuge"
+  },
+  "features": {
+    "title": "Kernfunktionen",
+    "subtitle": "Alles zur Monetarisierung autonomer Systeme",
+    "description": "Eine vollständige Abrechnungsinfrastruktur für die Maschinenökonomie. Von KI-Agenten bis IoT-Netzwerken – wir bewältigen die Komplexität.",
+    "usageTracking": {
+      "title": "Echtzeit-Nutzungsverfolgung",
+      "description": "Verfolgen Sie API-Aufrufe, Token, Rechenzyklen oder benutzerdefinierte Metriken. Sub-Millisekunden-Latenz mit globaler Edge-Bereitstellung."
+    },
+    "billing": {
+      "title": "Programmierbare Abrechnung",
+      "description": "Nutzungsbasiert, Abonnement, Prepaid-Guthaben oder Hybridmodelle. Stripe-basiert mit automatischer Rechnungsstellung und Steuerabwicklung."
+    },
+    "apiKeys": {
+      "title": "API-Schlüsselverwaltung",
+      "description": "Schlüssel sofort generieren, rotieren und widerrufen. Bereichsbezogene Berechtigungen, Nutzungslimits und Ablaufrichtlinien pro Schlüssel."
+    },
+    "rateLimiting": {
+      "title": "Verteilte Ratenbegrenzung",
+      "description": "Redis-gestützte Ratenbegrenzung über globale Edge-Knoten. Schützen Sie die Infrastruktur und setzen Sie faire Nutzung im großen Maßstab durch."
+    },
+    "security": {
+      "title": "Enterprise-Sicherheit",
+      "description": "SOC 2 Typ II bereit. Ende-zu-Ende-Verschlüsselung, Audit-Logs, SSO und Compliance-Kontrollen integriert."
+    },
+    "web3": {
+      "title": "Web3-nativ",
+      "description": "Erstklassige Unterstützung für Krypto-Zahlungen, Smart-Contract-Integration und dezentrale Identitätsverifizierung."
+    }
+  },
+  "pricing": {
+    "title": "Einfache, transparente Preise",
+    "subtitle": "Kostenlos starten, bei Wachstum skalieren. Keine versteckten Gebühren.",
+    "free": {
+      "name": "Kostenlos",
+      "price": "0 €",
+      "period": "/Monat",
+      "features": [
+        "10.000 API-Aufrufe/Monat",
+        "Grundlegende Nutzungsanalysen",
+        "API-Schlüsselverwaltung",
+        "Community-Support"
+      ],
+      "cta": "Kostenlos starten"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "45 €",
+      "period": "/Monat",
+      "popular": "Am beliebtesten",
+      "features": [
+        "1M API-Aufrufe/Monat",
+        "Erweiterte Analysen & Einblicke",
+        "Benutzerdefinierte Ratenlimits",
+        "Stripe-Abrechnungsintegration",
+        "E-Mail-Support"
+      ],
+      "cta": "Pro-Testversion starten"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "Individuell",
+      "features": [
+        "Unbegrenzte API-Aufrufe",
+        "Dedizierte Infrastruktur",
+        "SSO & erweiterte Sicherheit",
+        "Individuelles SLA",
+        "Dedizierter Support"
+      ],
+      "cta": "Vertrieb kontaktieren"
+    },
+    "footer": "Alle Pläne beinhalten 99,9% Verfügbarkeits-SLA • Jederzeit kündbar • Keine Kreditkarte für kostenlosen Tarif erforderlich"
+  },
+  "integrations": {
+    "title": "Integrationen",
+    "subtitle": "Funktioniert mit Ihrem gesamten Stack",
+    "description": "In Ihre bestehende Infrastruktur einstecken. Keine Migration erforderlich. Von KI-Anbietern bis zu Blockchain-Netzwerken."
+  },
+  "cta": {
+    "title": "Bereit, die Maschinenökonomie zu monetarisieren?",
+    "description": "Schließen Sie sich den Pionieren an, die autonome Systeme bauen, die sich selbst finanzieren. Null Plattformgebühren während der Beta. White-Glove-Onboarding inklusive.",
+    "primaryCta": "Kostenlos mit dem Bauen beginnen",
+    "secondaryCta": "Dokumentation lesen",
+    "features": [
+      "Keine Kreditkarte erforderlich",
+      "5-Minuten-Integration",
+      "Jederzeit kündbar"
+    ]
+  },
+  "footer": {
+    "tagline": "Zahlungen für Maschinen",
+    "copyright": "© 2025 MNNR. Alle Rechte vorbehalten.",
+    "links": {
+      "home": "Startseite",
+      "documentation": "Dokumentation",
+      "pilot": "Pilotprogramm",
+      "support": "Support kontaktieren"
+    }
+  }
+}

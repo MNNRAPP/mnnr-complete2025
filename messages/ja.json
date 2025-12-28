@@ -1,0 +1,139 @@
+{
+  "common": {
+    "signIn": "サインイン",
+    "signUp": "サインアップ",
+    "signOut": "サインアウト",
+    "getStarted": "今すぐ始める",
+    "learnMore": "詳細を見る",
+    "documentation": "ドキュメント",
+    "pricing": "料金",
+    "contact": "お問い合わせ",
+    "support": "サポート",
+    "dashboard": "ダッシュボード",
+    "settings": "設定",
+    "profile": "プロフィール",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "copy": "コピー",
+    "copied": "コピーしました"
+  },
+  "hero": {
+    "title": "マシンエコノミーのための決済インフラ",
+    "subtitle": "自律システムのためのユニバーサル課金レイヤー。",
+    "description": "あらゆるマシン、エージェント、プロトコルからの利用状況の追跡、制限の適用、支払いの回収を1つのAPIで。",
+    "cta": "今すぐ構築を始める",
+    "secondaryCta": "ドキュメントを見る",
+    "monetize": "収益化",
+    "aiAgents": "AIエージェント",
+    "llmApis": "LLM API",
+    "cryptoProtocols": "暗号プロトコル",
+    "iotDevices": "IoTデバイス",
+    "smartContracts": "スマートコントラクト",
+    "robotics": "ロボティクス",
+    "edgeComputing": "エッジコンピューティング",
+    "autonomousVehicles": "自動運転車"
+  },
+  "features": {
+    "title": "コア機能",
+    "subtitle": "自律システムを収益化するためのすべて",
+    "description": "マシンエコノミー向けに設計された完全な課金インフラ。AIエージェントからIoTネットワークまで、複雑さを処理します。",
+    "usageTracking": {
+      "title": "リアルタイム利用追跡",
+      "description": "API呼び出し、トークン、計算サイクル、またはカスタムメトリクスを追跡。グローバルエッジ展開でサブミリ秒のレイテンシ。"
+    },
+    "billing": {
+      "title": "プログラマブル課金",
+      "description": "従量課金、サブスクリプション、プリペイドクレジット、またはハイブリッドモデル。Stripe連携で自動請求と税務処理。"
+    },
+    "apiKeys": {
+      "title": "APIキー管理",
+      "description": "キーの即時生成、ローテーション、失効。キーごとのスコープ付き権限、使用制限、有効期限ポリシー。"
+    },
+    "rateLimiting": {
+      "title": "分散レート制限",
+      "description": "グローバルエッジノード全体でRedisバックアップのレート制限。インフラを保護し、スケールでの公平な使用を強制。"
+    },
+    "security": {
+      "title": "エンタープライズセキュリティ",
+      "description": "SOC 2 Type II準拠。エンドツーエンド暗号化、監査ログ、SSO、コンプライアンス制御を内蔵。"
+    },
+    "web3": {
+      "title": "Web3ネイティブ",
+      "description": "暗号決済、スマートコントラクト統合、分散型ID検証のファーストクラスサポート。"
+    }
+  },
+  "pricing": {
+    "title": "シンプルで透明な料金",
+    "subtitle": "無料で始めて、成長に合わせてスケール。隠れた費用なし。",
+    "free": {
+      "name": "無料",
+      "price": "¥0",
+      "period": "/月",
+      "features": [
+        "月間10,000 API呼び出し",
+        "基本的な利用分析",
+        "APIキー管理",
+        "コミュニティサポート"
+      ],
+      "cta": "無料で始める"
+    },
+    "pro": {
+      "name": "プロ",
+      "price": "¥7,350",
+      "period": "/月",
+      "popular": "最も人気",
+      "features": [
+        "月間100万 API呼び出し",
+        "高度な分析とインサイト",
+        "カスタムレート制限",
+        "Stripe課金統合",
+        "メールサポート"
+      ],
+      "cta": "プロトライアルを始める"
+    },
+    "enterprise": {
+      "name": "エンタープライズ",
+      "price": "カスタム",
+      "features": [
+        "無制限のAPI呼び出し",
+        "専用インフラ",
+        "SSO＆高度なセキュリティ",
+        "カスタムSLA",
+        "専任サポート"
+      ],
+      "cta": "営業に連絡"
+    },
+    "footer": "すべてのプランに99.9%稼働率SLA • いつでもキャンセル可能 • 無料プランはクレジットカード不要"
+  },
+  "integrations": {
+    "title": "統合",
+    "subtitle": "既存のスタック全体と連携",
+    "description": "既存のインフラにプラグイン。移行不要。AIプロバイダーからブロックチェーンネットワークまで。"
+  },
+  "cta": {
+    "title": "マシンエコノミーを収益化する準備はできましたか？",
+    "description": "自ら収益を上げる自律システムを構築するパイオニアに参加しましょう。ベータ期間中はプラットフォーム手数料ゼロ。ホワイトグローブオンボーディング付き。",
+    "primaryCta": "無料で構築を始める",
+    "secondaryCta": "ドキュメントを読む",
+    "features": [
+      "クレジットカード不要",
+      "5分で統合",
+      "いつでもキャンセル可能"
+    ]
+  },
+  "footer": {
+    "tagline": "マシンのための決済",
+    "copyright": "© 2025 MNNR. All rights reserved.",
+    "links": {
+      "home": "ホーム",
+      "documentation": "ドキュメント",
+      "pilot": "パイロットプログラム",
+      "support": "サポートに連絡"
+    }
+  }
+}
