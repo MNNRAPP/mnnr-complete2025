@@ -12,7 +12,7 @@
  * - Multi-modal interactions (text, voice, visual)
  */
 
-import { OpenAI } from 'openai';
+import { OpenAI, toFile } from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 
 // Initialize AI clients
@@ -227,8 +227,9 @@ export async function processVoiceCommand(
 
     // Transcribe audio if provided
     if (command.audio && !text) {
+      const audioFile = await toFile(command.audio, 'audio.webm', { type: 'audio/webm' });
       const transcription = await openai.audio.transcriptions.create({
-        file: command.audio,
+        file: audioFile,
         model: AI_CONFIG.speechToText,
         language: 'en',
       });

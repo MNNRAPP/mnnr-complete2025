@@ -105,7 +105,7 @@ export const stripeWebhookSchema = z.object({
   object: z.literal("event"),
   type: z.string(),
   data: z.object({
-    object: z.record(z.any()),
+    object: z.record(z.string(), z.any()),
   }),
 });
 
@@ -137,7 +137,7 @@ export const searchSchema = z.object({
     .string()
     .min(1, "Search query is required")
     .max(100, "Search query too long"),
-  filters: z.record(z.string()).optional(),
+  filters: z.record(z.string(), z.string()).optional(),
 });
 
 // ============================================================================
@@ -167,7 +167,7 @@ export function formatZodError(error: z.ZodError): {
   field: string;
   message: string;
 }[] {
-  return error.errors.map((err) => ({
+  return error.issues.map((err) => ({
     field: err.path.join("."),
     message: err.message,
   }));
