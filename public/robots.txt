@@ -1,0 +1,12 @@
+# MNNR Robots.txt
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /account/
+
+# Sitemap
+Sitemap: https://mnnr.app/sitemap.xml
