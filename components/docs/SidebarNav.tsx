@@ -1,4 +1,6 @@
+"use client";
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 type Props = { onNavigate?: () => void };
 
@@ -19,25 +21,34 @@ const sections = [
 ];
 
 export default function SidebarNav({ onNavigate }: Props) {
+  const pathname = usePathname();
+  
   return (
     <nav className="text-sm">
       {sections.map((group) => (
         <div key={group.title} className="mb-6">
-          <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+          <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
             {group.title}
           </div>
           <ul className="space-y-1">
-            {group.items.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="block rounded-md px-2 py-2 text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
-                  onClick={onNavigate}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            {group.items.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`block rounded-lg px-3 py-2 transition-colors ${
+                      isActive 
+                        ? 'bg-emerald-500/10 text-emerald-400 font-medium' 
+                        : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                    }`}
+                    onClick={onNavigate}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ))}
