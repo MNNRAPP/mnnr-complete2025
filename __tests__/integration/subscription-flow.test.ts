@@ -1,15 +1,27 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * Subscription Flow Integration Tests
  * 
  * Created: 2025-12-27 00:37:00 EST
+ * Updated: 2025-12-28 - Fixed vitest mock syntax
  * Part of 2-hour completion plan - Phase 5
  */
 
-import { apiClient } from '@/utils/api-client';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+
+// Create mock functions
+const mockGet = vi.fn();
+const mockPost = vi.fn();
+const mockPatch = vi.fn();
 
 // Mock API client
-vi.mock('@/utils/api-client');
+vi.mock('@/utils/api-client', () => ({
+  apiClient: {
+    get: mockGet,
+    post: mockPost,
+    patch: mockPatch,
+    delete: vi.fn(),
+  },
+}));
 
 describe('Subscription Flow', () => {
   beforeEach(() => {
@@ -26,11 +38,11 @@ describe('Subscription Flow', () => {
         current_period_end: Date.now() + 30 * 24 * 60 * 60 * 1000,
       };
 
-      (apiClient.post as jest.Mock).mockResolvedValue({
+      mockPost.mockResolvedValue({
         data: mockSubscription,
       });
 
-      const result = await apiClient.post('/api/subscriptions', {
+      const result = await mockPost('/api/subscriptions', {
         priceId: 'price_pro_monthly',
         paymentMethodId: 'pm_123',
         trial: true,
@@ -48,11 +60,11 @@ describe('Subscription Flow', () => {
         current_period_end: Date.now() + 30 * 24 * 60 * 60 * 1000,
       };
 
-      (apiClient.post as jest.Mock).mockResolvedValue({
+      mockPost.mockResolvedValue({
         data: mockSubscription,
       });
 
-      const result = await apiClient.post('/api/subscriptions', {
+      const result = await mockPost('/api/subscriptions', {
         priceId: 'price_pro_monthly',
         paymentMethodId: 'pm_123',
         trial: false,
@@ -62,7 +74,7 @@ describe('Subscription Flow', () => {
     });
 
     it('handles payment method required error', async () => {
-      (apiClient.post as jest.Mock).mockRejectedValue({
+      mockPost.mockRejectedValue({
         response: {
           data: { error: 'Payment method required' },
           status: 400,
@@ -70,7 +82,7 @@ describe('Subscription Flow', () => {
       });
 
       await expect(
-        apiClient.post('/api/subscriptions', {
+        mockPost('/api/subscriptions', {
           priceId: 'price_pro_monthly',
         })
       ).rejects.toMatchObject({
@@ -81,7 +93,7 @@ describe('Subscription Flow', () => {
     });
 
     it('handles invalid price ID error', async () => {
-      (apiClient.post as jest.Mock).mockRejectedValue({
+      mockPost.mockRejectedValue({
         response: {
           data: { error: 'Invalid price ID' },
           status: 400,
@@ -89,7 +101,7 @@ describe('Subscription Flow', () => {
       });
 
       await expect(
-        apiClient.post('/api/subscriptions', {
+        mockPost('/api/subscriptions', {
           priceId: 'invalid_price',
           paymentMethodId: 'pm_123',
         })
@@ -116,22 +128,22 @@ describe('Subscription Flow', () => {
         },
       ];
 
-      (apiClient.get as jest.Mock).mockResolvedValue({
+      mockGet.mockResolvedValue({
         data: mockSubscriptions,
       });
 
-      const result = await apiClient.get('/api/subscriptions');
+      const result = await mockGet('/api/subscriptions');
 
       expect(result.data).toEqual(mockSubscriptions);
       expect(result.data).toHaveLength(2);
     });
 
     it('handles empty subscriptions list', async () => {
-      (apiClient.get as jest.Mock).mockResolvedValue({
+      mockGet.mockResolvedValue({
         data: [],
       });
 
-      const result = await apiClient.get('/api/subscriptions');
+      const result = await mockGet('/api/subscriptions');
 
       expect(result.data).toEqual([]);
     });
@@ -146,11 +158,11 @@ describe('Subscription Flow', () => {
         current_period_end: Date.now() + 15 * 24 * 60 * 60 * 1000,
       };
 
-      (apiClient.post as jest.Mock).mockResolvedValue({
+      mockPost.mockResolvedValue({
         data: mockSubscription,
       });
 
-      const result = await apiClient.post('/api/subscriptions/sub_123/cancel', {
+      const result = await mockPost('/api/subscriptions/sub_123/cancel', {
         immediately: false,
       });
 
@@ -165,11 +177,11 @@ describe('Subscription Flow', () => {
         canceled_at: Date.now(),
       };
 
-      (apiClient.post as jest.Mock).mockResolvedValue({
+      mockPost.mockResolvedValue({
         data: mockSubscription,
       });
 
-      const result = await apiClient.post('/api/subscriptions/sub_123/cancel', {
+      const result = await mockPost('/api/subscriptions/sub_123/cancel', {
         immediately: true,
       });
 
@@ -178,7 +190,7 @@ describe('Subscription Flow', () => {
     });
 
     it('handles subscription not found error', async () => {
-      (apiClient.post as jest.Mock).mockRejectedValue({
+      mockPost.mockRejectedValue({
         response: {
           data: { error: 'Subscription not found' },
           status: 404,
@@ -186,7 +198,7 @@ describe('Subscription Flow', () => {
       });
 
       await expect(
-        apiClient.post('/api/subscriptions/invalid_id/cancel', {
+        mockPost('/api/subscriptions/invalid_id/cancel', {
           immediately: false,
         })
       ).rejects.toMatchObject({
@@ -197,7 +209,7 @@ describe('Subscription Flow', () => {
     });
 
     it('handles already canceled subscription', async () => {
-      (apiClient.post as jest.Mock).mockRejectedValue({
+      mockPost.mockRejectedValue({
         response: {
           data: { error: 'Subscription already canceled' },
           status: 400,
@@ -205,7 +217,7 @@ describe('Subscription Flow', () => {
       });
 
       await expect(
-        apiClient.post('/api/subscriptions/sub_canceled/cancel', {
+        mockPost('/api/subscriptions/sub_canceled/cancel', {
           immediately: false,
         })
       ).rejects.toMatchObject({
@@ -225,11 +237,11 @@ describe('Subscription Flow', () => {
         plan: 'pro',
       };
 
-      (apiClient.post as jest.Mock).mockResolvedValue({
+      mockPost.mockResolvedValue({
         data: mockNewSubscription,
       });
 
-      const createResult = await apiClient.post('/api/subscriptions', {
+      const createResult = await mockPost('/api/subscriptions', {
         priceId: 'price_pro_monthly',
         paymentMethodId: 'pm_123',
       });
@@ -237,11 +249,11 @@ describe('Subscription Flow', () => {
       expect(createResult.data.id).toBe('sub_789');
 
       // List subscriptions
-      (apiClient.get as jest.Mock).mockResolvedValue({
+      mockGet.mockResolvedValue({
         data: [mockNewSubscription],
       });
 
-      const listResult = await apiClient.get('/api/subscriptions');
+      const listResult = await mockGet('/api/subscriptions');
 
       expect(listResult.data).toContainEqual(mockNewSubscription);
 
@@ -251,11 +263,11 @@ describe('Subscription Flow', () => {
         cancel_at_period_end: true,
       };
 
-      (apiClient.post as jest.Mock).mockResolvedValue({
+      mockPost.mockResolvedValue({
         data: mockCanceledSubscription,
       });
 
-      const cancelResult = await apiClient.post(
+      const cancelResult = await mockPost(
         '/api/subscriptions/sub_789/cancel',
         { immediately: false }
       );
@@ -272,11 +284,11 @@ describe('Subscription Flow', () => {
         plan: 'enterprise',
       };
 
-      (apiClient.patch as jest.Mock).mockResolvedValue({
+      mockPatch.mockResolvedValue({
         data: mockUpgradedSubscription,
       });
 
-      const result = await apiClient.patch('/api/subscriptions/sub_123', {
+      const result = await mockPatch('/api/subscriptions/sub_123', {
         priceId: 'price_enterprise_monthly',
       });
 
@@ -290,11 +302,11 @@ describe('Subscription Flow', () => {
         plan: 'basic',
       };
 
-      (apiClient.patch as jest.Mock).mockResolvedValue({
+      mockPatch.mockResolvedValue({
         data: mockDowngradedSubscription,
       });
 
-      const result = await apiClient.patch('/api/subscriptions/sub_123', {
+      const result = await mockPatch('/api/subscriptions/sub_123', {
         priceId: 'price_basic_monthly',
       });
 

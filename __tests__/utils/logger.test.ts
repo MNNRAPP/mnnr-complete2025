@@ -200,3 +200,136 @@ describe('Logger Development Mode', () => {
     expect(logged).toContain('Dev message');
   });
 });
+
+
+describe('Logger Warning Messages', () => {
+  let consoleWarnSpy: MockInstance;
+  const originalEnv = process.env.NODE_ENV;
+
+  beforeEach(() => {
+    process.env.NODE_ENV = 'production';
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalEnv;
+    consoleWarnSpy.mockRestore();
+    vi.resetModules();
+  });
+
+  it('should log warning messages', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.warn('Warning message', { context: 'test' });
+    expect(consoleWarnSpy).toHaveBeenCalled();
+  });
+
+  it('should format warning as JSON in production', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.warn('Warning message');
+    const logged = consoleWarnSpy.mock.calls[0][0];
+    expect(() => JSON.parse(logged)).not.toThrow();
+  });
+});
+
+describe('Logger Debug Messages', () => {
+  let consoleDebugSpy: MockInstance;
+  const originalEnv = process.env.NODE_ENV;
+
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+    consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalEnv;
+    consoleDebugSpy.mockRestore();
+    vi.resetModules();
+  });
+
+  it('should log debug messages in development', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.debug('Debug message', { data: 'test' });
+    expect(consoleDebugSpy).toHaveBeenCalled();
+  });
+});
+
+describe('Logger Array Sanitization', () => {
+  let consoleInfoSpy: MockInstance;
+  const originalEnv = process.env.NODE_ENV;
+
+  beforeEach(() => {
+    process.env.NODE_ENV = 'production';
+    consoleInfoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalEnv;
+    consoleInfoSpy.mockRestore();
+    vi.resetModules();
+  });
+
+  it('should sanitize arrays with sensitive data', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.info('Array test', {
+      users: [
+        { name: 'John', password: 'secret1' },
+        { name: 'Jane', password: 'secret2' }
+      ]
+    });
+
+    const loggedData = JSON.parse(consoleInfoSpy.mock.calls[0][0]);
+    expect(loggedData.metadata.users[0].password).toBe('[REDACTED]');
+    expect(loggedData.metadata.users[1].password).toBe('[REDACTED]');
+    expect(loggedData.metadata.users[0].name).toBe('John');
+  });
+
+  it('should handle null values', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.info('Null test', { value: null });
+
+    const loggedData = JSON.parse(consoleInfoSpy.mock.calls[0][0]);
+    expect(loggedData.metadata.value).toBeNull();
+  });
+
+  it('should handle primitive values', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.info('Primitive test', { count: 42, active: true, name: 'test' });
+
+    const loggedData = JSON.parse(consoleInfoSpy.mock.calls[0][0]);
+    expect(loggedData.metadata.count).toBe(42);
+    expect(loggedData.metadata.active).toBe(true);
+    expect(loggedData.metadata.name).toBe('test');
+  });
+});
+
+describe('Logger Error with Non-Error Objects', () => {
+  let consoleErrorSpy: MockInstance;
+  const originalEnv = process.env.NODE_ENV;
+
+  beforeEach(() => {
+    process.env.NODE_ENV = 'production';
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalEnv;
+    consoleErrorSpy.mockRestore();
+    vi.resetModules();
+  });
+
+  it('should handle string errors', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.error('Error occurred', 'Simple string error');
+
+    const loggedData = JSON.parse(consoleErrorSpy.mock.calls[0][0]);
+    expect(loggedData.metadata.error.error).toBe('Simple string error');
+  });
+
+  it('should handle undefined errors', async () => {
+    const { logger } = await import('@/utils/logger');
+    logger.error('Error occurred', undefined, { context: 'test' });
+
+    const loggedData = JSON.parse(consoleErrorSpy.mock.calls[0][0]);
+    expect(loggedData.metadata.context).toBe('test');
+  });
+});

@@ -1,12 +1,14 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll, type MockInstance } from 'vitest';
 /**
  * Button Component Tests
  * 
  * Created: 2025-12-27 00:30:00 EST
+ * Updated: 2025-12-28 - Fixed to match actual component implementation
  * Part of 2-hour completion plan - Phase 4
  */
 
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
 import Button from '@/components/ui/Button';
 
 describe('Button Component', () => {
@@ -23,75 +25,43 @@ describe('Button Component', () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders with default variant', () => {
-    const { container } = render(<Button>Default</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('bg-blue-600');
+  it('renders with default flat variant', () => {
+    render(<Button>Default</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('data-variant', 'flat');
   });
 
-  it('renders with outline variant', () => {
-    const { container } = render(<Button variant="outline">Outline</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('border');
-  });
-
-  it('renders with ghost variant', () => {
-    const { container } = render(<Button variant="ghost">Ghost</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('hover:bg-gray-100');
-  });
-
-  it('renders with destructive variant', () => {
-    const { container } = render(<Button variant="destructive">Delete</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('bg-red-600');
-  });
-
-  it('renders with small size', () => {
-    const { container } = render(<Button size="sm">Small</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('px-3', 'py-1.5', 'text-sm');
-  });
-
-  it('renders with large size', () => {
-    const { container } = render(<Button size="lg">Large</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('px-6', 'py-3', 'text-lg');
+  it('renders with slim variant', () => {
+    render(<Button variant="slim">Slim</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('data-variant', 'slim');
   });
 
   it('is disabled when specified', () => {
     render(<Button disabled>Disabled</Button>);
-    const button = screen.getByText('Disabled');
+    const button = screen.getByRole('button');
     expect(button).toBeDisabled();
-    expect(button).toHaveClass('opacity-50', 'cursor-not-allowed');
   });
 
   it('does not call onClick when disabled', () => {
     const handleClick = vi.fn();
     render(<Button disabled onClick={handleClick}>Disabled</Button>);
     
-    fireEvent.click(screen.getByText('Disabled'));
+    fireEvent.click(screen.getByRole('button'));
     expect(handleClick).not.toHaveBeenCalled();
   });
 
   it('shows loading state', () => {
     render(<Button loading>Loading</Button>);
-    const button = screen.getByText('Loading');
-    expect(button).toBeDisabled();
-    expect(button).toHaveClass('opacity-50');
+    const button = screen.getByRole('button');
+    // Loading button should contain loading dots
+    expect(button.querySelector('i')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
-    const { container } = render(<Button className="custom-class">Custom</Button>);
-    const button = container.firstChild as HTMLElement;
+    render(<Button className="custom-class">Custom</Button>);
+    const button = screen.getByRole('button');
     expect(button).toHaveClass('custom-class');
-  });
-
-  it('renders as different HTML element when specified', () => {
-    const { container } = render(<Button as="a" href="/test">Link</Button>);
-    const element = container.firstChild as HTMLElement;
-    expect(element.tagName).toBe('A');
-    expect(element).toHaveAttribute('href', '/test');
   });
 
   it('forwards ref correctly', () => {
@@ -100,19 +70,69 @@ describe('Button Component', () => {
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
   });
 
-  it('renders with full width', () => {
-    const { container } = render(<Button fullWidth>Full Width</Button>);
-    const button = container.firstChild as HTMLElement;
-    expect(button).toHaveClass('w-full');
+  it('applies custom width', () => {
+    render(<Button width={200}>Custom Width</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveStyle({ width: '200px' });
   });
 
-  it('renders with icon', () => {
-    const Icon = () => <span data-testid="icon">🔥</span>;
+  it('applies custom style', () => {
+    render(<Button style={{ color: 'rgb(255, 0, 0)' }}>Custom Style</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+  });
+
+  it('sets aria-pressed when active', () => {
+    render(<Button active>Active</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('passes additional props to button element', () => {
+    render(<Button data-testid="test-button" type="submit">Submit</Button>);
+    const button = screen.getByTestId('test-button');
+    expect(button).toHaveAttribute('type', 'submit');
+  });
+
+  it('renders with displayName', () => {
+    expect(Button.displayName).toBe('Button');
+  });
+
+  it('combines width and style props correctly', () => {
     render(
-      <Button icon={<Icon />}>
-        With Icon
+      <Button width={150} style={{ color: 'rgb(0, 0, 255)' }}>
+        Combined
       </Button>
     );
-    expect(screen.getByTestId('icon')).toBeInTheDocument();
+    const button = screen.getByRole('button');
+    expect(button).toHaveStyle({ width: '150px', color: 'rgb(0, 0, 255)' });
+  });
+
+  it('handles loading and disabled together', () => {
+    render(<Button loading disabled>Both</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+    expect(button.querySelector('i')).toBeInTheDocument();
+  });
+
+  it('renders button element by default', () => {
+    render(<Button>Default Element</Button>);
+    const button = screen.getByRole('button');
+    expect(button.tagName).toBe('BUTTON');
+  });
+
+  it('can render loading dots inside button', () => {
+    const { container } = render(<Button loading>Loading Button</Button>);
+    // Check for the loading dots container
+    const loadingContainer = container.querySelector('i');
+    expect(loadingContainer).toBeInTheDocument();
+    expect(loadingContainer).toHaveClass('flex', 'pl-2', 'm-0');
+  });
+
+  it('merges refs correctly', () => {
+    const ref1 = React.createRef<HTMLButtonElement>();
+    render(<Button ref={ref1}>Merged Refs</Button>);
+    expect(ref1.current).not.toBeNull();
+    expect(ref1.current?.tagName).toBe('BUTTON');
   });
 });
