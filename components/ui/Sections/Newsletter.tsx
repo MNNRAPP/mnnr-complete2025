@@ -15,16 +15,26 @@ export default function Newsletter() {
     setStatus('loading');
     
     try {
-      // For now, just simulate success - connect to your email service later
-      // You can integrate with Mailchimp, ConvertKit, Resend, etc.
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
       
       setStatus('success');
       setMessage('You\'re on the list! We\'ll keep you updated on MNNR.');
       setEmail('');
-    } catch {
+    } catch (err) {
       setStatus('error');
-      setMessage('Something went wrong. Please try again.');
+      setMessage(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     }
   };
 
@@ -67,6 +77,7 @@ export default function Newsletter() {
                 placeholder="Enter your email"
                 className="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
                 disabled={status === 'loading' || status === 'success'}
+                required
               />
             </div>
             <button

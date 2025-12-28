@@ -70,7 +70,7 @@ export default function TermsOfServicePage() {
           <h3>5.1 Plans</h3>
           <ul>
             <li><strong>Free Tier:</strong> 10,000 API calls per month, no credit card required</li>
-            <li><strong>Pro:</strong> $49/month with 100,000 API calls included</li>
+            <li><strong>Pro:</strong> $49/month with 1M API calls included</li>
             <li><strong>Enterprise:</strong> Custom pricing and limits</li>
           </ul>
 
