@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 /**
  * Supabase Integration Tests
@@ -7,20 +7,37 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
  * They use mocked responses to avoid hitting the actual database in CI.
  */
 
-// Mock Supabase client
-const mockSupabaseClient = {
-  from: vi.fn().mockReturnThis(),
-  select: vi.fn().mockReturnThis(),
-  insert: vi.fn().mockReturnThis(),
-  update: vi.fn().mockReturnThis(),
-  delete: vi.fn().mockReturnThis(),
-  eq: vi.fn().mockReturnThis(),
-  single: vi.fn(),
-  auth: {
-    getUser: vi.fn(),
-    signInWithPassword: vi.fn(),
-    signOut: vi.fn(),
-  },
+// Create chainable mock functions
+const createChainableMock = () => {
+  const mock: any = {
+    data: null,
+    error: null,
+  };
+  
+  mock.from = vi.fn().mockReturnValue(mock);
+  mock.select = vi.fn().mockReturnValue(mock);
+  mock.insert = vi.fn().mockReturnValue(mock);
+  mock.update = vi.fn().mockReturnValue(mock);
+  mock.delete = vi.fn().mockReturnValue(mock);
+  mock.eq = vi.fn().mockReturnValue(mock);
+  mock.single = vi.fn().mockImplementation(() => Promise.resolve({ data: mock.data, error: mock.error }));
+  mock.then = vi.fn().mockImplementation((resolve) => Promise.resolve({ data: mock.data, error: mock.error }).then(resolve));
+  
+  mock.setResponse = (data: any, error: any = null) => {
+    mock.data = data;
+    mock.error = error;
+  };
+  
+  return mock;
+};
+
+const mockSupabaseClient = createChainableMock();
+
+// Add auth methods
+mockSupabaseClient.auth = {
+  getUser: vi.fn(),
+  signInWithPassword: vi.fn(),
+  signOut: vi.fn(),
 };
 
 vi.mock('@supabase/supabase-js', () => ({
@@ -28,12 +45,9 @@ vi.mock('@supabase/supabase-js', () => ({
 }));
 
 describe('Supabase Client', () => {
-  beforeAll(() => {
-    // Setup
-  });
-
-  afterAll(() => {
+  beforeEach(() => {
     vi.clearAllMocks();
+    mockSupabaseClient.setResponse(null, null);
   });
 
   describe('Authentication', () => {
@@ -99,10 +113,7 @@ describe('Supabase Client', () => {
 
   describe('Database Operations', () => {
     it('should query data from tables', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: { id: '1', name: 'Test' },
-        error: null,
-      });
+      mockSupabaseClient.setResponse({ id: '1', name: 'Test' }, null);
 
       const result = await mockSupabaseClient
         .from('test_table')
@@ -115,10 +126,7 @@ describe('Supabase Client', () => {
     });
 
     it('should insert data into tables', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: { id: '2', name: 'New Item' },
-        error: null,
-      });
+      mockSupabaseClient.setResponse({ id: '2', name: 'New Item' }, null);
 
       const result = await mockSupabaseClient
         .from('test_table')
@@ -131,10 +139,7 @@ describe('Supabase Client', () => {
     });
 
     it('should update data in tables', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: { id: '1', name: 'Updated' },
-        error: null,
-      });
+      mockSupabaseClient.setResponse({ id: '1', name: 'Updated' }, null);
 
       const result = await mockSupabaseClient
         .from('test_table')
@@ -148,24 +153,19 @@ describe('Supabase Client', () => {
     });
 
     it('should delete data from tables', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: null,
-        error: null,
-      });
+      mockSupabaseClient.setResponse(null, null);
 
       const result = await mockSupabaseClient
         .from('test_table')
         .delete()
         .eq('id', '1');
 
+      // Result is the mock itself which has error: null
       expect(result.error).toBeNull();
     });
 
     it('should handle database errors', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: null,
-        error: { message: 'Row not found', code: 'PGRST116' },
-      });
+      mockSupabaseClient.setResponse(null, { message: 'Row not found', code: 'PGRST116' });
 
       const result = await mockSupabaseClient
         .from('test_table')
@@ -180,17 +180,14 @@ describe('Supabase Client', () => {
 
   describe('API Keys Table', () => {
     it('should create API key record', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: {
-          id: 'key-1',
-          user_id: 'user-1',
-          name: 'Production Key',
-          key_prefix: 'sk_live_abc',
-          key_hash: 'hashed_value',
-          created_at: new Date().toISOString(),
-        },
-        error: null,
-      });
+      mockSupabaseClient.setResponse({
+        id: 'key-1',
+        user_id: 'user-1',
+        name: 'Production Key',
+        key_prefix: 'sk_live_abc',
+        key_hash: 'hashed_value',
+        created_at: new Date().toISOString(),
+      }, null);
 
       const result = await mockSupabaseClient
         .from('api_keys')
@@ -209,13 +206,10 @@ describe('Supabase Client', () => {
     });
 
     it('should list user API keys', async () => {
-      mockSupabaseClient.select.mockResolvedValue({
-        data: [
-          { id: 'key-1', name: 'Key 1', key_prefix: 'sk_live_abc' },
-          { id: 'key-2', name: 'Key 2', key_prefix: 'sk_live_def' },
-        ],
-        error: null,
-      });
+      mockSupabaseClient.setResponse([
+        { id: 'key-1', name: 'Key 1', key_prefix: 'sk_live_abc' },
+        { id: 'key-2', name: 'Key 2', key_prefix: 'sk_live_def' },
+      ], null);
 
       const result = await mockSupabaseClient
         .from('api_keys')
@@ -227,10 +221,7 @@ describe('Supabase Client', () => {
     });
 
     it('should soft delete API key', async () => {
-      mockSupabaseClient.single.mockResolvedValue({
-        data: { id: 'key-1', deleted_at: new Date().toISOString() },
-        error: null,
-      });
+      mockSupabaseClient.setResponse({ id: 'key-1', deleted_at: new Date().toISOString() }, null);
 
       const result = await mockSupabaseClient
         .from('api_keys')
@@ -246,11 +237,7 @@ describe('Supabase Client', () => {
 
   describe('Row Level Security', () => {
     it('should enforce RLS on API keys', async () => {
-      // Simulate RLS blocking access to another user's keys
-      mockSupabaseClient.single.mockResolvedValue({
-        data: null,
-        error: { message: 'Row not found', code: 'PGRST116' },
-      });
+      mockSupabaseClient.setResponse(null, { message: 'Row not found', code: 'PGRST116' });
 
       const result = await mockSupabaseClient
         .from('api_keys')
@@ -258,7 +245,6 @@ describe('Supabase Client', () => {
         .eq('user_id', 'other-user-id')
         .single();
 
-      // Should not return data for other user's keys
       expect(result.data).toBeNull();
     });
   });
@@ -266,14 +252,11 @@ describe('Supabase Client', () => {
 
 describe('Supabase Environment', () => {
   it('should have required environment variables', () => {
-    // These are checked at runtime, but we verify the pattern
     const requiredVars = [
       'NEXT_PUBLIC_SUPABASE_URL',
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
     ];
 
-    // In test environment, these may not be set
-    // This test documents what's required
     expect(requiredVars).toHaveLength(2);
   });
 });

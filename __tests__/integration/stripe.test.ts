@@ -14,6 +14,7 @@ const mockStripe = {
     retrieve: vi.fn(),
     update: vi.fn(),
     del: vi.fn(),
+    list: vi.fn(),
   },
   subscriptions: {
     create: vi.fn(),
