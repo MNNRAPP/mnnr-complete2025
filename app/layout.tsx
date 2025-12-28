@@ -4,6 +4,7 @@ import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
 import { PostHogProvider } from '@/providers/PostHogProvider';
+import { CurrencyProvider } from '@/components/providers/CurrencyProvider';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
 import 'styles/main.css';
@@ -16,8 +17,8 @@ const inter = Inter({
   preload: true,
 });
 
-const title = 'MNNR - Payments for Machines';
-const description = 'Pay-per-call billing for AI agents, APIs, and autonomous systems. Usage tracking, spend caps, and real-time settlement.';
+const title = 'MNNR - Payments Infrastructure for the Machine Economy';
+const description = 'The universal billing layer for autonomous systems. One API to track usage, enforce limits, and collect payments from any machine, agent, or protocol.';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -32,7 +33,20 @@ export const metadata: Metadata = {
     template: '%s | MNNR',
   },
   description: description,
-  keywords: ['AI billing', 'API monetization', 'usage tracking', 'machine payments', 'agent billing', 'LLM billing'],
+  keywords: [
+    'AI billing', 
+    'API monetization', 
+    'usage tracking', 
+    'machine payments', 
+    'agent billing', 
+    'LLM billing',
+    'machine economy',
+    'autonomous systems',
+    'crypto payments',
+    'x402 protocol',
+    'agent wallets',
+    'M2M payments'
+  ],
   authors: [{ name: 'MNNR' }],
   creator: 'MNNR',
   publisher: 'MNNR',
@@ -50,6 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
+    alternateLocale: ['zh_CN', 'es_ES'],
     url: getURL(),
     siteName: 'MNNR',
     title: title,
@@ -59,7 +74,7 @@ export const metadata: Metadata = {
         url: '/mnnr-logo-full.svg',
         width: 1200,
         height: 630,
-        alt: 'MNNR - Payments for Machines',
+        alt: 'MNNR - Payments Infrastructure for the Machine Economy',
       },
     ],
   },
@@ -87,27 +102,34 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         {/* Preload critical assets */}
         <link rel="preload" href="/mnnr-icon.svg" as="image" type="image/svg+xml" />
+        {/* Alternate language versions for SEO */}
+        <link rel="alternate" hrefLang="en" href={getURL()} />
+        <link rel="alternate" hrefLang="zh" href={`${getURL()}?lang=zh`} />
+        <link rel="alternate" hrefLang="es" href={`${getURL()}?lang=es`} />
+        <link rel="alternate" hrefLang="x-default" href={getURL()} />
       </head>
       <body className={`${inter.className} bg-black antialiased`}>
         <PostHogProvider>
-          {/* Skip to main content link for accessibility */}
-          <a 
-            href="#main-content" 
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:rounded-lg"
-          >
-            Skip to main content
-          </a>
-          <Navbar />
-          <main
-            id="main-content"
-            className="min-h-[calc(100dvh-4rem)] md:min-h-[calc(100dvh-5rem)]"
-          >
-            {children}
-          </main>
-          <Footer />
-          <Suspense>
-            <Toaster />
-          </Suspense>
+          <CurrencyProvider>
+            {/* Skip to main content link for accessibility */}
+            <a 
+              href="#main-content" 
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:rounded-lg"
+            >
+              Skip to main content
+            </a>
+            <Navbar />
+            <main
+              id="main-content"
+              className="min-h-[calc(100dvh-4rem)] md:min-h-[calc(100dvh-5rem)]"
+            >
+              {children}
+            </main>
+            <Footer />
+            <Suspense>
+              <Toaster />
+            </Suspense>
+          </CurrencyProvider>
         </PostHogProvider>
       </body>
     </html>

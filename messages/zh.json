@@ -1,0 +1,114 @@
+{
+  "common": {
+    "signIn": "登录",
+    "signUp": "注册",
+    "signOut": "退出",
+    "getStarted": "开始使用",
+    "startBuilding": "开始构建",
+    "viewDocs": "查看文档",
+    "pricing": "价格",
+    "documentation": "文档",
+    "dashboard": "控制台",
+    "settings": "设置",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功"
+  },
+  "hero": {
+    "title": "机器经济的支付基础设施",
+    "subtitle": "自主系统的通用计费层。",
+    "description": "一个API即可追踪使用量、执行限制并从任何机器、代理或协议收取付款。",
+    "monetize": "变现",
+    "aiAgents": "AI代理",
+    "llmApis": "大语言模型API",
+    "cryptoProtocols": "加密协议",
+    "iotNetworks": "物联网网络",
+    "robotics": "机器人",
+    "edgeComputing": "边缘计算",
+    "smartContracts": "智能合约",
+    "autonomousVehicles": "自动驾驶汽车"
+  },
+  "features": {
+    "title": "核心功能",
+    "usageTracking": {
+      "title": "使用量追踪",
+      "description": "以亚毫秒级精度实时追踪每个API调用、令牌和计算单元。"
+    },
+    "rateLimiting": {
+      "title": "智能限流",
+      "description": "自动执行使用限制。保护您的API免受滥用，同时最大化收入。"
+    },
+    "billing": {
+      "title": "灵活计费",
+      "description": "按请求、按令牌、订阅或基于结果计费。按客户需求计费。"
+    },
+    "analytics": {
+      "title": "实时分析",
+      "description": "了解您的使用模式，识别顶级客户，实时优化定价。"
+    },
+    "security": {
+      "title": "企业级安全",
+      "description": "SOC 2就绪，GDPR合规，具有审计追踪和基于角色的访问控制。"
+    },
+    "global": {
+      "title": "全球规模",
+      "description": "部署在50多个边缘位置。全球任何地方延迟低于5毫秒。"
+    }
+  },
+  "stats": {
+    "integration": "集成时间",
+    "uptime": "正常运行时间",
+    "toStart": "起步价",
+    "latency": "API延迟"
+  },
+  "badges": {
+    "soc2": "SOC 2就绪",
+    "edge": "边缘优化",
+    "cdn": "全球CDN",
+    "web3": "Web3原生"
+  },
+  "pricing": {
+    "title": "简单透明的定价",
+    "subtitle": "免费开始，随用随付",
+    "free": {
+      "name": "免费版",
+      "price": "¥0",
+      "period": "永久",
+      "description": "适合入门",
+      "features": ["每月1,000次API调用", "基础分析", "社区支持", "1个项目"]
+    },
+    "pro": {
+      "name": "专业版",
+      "price": "¥349",
+      "period": "/月",
+      "description": "适合成长中的团队",
+      "features": ["每月50,000次API调用", "高级分析", "优先支持", "无限项目", "自定义限流", "Webhooks"]
+    },
+    "enterprise": {
+      "name": "企业版",
+      "price": "定制",
+      "period": "",
+      "description": "适合大型组织",
+      "features": ["无限API调用", "专属支持", "SLA保证", "定制集成", "本地部署选项", "SOC 2合规"]
+    }
+  },
+  "cta": {
+    "title": "准备好变现机器经济了吗？",
+    "subtitle": "加入数千名正在构建自主商业未来的开发者。",
+    "button": "免费开始构建"
+  },
+  "footer": {
+    "product": "产品",
+    "company": "公司",
+    "resources": "资源",
+    "legal": "法律",
+    "copyright": "© 2025 MNNR. 保留所有权利。"
+  },
+  "currency": {
+    "usd": "美元",
+    "eur": "欧元",
+    "gbp": "英镑",
+    "jpy": "日元",
+    "cny": "人民币"
+  }
+}

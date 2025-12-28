@@ -6,6 +6,8 @@ import { handleRequest } from '@/utils/auth-helpers/client';
 import Logo from '@/components/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+import { LanguageSelector } from '@/components/ui/LanguageSelector';
+import { CurrencySelector } from '@/components/ui/CurrencySelector';
 import s from './Navbar.module.css';
 
 import { User } from '@supabase/supabase-js';
@@ -40,7 +42,13 @@ export default function Navlinks({ user }: NavlinksProps) {
           )}
         </nav>
       </div>
-      <div className="flex justify-end items-center space-x-4">
+      <div className="flex justify-end items-center space-x-3">
+        {/* Language and Currency Selectors - Hidden on mobile */}
+        <div className="hidden md:flex items-center space-x-2">
+          <LanguageSelector />
+          <CurrencySelector />
+        </div>
+        
         {user ? (
           <form onSubmit={(e) => handleRequest(e, SignOut, activeRouter)}>
             <input type="hidden" name="pathName" value={pathname} />
