@@ -6,7 +6,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 
 describe('Card Component', () => {
   it('renders children correctly', () => {
