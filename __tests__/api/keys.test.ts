@@ -308,3 +308,124 @@ describe('/api/keys', () => {
     });
   });
 });
+
+
+describe('POST /api/keys - Additional Coverage', () => {
+  let mockSupabase: any;
+  
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    
+    mockSupabase = {
+      auth: {
+        getUser: vi.fn(),
+      },
+      from: vi.fn(),
+    };
+    
+    const { createClient } = await import('@/utils/supabase/server');
+    vi.mocked(createClient).mockReturnValue(mockSupabase);
+  });
+
+  it('should handle userError in POST', async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: null },
+      error: new Error('Auth error'),
+    });
+
+    const request = new NextRequest('http://localhost/api/keys', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Test Key' }),
+    });
+
+    const { POST } = await import('@/app/api/keys/route');
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(401);
+    expect(data.error).toBe('Unauthorized');
+  });
+
+  it('should handle unexpected error with ZodError in POST', async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'user-123' } },
+      error: null,
+    });
+
+    const request = new NextRequest('http://localhost/api/keys', {
+      method: 'POST',
+      body: JSON.stringify({ name: '' }), // Invalid - will trigger ZodError
+    });
+
+    const { POST } = await import('@/app/api/keys/route');
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toBe('Validation error');
+  });
+});
+
+describe('DELETE /api/keys - Additional Coverage', () => {
+  let mockSupabase: any;
+  
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    
+    mockSupabase = {
+      auth: {
+        getUser: vi.fn(),
+      },
+      from: vi.fn(),
+    };
+    
+    const { createClient } = await import('@/utils/supabase/server');
+    vi.mocked(createClient).mockReturnValue(mockSupabase);
+  });
+
+  it('should handle userError in DELETE', async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: null },
+      error: new Error('Auth error'),
+    });
+
+    const request = new NextRequest('http://localhost/api/keys?id=123e4567-e89b-12d3-a456-426614174000', {
+      method: 'DELETE',
+    });
+
+    const { DELETE } = await import('@/app/api/keys/route');
+    const response = await DELETE(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(401);
+    expect(data.error).toBe('Unauthorized');
+  });
+
+  it('should handle unexpected error in DELETE', async () => {
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: { id: 'user-123' } },
+      error: null,
+    });
+
+    mockSupabase.from.mockReturnValue({
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockImplementation(() => {
+            throw new Error('Unexpected database error');
+          }),
+        }),
+      }),
+    });
+
+    const request = new NextRequest('http://localhost/api/keys?id=123e4567-e89b-12d3-a456-426614174000', {
+      method: 'DELETE',
+    });
+
+    const { DELETE } = await import('@/app/api/keys/route');
+    const response = await DELETE(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(data.error).toBe('Internal server error');
+  });
+});

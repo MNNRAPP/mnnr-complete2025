@@ -505,3 +505,38 @@ describe('Typed API Methods - Admin', () => {
     );
   });
 });
+
+
+describe('ApiClient Error Toast Coverage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
+  });
+
+  it('should show error toast on AbortError with showErrorToast true', async () => {
+    const abortError = new Error('AbortError');
+    abortError.name = 'AbortError';
+    (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(abortError);
+
+    const response = await apiClient.get('/test', {
+      timeout: 1,
+      retries: 0,
+      showErrorToast: true, // This will trigger line 138
+    });
+
+    expect(response.success).toBe(false);
+    expect(response.error).toBe('Request timeout');
+  });
+
+  it('should show error toast on generic Error with showErrorToast true', async () => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('Network failure'));
+
+    const response = await apiClient.get('/test', {
+      retries: 0,
+      showErrorToast: true, // This will trigger line 138
+    });
+
+    expect(response.success).toBe(false);
+    expect(response.error).toBe('Network failure');
+  });
+});

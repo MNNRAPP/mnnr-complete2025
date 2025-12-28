@@ -333,3 +333,54 @@ describe('Logger Error with Non-Error Objects', () => {
     expect(loggedData.metadata.context).toBe('test');
   });
 });
+
+
+// Log aggregation error path is covered by existing tests
+
+describe('Logger - Development Mode Branches', () => {
+  let consoleWarnSpy: any;
+  let consoleErrorSpy: any;
+  const originalEnv = process.env.NODE_ENV;
+
+  beforeEach(() => {
+    process.env.NODE_ENV = 'development';
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalEnv;
+    consoleWarnSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should log warn in development mode with metadata', async () => {
+    const { logger } = await import('@/utils/logger');
+    
+    logger.warn('Development warning', { key: 'value' });
+    
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[WARN] Development warning',
+      { key: 'value' }
+    );
+  });
+
+  it('should log error in development mode with error object', async () => {
+    const { logger } = await import('@/utils/logger');
+    
+    const testError = new Error('Test error');
+    logger.error('Development error', testError, { context: 'test' });
+    
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '[ERROR] Development error',
+      expect.objectContaining({
+        context: 'test',
+        error: expect.objectContaining({
+          name: 'Error',
+          message: 'Test error',
+        }),
+      })
+    );
+  });
+});
