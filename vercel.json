@@ -51,27 +51,5 @@
     }
   ],
   
-  "regions": ["iad1", "sfo1", "lhr1", "fra1", "sin1"],
-  
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/webhooks/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
-  
-  "crons": [
-    {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/metrics",
-      "schedule": "*/15 * * * *"
-    }
-  ]
+  "regions": ["iad1"]
 }
