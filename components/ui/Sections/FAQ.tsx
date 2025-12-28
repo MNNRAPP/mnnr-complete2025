@@ -18,7 +18,7 @@ const faqs: FAQItem[] = [
   },
   {
     question: "How much does MNNR cost?",
-    answer: "We offer a free tier with 10,000 API calls per month—no credit card required. Our Pro plan starts at $49/month with 100,000 calls included, and Enterprise plans are custom-priced based on volume. During our public beta, there are zero platform fees on transactions."
+    answer: "We offer a free tier with 10,000 API calls per month—no credit card required. Our Pro plan starts at $49/month with 1M calls included, and Enterprise plans are custom-priced based on volume. During our public beta, there are zero platform fees on transactions."
   },
   {
     question: "What happens if I exceed my plan limits?",
