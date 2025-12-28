@@ -9,13 +9,17 @@ const sections = [
     { href: '/docs', label: 'Getting Started' },
     { href: '/docs/quick-start', label: 'Quick Start' },
   ]},
+  { title: 'Agent Economy', items: [
+    { href: '/docs/api', label: 'API Reference' },
+    { href: '/docs/x402', label: 'x402 Protocol' },
+    { href: '/docs/marketplace', label: 'Marketplace' },
+  ]},
   { title: 'Guides', items: [
     { href: '/docs/deployment', label: 'Deployment' },
     { href: '/docs/security', label: 'Security' },
     { href: '/docs/enterprise', label: 'Enterprise' },
   ]},
   { title: 'Reference', items: [
-    { href: '/docs/api', label: 'API Reference' },
     { href: '/docs/changelog', label: 'Changelog' },
   ]},
 ];
