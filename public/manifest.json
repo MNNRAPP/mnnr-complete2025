@@ -1,0 +1,17 @@
+{
+  "name": "MNNR - Payments for Machines",
+  "short_name": "MNNR",
+  "description": "Pay-per-call billing for AI agents, APIs, and autonomous systems",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "/mnnr-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
