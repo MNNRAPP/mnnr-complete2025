@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useMemo, useState } from 'react';
 
 type Heading = { id: string; text: string; level: number };
@@ -14,7 +13,7 @@ function slugify(text: string) {
 
 function getHeadings(root: Element | null): Heading[] {
   if (!root) return [];
-  const nodes = Array.from(root.querySelectorAll('h1, h2, h3, h4, h5')) as HTMLHeadingElement[];
+  const nodes = Array.from(root.querySelectorAll('h2, h3, h4')) as HTMLHeadingElement[];
   nodes.forEach((n) => {
     if (!n.id) {
       const id = slugify(n.textContent || '');
@@ -30,16 +29,14 @@ function getHeadings(root: Element | null): Heading[] {
 
 function indentClass(level: number) {
   switch (level) {
-    case 1:
-      return 'pl-0';
     case 2:
-      return 'pl-3';
+      return 'pl-0';
     case 3:
-      return 'pl-6';
+      return 'pl-3';
     case 4:
-      return 'pl-9';
+      return 'pl-6';
     default:
-      return 'pl-12';
+      return 'pl-9';
   }
 }
 
@@ -50,7 +47,7 @@ export default function TOC({ rootSelector = '#docs-content' }: { rootSelector?:
   useEffect(() => {
     const root = document.querySelector(rootSelector);
     setHeadings(getHeadings(root));
-
+    
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -62,29 +59,28 @@ export default function TOC({ rootSelector = '#docs-content' }: { rootSelector?:
       },
       { rootMargin: '0px 0px -70% 0px', threshold: [0, 1] }
     );
-
-  const hs = Array.from(root?.querySelectorAll('h1, h2, h3, h4, h5') || []);
+    
+    const hs = Array.from(root?.querySelectorAll('h2, h3, h4') || []);
     hs.forEach((h) => observer.observe(h));
     return () => observer.disconnect();
   }, [rootSelector]);
 
   const items = useMemo(() => headings, [headings]);
+  
   if (!items.length) return null;
 
   return (
     <nav aria-label="On this page" className="text-sm">
-      <div className="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-        On this page
-      </div>
       <ul className="space-y-1">
         {items.map((h) => (
           <li key={h.id}>
             <a
               href={`#${h.id}`}
-              className={
-                `block rounded-md px-2 py-1 text-gray-600 hover:text-emerald-700 hover:bg-emerald-50 ${indentClass(h.level)} ` +
-                (active === h.id ? 'text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200' : '')
-              }
+              className={`block rounded-lg px-2 py-1.5 transition-colors ${indentClass(h.level)} ${
+                active === h.id 
+                  ? 'text-emerald-400 bg-emerald-500/10' 
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800'
+              }`}
             >
               {h.text}
             </a>
