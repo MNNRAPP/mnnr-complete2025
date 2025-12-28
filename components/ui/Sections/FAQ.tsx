@@ -14,7 +14,7 @@ const faqs: FAQItem[] = [
   },
   {
     question: "How is MNNR different from Stripe or other payment processors?",
-    answer: "While Stripe was built for human-initiated transactions, MNNR is designed for autonomous systems. We handle sub-millisecond usage tracking, distributed rate limiting across global edge nodes, and billing models that don't exist in traditional commerce—like per-token pricing for AI, per-cycle billing for compute, or real-time streaming payments between agents."
+    answer: "While Stripe was built for human-initiated transactions, MNNR is designed for autonomous systems. We handle fast usage tracking, distributed rate limiting across global infrastructure, and billing models that don't exist in traditional commerce—like per-token pricing for AI, per-cycle billing for compute, or real-time streaming payments between agents."
   },
   {
     question: "How much does MNNR cost?",
@@ -34,19 +34,19 @@ const faqs: FAQItem[] = [
   },
   {
     question: "Is my data secure with MNNR?",
-    answer: "Absolutely. We use bank-level 256-bit encryption for all data in transit and at rest. We're SOC 2 Type II ready, GDPR compliant, and CCPA compliant. All infrastructure runs on enterprise-grade cloud providers with 99.99% uptime SLA. We never store sensitive payment information—that's handled by Stripe."
+    answer: "Yes. We use bank-level 256-bit encryption for all data in transit and at rest. We're implementing SOC 2 controls and follow GDPR and CCPA compliant practices. All infrastructure runs on enterprise-grade cloud providers with high availability. We never store sensitive payment information—that's handled by Stripe."
   },
   {
     question: "Do you support cryptocurrency and Web3 payments?",
-    answer: "Yes! MNNR is Web3-native. We support crypto payments, smart contract integration, and decentralized identity verification. You can accept payments in major cryptocurrencies, integrate with DeFi protocols, and build billing for decentralized applications."
+    answer: "Yes! MNNR is Web3-compatible. We support crypto payments, smart contract integration, and decentralized identity verification. You can accept payments in major cryptocurrencies, integrate with DeFi protocols, and build billing for decentralized applications."
   },
   {
     question: "Can I migrate from my current billing solution?",
-    answer: "Yes, we provide migration guides and support for common billing systems. Our API is designed to be a drop-in replacement for most use cases. For Enterprise customers, we offer white-glove migration assistance to ensure zero downtime during the transition."
+    answer: "Yes, we provide migration guides and support for common billing systems. Our API is designed to be a drop-in replacement for most use cases. For Enterprise customers, we offer white-glove migration assistance to ensure smooth transition."
   },
   {
     question: "What kind of support do you offer?",
-    answer: "Free tier users get access to our documentation, community Discord, and email support. Pro users get priority support with 4-hour response times. Enterprise customers receive dedicated support, custom SLAs, and direct access to our engineering team. We also offer integration consulting for complex use cases."
+    answer: "Free tier users get access to our documentation, community Discord, and email support. Pro users get priority support with faster response times. Enterprise customers receive dedicated support, custom SLAs, and direct access to our engineering team. We also offer integration consulting for complex use cases."
   }
 ];
 
@@ -106,7 +106,7 @@ export default function FAQ() {
             </span>
           </h2>
           <p className="text-xl text-white/50 max-w-2xl mx-auto">
-            Everything you need to know about MNNR. Can't find what you're looking for? 
+            Everything you need to know about MNNR. Can&apos;t find what you&apos;re looking for? 
             <a href="mailto:support@mnnr.app" className="text-emerald-400 hover:text-emerald-300 ml-1">
               Contact our team
             </a>
@@ -130,7 +130,7 @@ export default function FAQ() {
         {/* Bottom CTA */}
         <div className="mt-16 text-center">
           <p className="text-white/40 mb-6">
-            Still have questions? We're here to help.
+            Still have questions? We&apos;re here to help.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a 

@@ -75,7 +75,7 @@ function CodeTerminal() {
   
   const copyCode = () => {
     navigator.clipboard.writeText(`curl https://api.mnnr.app/v1/usage \\
-  -H "Authorization: Bearer sk_live_..." \\
+  -H "Authorization: Bearer sk_test_..." \\
   -d '{"tokens": 1500, "model": "gpt-4"}'`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -111,11 +111,11 @@ function CodeTerminal() {
             <span className="text-white/80"> https://api.mnnr.app/v1/usage \</span>
             {'\n'}
             <span className="text-white/50">  -H </span>
-            <span className="text-emerald-400">"Authorization: Bearer sk_live_..."</span>
+            <span className="text-emerald-400">&quot;Authorization: Bearer sk_test_...&quot;</span>
             <span className="text-white/80"> \</span>
             {'\n'}
             <span className="text-white/50">  -d </span>
-            <span className="text-purple-400">{'\'{"tokens": 1500, "model": "gpt-4"}\''}</span>
+            <span className="text-purple-400">{'\'{\"tokens\": 1500, \"model\": \"gpt-4\"}\''}</span>
           </code>
         </pre>
         
@@ -123,7 +123,7 @@ function CodeTerminal() {
         <div className="mt-4 pt-4 border-t border-white/5">
           <span className="text-white/30 text-xs font-mono">Response:</span>
           <pre className="text-xs font-mono mt-2 text-emerald-400/80">
-            {'{"success": true, "usage_id": "usg_7x9k2...", "balance": 8500}'}
+            {'{\"success\": true, \"usage_id\": \"usg_7x9k2...\", \"balance\": 8500}'}
           </pre>
         </div>
       </div>
@@ -131,13 +131,13 @@ function CodeTerminal() {
   );
 }
 
-// Stats with animated counters
+// Stats with animated counters - QUALIFIED CLAIMS ONLY
 function AnimatedStats() {
   return (
     <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto">
       {[
         { value: '< 5min', label: 'Integration' },
-        { value: '99.99%', label: 'Uptime' },
+        { value: 'High', label: 'Availability' },
         { value: '$0', label: 'To Start' }
       ].map((stat) => (
         <div key={stat.label} className="text-center">
@@ -151,13 +151,13 @@ function AnimatedStats() {
   );
 }
 
-// Trust badges
+// Trust badges - QUALIFIED CLAIMS ONLY
 function TrustBadges() {
   const badges = [
-    { icon: '🔐', text: 'SOC 2 Ready' },
-    { icon: '⚡', text: 'Edge Optimized' },
-    { icon: '🌐', text: 'Global CDN' },
-    { icon: '🔗', text: 'Web3 Native' }
+    { icon: '🔐', text: 'Bank-Level Encryption' },
+    { icon: '⚡', text: 'Low Latency' },
+    { icon: '🌐', text: 'Global Infrastructure' },
+    { icon: '🔗', text: 'Web3 Compatible' }
   ];
 
   return (

@@ -138,8 +138,8 @@ export default function Features() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
       ),
-      title: 'Enterprise Security',
-      description: 'SOC 2 Type II ready. End-to-end encryption, audit logs, SSO, and compliance controls built-in.',
+      title: 'Security Focused',
+      description: 'Bank-level encryption, audit logs, SSO support, and compliance controls in progress.',
       gradient: 'bg-gradient-to-br from-red-500/20 to-pink-500/20',
       href: '/legal/security'
     },
@@ -200,10 +200,10 @@ export default function Features() {
         {/* Stats Section */}
         <div className="mt-24 pt-16 border-t border-white/5">
           <div className="flex flex-wrap justify-center gap-16">
-            <AnimatedStat value="<5" suffix="ms" label="API Latency" />
-            <AnimatedStat value="99.99" suffix="%" label="Uptime SLA" />
-            <AnimatedStat value="50" suffix="+" label="Edge Locations" />
-            <AnimatedStat value="∞" label="Scale" />
+            <AnimatedStat value="<5" suffix="min" label="Integration" />
+            <AnimatedStat value="High" suffix="" label="Availability" />
+            <AnimatedStat value="Global" suffix="" label="Infrastructure" />
+            <AnimatedStat value="$0" suffix="" label="To Start" />
           </div>
         </div>
 
@@ -262,15 +262,15 @@ export default function Features() {
           {/* Beta Metrics */}
           <div className="mt-12 flex flex-wrap justify-center gap-8 text-center">
             <div className="px-6">
-              <div className="text-2xl font-bold text-white">50+</div>
-              <div className="text-white/40 text-sm">Beta Teams</div>
+              <div className="text-2xl font-bold text-white">Beta</div>
+              <div className="text-white/40 text-sm">Now Open</div>
             </div>
             <div className="px-6 border-l border-white/10">
-              <div className="text-2xl font-bold text-white">1M+</div>
-              <div className="text-white/40 text-sm">API Calls Processed</div>
+              <div className="text-2xl font-bold text-white">Free</div>
+              <div className="text-white/40 text-sm">Tier Available</div>
             </div>
             <div className="px-6 border-l border-white/10">
-              <div className="text-2xl font-bold text-white">24/7</div>
+              <div className="text-2xl font-bold text-white">Email</div>
               <div className="text-white/40 text-sm">Support</div>
             </div>
           </div>
