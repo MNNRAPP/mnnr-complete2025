@@ -162,7 +162,7 @@ function StaticPricing() {
 
         <div className="mt-16 text-center">
           <p className="text-gray-400 text-sm">
-            All plans include 99.9% uptime SLA • Cancel anytime • No credit card required for free tier
+            All plans include uptime monitoring • Cancel anytime • No credit card required for free tier
           </p>
         </div>
       </div>

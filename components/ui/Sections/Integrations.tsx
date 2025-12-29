@@ -138,7 +138,7 @@ export default function Integrations() {
                     <span className="text-white/80">({'{'}</span>
                     {'\n'}
                     <span className="text-white/80">  apiKey: </span>
-                    <span className="text-emerald-400">'sk_live_...'</span>
+                    <span className="text-emerald-400">'sk_test_...'</span>
                     <span className="text-white/80">,</span>
                     {'\n'}
                     <span className="text-white/80">  provider: </span>
