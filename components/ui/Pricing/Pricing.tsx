@@ -224,7 +224,7 @@ export default function Pricing({ user, products, subscription }: Props) {
           {/* FAQ/Note */}
           <div className="mt-16 text-center">
             <p className="text-gray-400 text-sm">
-              All plans include 99.9% uptime SLA • Cancel anytime • No credit card required for free tier
+              All plans include uptime monitoring • Cancel anytime • No credit card required for free tier
             </p>
             <p className="text-gray-500 text-xs mt-4">
               Need to set up Stripe products?{' '}
@@ -366,7 +366,7 @@ export default function Pricing({ user, products, subscription }: Props) {
 
         <div className="mt-16 text-center">
           <p className="text-gray-400 text-sm">
-            All plans include 99.9% uptime SLA • Cancel anytime • No credit card required for free tier
+            All plans include uptime monitoring • Cancel anytime • No credit card required for free tier
           </p>
         </div>
       </div>

@@ -62,7 +62,7 @@ export default function ApiPage() {
                 <span className="text-gray-400 text-sm">Request Header</span>
               </div>
               <pre className="p-4 text-sm text-gray-300 overflow-x-auto">
-{`Authorization: Bearer sk_live_your_api_key_here
+{`Authorization: Bearer sk_test_your_api_key_here
 Content-Type: application/json`}
               </pre>
             </div>

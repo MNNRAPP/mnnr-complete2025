@@ -22,11 +22,11 @@ const deploymentSteps = [
     ],
     code: `# .env.production
 DATABASE_URL="postgresql://..."
-STRIPE_SECRET_KEY="sk_live_..."
-STRIPE_PUBLISHABLE_KEY="pk_live_..."
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_PUBLISHABLE_KEY="pk_test_..."
 REDIS_URL="redis://..."
 SENTRY_DSN="https://..."
-MNNR_API_KEY="mnnr_live_..."`,
+MNNR_API_KEY="mnnr_test_..."`,
   },
   {
     number: 2,

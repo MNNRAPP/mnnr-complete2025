@@ -37,7 +37,7 @@ const endpoints = [
     },
     response: {
       success: true,
-      key: 'sk_live_xxxxxxxxxxxx',
+      key: 'sk_test_xxxxxxxxxxxx',
       keyId: 'key_abc123',
       permissions: ['usage:write', 'usage:read'],
     },
