@@ -1,12 +1,64 @@
-# MNNR Robots.txt
+# MNNR Robots.txt - Optimized for AI Search Discovery
+# https://mnnr.app - AI Agent Billing Infrastructure
+
+# Allow all search engines and AI crawlers
 User-agent: *
 Allow: /
 
-# Disallow admin and API routes
+# Explicitly allow AI search engine crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# Disallow private/admin routes for all crawlers
 Disallow: /api/
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /account/
+Disallow: /settings/
+Disallow: /_next/
+Disallow: /signin/callback
 
-# Sitemap
+# AI Agent Discovery Files
+# These files help AI agents understand and interact with MNNR
+
+# llms.txt - Human and AI readable description
+# Location: https://mnnr.app/llms.txt
+
+# AI Plugin Manifest - For ChatGPT and similar
+# Location: https://mnnr.app/.well-known/ai-plugin.json
+
+# Sitemap for search indexing
 Sitemap: https://mnnr.app/sitemap.xml
+
+# Crawl-delay for polite crawling (optional)
+# Crawl-delay: 1
+
+# Host directive
+Host: https://mnnr.app

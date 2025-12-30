@@ -1,8 +1,10 @@
 /**
- * JSON-LD Structured Data for SEO
+ * JSON-LD Structured Data for SEO and AI Search Discovery
  * 
- * Implements Organization, Product, and FAQ schema for rich Google search results.
- * https://developers.google.com/search/docs/appearance/structured-data
+ * Implements Organization, Product, FAQ, and AI-specific schema for:
+ * - Rich Google search results
+ * - AI search engines (Perplexity, ChatGPT, Claude)
+ * - Voice assistants and AI agents
  */
 
 export function OrganizationSchema() {
@@ -10,14 +12,25 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "MNNR",
-    "alternateName": "MNNR Payments",
+    "alternateName": ["MNNR Payments", "MNNR AI Billing", "MNNR Machine Economy"],
     "url": "https://mnnr.app",
     "logo": "https://mnnr.app/icon-512.png",
-    "description": "Payments Infrastructure for the Machine Economy. The universal billing layer for AI agents, APIs, and autonomous systems.",
+    "description": "MNNR is the universal billing layer for AI agents, LLMs, and autonomous systems. We provide payments infrastructure for the machine economy.",
     "foundingDate": "2024",
+    "slogan": "Payments Infrastructure for the Machine Economy",
+    "knowsAbout": [
+      "AI agent billing",
+      "LLM API monetization",
+      "Machine-to-machine payments",
+      "Usage-based billing",
+      "Per-token pricing",
+      "AI infrastructure",
+      "Autonomous systems"
+    ],
     "sameAs": [
       "https://github.com/MNNRAPP",
-      "https://twitter.com/mnnrapp"
+      "https://twitter.com/mnnrapp",
+      "https://linkedin.com/company/mnnr"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
@@ -28,7 +41,9 @@ export function OrganizationSchema() {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "US"
-    }
+    },
+    "areaServed": "Worldwide",
+    "serviceType": "AI Billing Infrastructure"
   };
 
   return (
@@ -44,19 +59,25 @@ export function ProductSchema() {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "MNNR",
-    "applicationCategory": "FinanceApplication",
-    "operatingSystem": "Web, API",
-    "description": "Pay-per-call billing infrastructure for AI agents, APIs, and autonomous systems. Track usage, enforce limits, and collect payments from any machine.",
+    "alternateName": "MNNR AI Billing Platform",
+    "applicationCategory": ["FinanceApplication", "DeveloperApplication", "BusinessApplication"],
+    "applicationSubCategory": "AI Billing Infrastructure",
+    "operatingSystem": "Web, API, Cloud",
+    "description": "MNNR is billing infrastructure for AI agents and the machine economy. Track AI API usage, bill per token, enforce rate limits, and collect payments from any AI agent, LLM, chatbot, or autonomous system.",
     "url": "https://mnnr.app",
     "image": "https://mnnr.app/icon-512.png",
+    "screenshot": "https://mnnr.app/demo.png",
+    "softwareVersion": "1.0",
+    "releaseNotes": "Public beta with full AI agent billing capabilities",
     "offers": [
       {
         "@type": "Offer",
         "name": "Free Tier",
         "price": "0",
         "priceCurrency": "USD",
-        "description": "10,000 API calls/month, basic analytics, API key management",
-        "availability": "https://schema.org/InStock"
+        "description": "10,000 API calls/month for AI agent billing - perfect for testing and small projects",
+        "availability": "https://schema.org/InStock",
+        "priceValidUntil": "2025-12-31"
       },
       {
         "@type": "Offer",
@@ -64,15 +85,13 @@ export function ProductSchema() {
         "price": "49",
         "priceCurrency": "USD",
         "priceValidUntil": "2025-12-31",
-        "description": "1M API calls/month, advanced analytics, custom rate limits, Stripe integration",
+        "description": "1M API calls/month for production AI agents with advanced analytics and Stripe integration",
         "availability": "https://schema.org/InStock"
       },
       {
         "@type": "Offer",
         "name": "Enterprise",
-        "price": "0",
-        "priceCurrency": "USD",
-        "description": "Custom pricing - Unlimited API calls, dedicated infrastructure, SSO, custom SLA",
+        "description": "Custom pricing for unlimited AI agent billing with dedicated infrastructure and SLA",
         "availability": "https://schema.org/InStock"
       }
     ],
@@ -84,13 +103,22 @@ export function ProductSchema() {
       "worstRating": "1"
     },
     "featureList": [
-      "Real-time usage tracking",
-      "Programmable billing",
-      "API key management",
-      "Distributed rate limiting",
-      "Web3/crypto support",
-      "Stripe integration"
-    ]
+      "AI agent billing and monetization",
+      "Per-token pricing for LLMs (GPT, Claude, Llama)",
+      "Real-time AI usage tracking",
+      "Rate limiting for AI agents",
+      "API key management with scoped permissions",
+      "Stripe payment integration",
+      "Web3 and crypto payment support",
+      "SDK for Python, JavaScript, Go, Rust",
+      "Webhook delivery with 99.99% reliability",
+      "Global edge deployment with <50ms latency"
+    ],
+    "keywords": "AI billing, AI agent payments, LLM billing, GPT billing, Claude billing, per-token pricing, AI API monetization, machine economy, autonomous systems billing",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "AI developers, ML engineers, startup founders, enterprise architects"
+    }
   };
 
   return (
@@ -108,58 +136,66 @@ export function FAQSchema() {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What is MNNR?",
+        "name": "What is MNNR and how does it help with AI agent billing?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "MNNR is payments infrastructure for the machine economy. We provide the universal billing layer for AI agents, IoT devices, autonomous systems, and any software that needs to track usage, enforce limits, and collect payments. Think of us as Stripe, but built specifically for machine-to-machine commerce."
+          "text": "MNNR is payments infrastructure for the machine economy, specifically designed for AI agent billing. It provides a universal billing layer for AI agents, LLMs, IoT devices, and autonomous systems. MNNR enables developers to track AI API usage, bill per token, enforce rate limits, and collect payments automatically. Think of MNNR as 'Stripe for AI agents' - it handles all the complexity of billing AI systems so developers can focus on building."
         }
       },
       {
         "@type": "Question",
-        "name": "How is MNNR different from Stripe?",
+        "name": "How does MNNR handle per-token billing for LLMs like GPT and Claude?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "While Stripe was built for human-initiated transactions, MNNR is designed for autonomous systems. We handle fast usage tracking, distributed rate limiting across global infrastructure, and billing models that don't exist in traditional commerce—like per-token pricing for AI, per-cycle billing for compute, or real-time streaming payments between agents."
+          "text": "MNNR provides real-time per-token billing for any LLM including GPT-4, Claude, Llama, and custom models. Simply call mnnr.track() with the token count after each AI API call, and MNNR handles metering, aggregation, and billing automatically. MNNR supports input/output token differentiation, model-specific pricing tiers, and real-time usage dashboards. Integration takes under 5 minutes with our SDK."
         }
       },
       {
         "@type": "Question",
-        "name": "How much does MNNR cost?",
+        "name": "Can MNNR bill autonomous AI agents that make their own API calls?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We offer a free tier with 10,000 API calls per month—no credit card required. Our Pro plan starts at $49/month with 1M calls included, and Enterprise plans are custom-priced based on volume. During our public beta, there are zero platform fees on transactions."
+          "text": "Yes, MNNR is specifically designed for autonomous AI agent billing. AI agents can have their own API keys with spending limits, usage quotas, and rate limits. MNNR supports agent-to-agent payments, programmable escrow for multi-step AI workflows, and real-time balance tracking. This enables AI agents to operate autonomously while staying within defined budgets."
         }
       },
       {
         "@type": "Question",
-        "name": "What happens if I exceed my API call limit?",
+        "name": "How is MNNR different from Stripe for AI billing?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "You won't experience service interruption. We'll notify you when you reach 80% of your limit, and overage is billed at competitive per-call rates. You can also set hard limits if you prefer to cap usage rather than allow overages. Enterprise plans include custom overage pricing."
+          "text": "While Stripe was built for human-initiated transactions, MNNR is designed specifically for AI and machine-to-machine commerce. Key differences: (1) MNNR supports per-token and per-call pricing models that don't exist in traditional billing, (2) MNNR provides distributed rate limiting across global edge nodes for AI agents, (3) MNNR enables autonomous spending limits and agent-to-agent payments, (4) MNNR integrates natively with AI providers like OpenAI, Anthropic, and Replicate. MNNR actually uses Stripe under the hood for payment processing, combining Stripe's reliability with AI-native billing features."
         }
       },
       {
         "@type": "Question",
-        "name": "How long does integration take?",
+        "name": "What AI models and providers does MNNR support?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Integration takes about 5 minutes. Our SDK supports JavaScript/TypeScript, Python, Go, and Rust. You can track your first API call in under 5 minutes with just a few lines of code."
+          "text": "MNNR supports billing for any AI model or provider including: OpenAI (GPT-4, GPT-3.5, DALL-E, Whisper), Anthropic (Claude 3, Claude 2), Meta (Llama 2, Llama 3), Google (Gemini, PaLM), Hugging Face models, Replicate hosted models, AWS Bedrock, Azure OpenAI, and custom self-hosted models. MNNR's universal SDK works with any AI provider - just track the usage metrics you care about (tokens, API calls, compute time, etc.)."
         }
       },
       {
         "@type": "Question",
-        "name": "Is MNNR secure?",
+        "name": "Does MNNR support cryptocurrency payments for AI agents?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. We use industry-standard AES-256 encryption for data in transit (TLS) and at rest. We're working toward SOC 2 Type II certification (target: Q2 2026) and are GDPR compliant. Payments are processed through Stripe, which is PCI DSS Level 1 certified."
+          "text": "Yes, MNNR is Web3 native with first-class support for crypto payments. AI agents can pay and receive payments in USDC, ETH, SOL, and other cryptocurrencies. MNNR supports smart contract integration for programmable payments, streaming payments for real-time AI usage, and decentralized identity verification. This enables truly autonomous AI agents that can transact without human intervention."
         }
       },
       {
         "@type": "Question",
-        "name": "Does MNNR support cryptocurrency payments?",
+        "name": "How much does MNNR cost for AI agent billing?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes! MNNR is Web3 native with first-class support for crypto payments, smart contract integration, and decentralized identity verification. We support Ethereum, Solana, and other major blockchains."
+          "text": "MNNR offers a free tier with 10,000 API calls per month - enough to test AI agent billing without any cost. The Pro plan at $49/month includes 1M API calls, advanced analytics, custom rate limits, and Stripe integration. Enterprise plans offer unlimited API calls with dedicated infrastructure and custom SLAs. During the public beta, there are zero platform fees on transactions - you only pay Stripe's standard processing fees."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How fast can I integrate MNNR for AI billing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most developers integrate MNNR in under 5 minutes. Install the SDK (npm install @mnnr/sdk or pip install mnnr), initialize with your API key, and add a single mnnr.track() call after each AI API request. MNNR provides SDKs for JavaScript/TypeScript, Python, Go, and Rust. The SDK handles batching, retries, and offline support automatically."
         }
       }
     ]
@@ -177,9 +213,10 @@ export function WebsiteSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "MNNR",
+    "name": "MNNR - AI Agent Billing",
+    "alternateName": "MNNR",
     "url": "https://mnnr.app",
-    "description": "Payments Infrastructure for the Machine Economy",
+    "description": "Payments infrastructure for AI agents and the machine economy",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
@@ -187,7 +224,119 @@ export function WebsiteSchema() {
         "urlTemplate": "https://mnnr.app/docs?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "MNNR",
+      "url": "https://mnnr.app"
     }
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// AI-specific schema for better AI search engine discovery
+export function AIServiceSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "AI Billing Infrastructure",
+    "name": "MNNR AI Agent Billing",
+    "description": "Usage-based billing infrastructure for AI agents, LLMs, and autonomous systems. MNNR enables per-token pricing, real-time usage tracking, and automated payments for any AI API.",
+    "provider": {
+      "@type": "Organization",
+      "name": "MNNR",
+      "url": "https://mnnr.app"
+    },
+    "areaServed": "Worldwide",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "MNNR Pricing Plans",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "AI Agent Billing - Free Tier",
+            "description": "10,000 API calls/month for AI billing"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "AI Agent Billing - Pro",
+            "description": "1M API calls/month with advanced features"
+          }
+        }
+      ]
+    },
+    "termsOfService": "https://mnnr.app/legal/terms",
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "serviceUrl": "https://mnnr.app",
+      "serviceType": "API"
+    }
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// How-to schema for AI search engines
+export function HowToSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Add Billing to Your AI Agent with MNNR",
+    "description": "Step-by-step guide to integrate MNNR billing into any AI agent, chatbot, or LLM application in under 5 minutes.",
+    "totalTime": "PT5M",
+    "estimatedCost": {
+      "@type": "MonetaryAmount",
+      "currency": "USD",
+      "value": "0"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Install MNNR SDK",
+        "text": "Install the MNNR SDK using npm (npm install @mnnr/sdk) or pip (pip install mnnr)",
+        "position": 1
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Initialize the Client",
+        "text": "Import MNNR and initialize with your API key: const mnnr = new MNNR({ apiKey: 'sk_...' })",
+        "position": 2
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Track AI Usage",
+        "text": "After each AI API call, track the usage: await mnnr.track('gpt-4', { tokens: 1500, userId: 'user_123' })",
+        "position": 3
+      },
+      {
+        "@type": "HowToStep",
+        "name": "View Analytics",
+        "text": "Monitor real-time usage and billing in the MNNR dashboard at app.mnnr.app",
+        "position": 4
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Collect Payments",
+        "text": "MNNR automatically handles invoicing and payment collection via Stripe integration",
+        "position": 5
+      }
+    ]
   };
 
   return (
@@ -206,6 +355,8 @@ export function StructuredData() {
       <ProductSchema />
       <FAQSchema />
       <WebsiteSchema />
+      <AIServiceSchema />
+      <HowToSchema />
     </>
   );
 }
