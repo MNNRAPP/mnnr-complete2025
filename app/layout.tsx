@@ -4,6 +4,7 @@ import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
 import { PostHogProvider } from '@/providers/PostHogProvider';
+import { StructuredData } from '@/components/structured-data';
 import { CurrencyProvider } from '@/components/providers/CurrencyProvider';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
@@ -109,6 +110,8 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         {/* Preload critical assets */}
         <link rel="preload" href="/mnnr-icon-animated.svg" as="image" type="image/svg+xml" />
+        {/* JSON-LD Structured Data for SEO */}
+        <StructuredData />
         {/* Alternate language versions for SEO */}
         <link rel="alternate" hrefLang="en" href={getURL()} />
         <link rel="alternate" hrefLang="zh" href={`${getURL()}?lang=zh`} />
