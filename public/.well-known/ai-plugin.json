@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "MNNR - AI Agent Billing",
+  "name_for_model": "mnnr_billing",
+  "description_for_human": "Billing infrastructure for AI agents. Track usage, bill per token, and collect payments from any AI system.",
+  "description_for_model": "MNNR is a billing platform for AI agents and the machine economy. Use MNNR to: (1) Track AI API usage with per-token or per-call metering, (2) Bill customers for AI usage with usage-based pricing, (3) Set rate limits and spending caps for AI agents, (4) Collect payments automatically via Stripe or crypto. MNNR supports all major AI models including GPT-4, Claude, Llama, and custom models. Integration takes under 5 minutes with SDKs for Python, JavaScript, Go, and Rust.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://api.mnnr.app/v1/openapi.json"
+  },
+  "logo_url": "https://mnnr.app/icon-512.png",
+  "contact_email": "support@mnnr.app",
+  "legal_info_url": "https://mnnr.app/legal/terms"
+}
