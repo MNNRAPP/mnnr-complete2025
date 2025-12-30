@@ -95,7 +95,7 @@ export default function Features() {
         </svg>
       ),
       title: 'Real-Time Usage Tracking',
-      description: 'Track API calls, tokens, compute cycles, or any custom metric. Sub-millisecond latency with global edge deployment.',
+      description: 'Track API calls, tokens, compute cycles, or any custom metric. Fast, reliable tracking with global edge deployment.',
       gradient: 'bg-gradient-to-br from-emerald-500/20 to-emerald-600/20',
       href: '/docs/api#usage-tracking'
     },
@@ -139,7 +139,7 @@ export default function Features() {
         </svg>
       ),
       title: 'Security Focused',
-      description: 'Bank-level encryption, audit logs, SSO support, and compliance controls in progress.',
+      description: 'Industry-standard encryption (AES-256), audit logs, SSO support, and compliance controls in progress (SOC 2 Type II target: Q2 2026).',
       gradient: 'bg-gradient-to-br from-red-500/20 to-pink-500/20',
       href: '/legal/security'
     },

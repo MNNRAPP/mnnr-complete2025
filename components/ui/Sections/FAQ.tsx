@@ -34,7 +34,7 @@ const faqs: FAQItem[] = [
   },
   {
     question: "Is my data secure with MNNR?",
-    answer: "Yes. We use bank-level 256-bit encryption for all data in transit and at rest. We're implementing SOC 2 controls and follow GDPR and CCPA compliant practices. All infrastructure runs on enterprise-grade cloud providers with high availability. We never store sensitive payment information—that's handled by Stripe."
+    answer: "Yes. We use industry-standard AES-256 encryption for all data in transit (TLS) and at rest. We are working towards SOC 2 Type II certification (target: Q2 2026) and follow GDPR and CCPA compliant practices. All infrastructure runs on enterprise-grade cloud providers. We never store sensitive payment information—that's handled by Stripe, a PCI DSS Level 1 certified payment processor."
   },
   {
     question: "Do you support cryptocurrency and Web3 payments?",
