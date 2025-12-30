@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import DemoVideo from './DemoVideo';
 
 // Animated particles background
 function ParticleField() {
@@ -234,9 +235,10 @@ export default function Hero() {
           </Link>
         </div>
 
-        {/* Code Terminal */}
-        <div className="max-w-2xl mx-auto mb-16">
+        {/* Code Terminal & Demo Video */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
           <CodeTerminal />
+          <DemoVideo />
         </div>
         
         {/* Stats */}
