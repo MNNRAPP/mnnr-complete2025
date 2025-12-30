@@ -85,8 +85,15 @@ export const metadata: Metadata = {
     images: ['/mnnr-logo-full.svg'],
   },
   icons: {
-    icon: '/mnnr-icon.svg',
-    apple: '/mnnr-icon.svg',
+    icon: '/mnnr-icon-animated.svg',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+    other: [
+      { rel: 'icon', type: 'image/png', sizes: '32x32', url: '/favicon-32.png' },
+      { rel: 'icon', type: 'image/png', sizes: '16x16', url: '/favicon-16.png' },
+      { rel: 'icon', type: 'image/png', sizes: '192x192', url: '/icon-192.png' },
+      { rel: 'icon', type: 'image/png', sizes: '512x512', url: '/icon-512.png' },
+    ],
   },
   manifest: '/manifest.json',
 };
@@ -101,7 +108,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="dns-prefetch" href="https://api.stripe.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         {/* Preload critical assets */}
-        <link rel="preload" href="/mnnr-icon.svg" as="image" type="image/svg+xml" />
+        <link rel="preload" href="/mnnr-icon-animated.svg" as="image" type="image/svg+xml" />
         {/* Alternate language versions for SEO */}
         <link rel="alternate" hrefLang="en" href={getURL()} />
         <link rel="alternate" hrefLang="zh" href={`${getURL()}?lang=zh`} />
