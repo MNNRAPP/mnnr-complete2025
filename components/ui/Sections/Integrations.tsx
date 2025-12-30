@@ -77,8 +77,10 @@ export default function Integrations() {
             </span>
           </h2>
           <p className="text-xl text-white/50 max-w-2xl mx-auto">
-            Plug into your existing infrastructure. No migration required. 
-            From AI providers to blockchain networks.
+            Plug into your existing infrastructure. No migration required.
+          </p>
+          <p className="text-xs text-white/30 mt-4 max-w-2xl mx-auto">
+            Third-party logos are trademarks of their respective owners. MNNR is not affiliated with or endorsed by these companies. Logos shown indicate technical compatibility only.
           </p>
         </div>
 

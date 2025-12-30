@@ -1,11 +1,14 @@
 import Hero from '@/components/ui/Hero/Hero';
 import Features from '@/components/ui/Sections/Features';
+import PerformanceMetrics from '@/components/ui/Sections/PerformanceMetrics';
 import Integrations from '@/components/ui/Sections/Integrations';
 import CTA from '@/components/ui/Sections/CTA';
 import PricingSection from '@/components/ui/Pricing/PricingSection';
+import PricingComparison from '@/components/ui/Pricing/PricingComparison';
 import FAQ from '@/components/ui/Sections/FAQ';
 import Newsletter from '@/components/ui/Sections/Newsletter';
 import Testimonials from '@/components/ui/Sections/Testimonials';
+import CaseStudies from '@/components/ui/Sections/CaseStudies';
 
 // Force static generation for maximum performance
 // Data fetching moved to client-side in PricingSection
@@ -17,9 +20,12 @@ export default function HomePage() {
     <>
       <Hero />
       <Features />
+      <PerformanceMetrics />
       <Integrations />
       <PricingSection />
+      <PricingComparison />
       <Testimonials />
+      <CaseStudies />
       <FAQ />
       <Newsletter />
       <CTA />

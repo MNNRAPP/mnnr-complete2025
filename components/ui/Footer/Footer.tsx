@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Logo from '@/components/icons/Logo';
+import ComplianceFooter from './ComplianceFooter';
 
 export default function Footer() {
   return (
@@ -127,18 +128,8 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} MNNR. All rights reserved.
-          </div>
-          <div className="text-white/40 text-xs text-center max-w-md">
-            Third-party logos are trademarks of their respective owners. No endorsement implied.
-          </div>
-          <div className="text-white/40 text-sm">
-            Billing Infrastructure for the Machine Economy
-          </div>
-        </div>
+        {/* Compliance Footer */}
+        <ComplianceFooter />
       </div>
     </footer>
   );
