@@ -1,0 +1,182 @@
+{
+  "version": "1.0",
+  "application": {
+    "name": "MNNR Website",
+    "description": "AI Agent Billing & Payments Infrastructure",
+    "repository": "https://github.com/MNNRAPP/mnnr-complete2025",
+    "branch": "main",
+    "buildCommand": "npm run build",
+    "startCommand": "npm start",
+    "port": 3000,
+    "environment": "production"
+  },
+  "deployment": {
+    "strategy": "docker",
+    "healthCheck": {
+      "enabled": true,
+      "path": "/",
+      "interval": 30,
+      "timeout": 10,
+      "retries": 3
+    },
+    "autoRestart": true,
+    "logging": {
+      "level": "info",
+      "retention": 30
+    }
+  },
+  "scaling": {
+    "minInstances": 1,
+    "maxInstances": 3,
+    "cpuThreshold": 80,
+    "memoryThreshold": 85
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics": [
+      "cpu",
+      "memory",
+      "disk",
+      "network",
+      "requests"
+    ],
+    "alerts": {
+      "highCpu": {
+        "enabled": true,
+        "threshold": 80
+      },
+      "highMemory": {
+        "enabled": true,
+        "threshold": 85
+      },
+      "diskFull": {
+        "enabled": true,
+        "threshold": 90
+      },
+      "deploymentFailure": {
+        "enabled": true
+      }
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "frequency": "daily",
+    "retention": 30,
+    "storage": "local"
+  },
+  "ssl": {
+    "enabled": true,
+    "provider": "letsencrypt",
+    "autoRenew": true,
+    "domains": [
+      "mnnr.app",
+      "www.mnnr.app"
+    ]
+  },
+  "domains": [
+    {
+      "name": "mnnr.app",
+      "ssl": true,
+      "redirect": false
+    },
+    {
+      "name": "www.mnnr.app",
+      "ssl": true,
+      "redirect": true,
+      "redirectTo": "mnnr.app"
+    }
+  ],
+  "environmentVariables": {
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_SUPABASE_URL": "${NEXT_PUBLIC_SUPABASE_URL}",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "${NEXT_PUBLIC_SUPABASE_ANON_KEY}",
+    "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}",
+    "DATABASE_URL": "${DATABASE_URL}",
+    "STRIPE_SECRET_KEY": "${STRIPE_SECRET_KEY}",
+    "STRIPE_WEBHOOK_SECRET": "${STRIPE_WEBHOOK_SECRET}",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}",
+    "POSTHOG_API_KEY": "${POSTHOG_API_KEY}",
+    "SENTRY_DSN": "${SENTRY_DSN}"
+  },
+  "services": {
+    "database": {
+      "type": "postgresql",
+      "version": "15",
+      "enabled": true,
+      "backup": {
+        "enabled": true,
+        "frequency": "daily",
+        "retention": 30
+      }
+    },
+    "redis": {
+      "type": "redis",
+      "version": "7",
+      "enabled": true,
+      "persistence": true
+    },
+    "nginx": {
+      "type": "nginx",
+      "enabled": true,
+      "ssl": true,
+      "compression": true
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": 3600,
+      "strategy": "redis"
+    },
+    "compression": {
+      "enabled": true,
+      "level": 6
+    },
+    "cdn": {
+      "enabled": false,
+      "provider": "cloudflare"
+    }
+  },
+  "security": {
+    "firewall": {
+      "enabled": true,
+      "rules": [
+        {
+          "type": "rate_limit",
+          "requests": 100,
+          "window": 60
+        },
+        {
+          "type": "ddos_protection",
+          "enabled": true
+        }
+      ]
+    },
+    "headers": {
+      "contentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+      "xFrameOptions": "DENY",
+      "xContentTypeOptions": "nosniff",
+      "xXssProtection": "1; mode=block"
+    }
+  },
+  "notifications": {
+    "email": {
+      "enabled": true,
+      "recipients": ["pilot@mnnr.app"],
+      "events": [
+        "deployment_success",
+        "deployment_failure",
+        "alert_triggered",
+        "backup_completed"
+      ]
+    },
+    "slack": {
+      "enabled": false,
+      "webhook": "${SLACK_WEBHOOK_URL}"
+    }
+  },
+  "deployment_history": {
+    "retention": 50,
+    "autoCleanup": true
+  }
+}
