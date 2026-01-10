@@ -6,10 +6,10 @@ import { getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
 export async function GET(request: NextRequest) {
   // The `/auth/callback` route handles both OAuth code exchange and magic link verification
   // OAuth: code parameter for OAuth flows
-  // Magic Link: token + type parameters for email-based OTP authentication
+  // Magic Link: token_hash + type parameters for email-based OTP authentication
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
-  const token = requestUrl.searchParams.get('token');
+  const token_hash = requestUrl.searchParams.get('token_hash');
   const type = requestUrl.searchParams.get('type');
 
   const supabase = createClient();
@@ -38,12 +38,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Handle magic link (OTP token from email)
-  if (token && type) {
+  // Handle magic link (OTP token_hash from email)
+  if (token_hash && type) {
     try {
       const { error } = await supabase.auth.verifyOtp({
-        token,
-        type: type as 'signup' | 'recovery' | 'invite' | 'email_change' | 'phone_change'
+        token_hash,
+        type: type as 'signup' | 'recovery' | 'invite' | 'email' | 'magiclink'
       });
 
       if (error) {

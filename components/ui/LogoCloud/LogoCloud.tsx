@@ -1,9 +1,9 @@
 import Image from 'next/image';
 
-const LOGOS = [
+const TECH_STACK = [
   {
     href: 'https://nextjs.org',
-    ariaLabel: 'Next.js Link',
+    ariaLabel: 'Built with Next.js',
     src: '/nextjs.svg',
     alt: 'Next.js Logo',
     width: 120,
@@ -11,37 +11,28 @@ const LOGOS = [
     className: 'h-6 sm:h-12 w-auto text-white',
   },
   {
-    href: 'https://vercel.com',
-    ariaLabel: 'Vercel.com Link',
-    src: '/vercel.svg',
-    alt: 'Vercel.com Logo',
-    width: 120,
-    height: 24,
-    className: 'h-6 w-auto text-white',
-  },
-  {
-    href: 'https://stripe.com',
-    ariaLabel: 'stripe.com Link',
-    src: '/stripe.svg',
-    alt: 'stripe.com Logo',
-    width: 120,
-    height: 48,
-    className: 'h-12 w-auto text-white',
-  },
-  {
     href: 'https://supabase.io',
-    ariaLabel: 'supabase.io Link',
+    ariaLabel: 'Powered by Supabase',
     src: '/supabase.svg',
-    alt: 'supabase.io Logo',
+    alt: 'Supabase Logo',
     width: 120,
     height: 40,
     className: 'h-10 w-auto text-white',
   },
   {
+    href: 'https://stripe.com',
+    ariaLabel: 'Payments by Stripe',
+    src: '/stripe.svg',
+    alt: 'Stripe Logo',
+    width: 120,
+    height: 48,
+    className: 'h-12 w-auto text-white',
+  },
+  {
     href: 'https://github.com',
-    ariaLabel: 'github.com Link',
+    ariaLabel: 'Open source on GitHub',
     src: '/github.svg',
-    alt: 'github.com Logo',
+    alt: 'GitHub Logo',
     width: 120,
     height: 40,
     className: 'h-8 w-auto text-white',
@@ -52,18 +43,18 @@ export default function LogoCloud() {
   return (
     <div>
       <p className="mt-24 text-xs uppercase text-zinc-400 text-center font-bold tracking-[0.3em]">
-        Brought to you by
+        Built with
       </p>
-      <div className="grid grid-cols-1 place-items-center my-12 space-y-4 sm:mt-8 sm:space-y-0 md:mx-auto md:max-w-2xl sm:grid sm:gap-6 sm:grid-cols-5">
-        {LOGOS.map((logo) => (
-          <div key={logo.src} className="flex items-center justify-start h-12">
-            <a href={logo.href} aria-label={logo.ariaLabel}>
+      <div className="grid grid-cols-1 place-items-center my-12 space-y-4 sm:mt-8 sm:space-y-0 md:mx-auto md:max-w-2xl sm:grid sm:gap-6 sm:grid-cols-4">
+        {TECH_STACK.map((tech) => (
+          <div key={tech.src} className="flex items-center justify-start h-12">
+            <a href={tech.href} aria-label={tech.ariaLabel}>
               <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={logo.width}
-                height={logo.height}
-                className={logo.className}
+                src={tech.src}
+                alt={tech.alt}
+                width={tech.width}
+                height={tech.height}
+                className={tech.className}
               />
             </a>
           </div>
