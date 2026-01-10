@@ -2,190 +2,312 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | MNNR',
-  description: 'Privacy Policy for MNNR - Billing Infrastructure for the Machine Economy'
+  description: 'Privacy Policy for MNNR, LLC - Usage Analytics for AI Applications'
 };
 
-export default function PrivacyPolicyPage() {
+export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      <div className="max-w-4xl mx-auto px-6 py-20">
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
-            <span className="text-emerald-400 text-sm">🔒 Legal</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Privacy Policy</h1>
-          <p className="text-white/50">
-            <strong>Last Updated:</strong> December 28, 2025<br />
-            <strong>Effective Date:</strong> January 1, 2026
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          <a href="/" className="text-2xl font-bold text-blue-600">MNNR</a>
+        </div>
+      </header>
+
+      {/* Content */}
+      <article className="max-w-4xl mx-auto px-4 py-12 prose prose-lg prose-slate max-w-none">
+        <h1>Privacy Policy</h1>
+        
+        <p className="text-gray-600">
+          <strong>Last Updated:</strong> January 9, 2026<br />
+          <strong>Effective Date:</strong> January 9, 2026
+        </p>
+
+        <hr />
+
+        <h2>1. Introduction</h2>
+        <p>
+          Welcome to MNNR ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, disclose, and safeguard your information when you use our usage analytics and metering platform at https://mnnr.app (the "Service").
+        </p>
+        <p>
+          <strong>Legal Entity:</strong> MNNR, LLC<br />
+          <strong>EIN:</strong> 33-3678186<br />
+          <strong>Address:</strong> 1603 Capitol Ave, Suite 413 PMB #1750, Cheyenne, WY 82001<br />
+          <strong>Phone:</strong> (252) 242-0710<br />
+          <strong>Email:</strong> legal@mnnr.app
+        </p>
+
+        <h2>2. Information We Collect</h2>
+        
+        <h3>2.1 Information You Provide to Us</h3>
+        <p><strong>Account Information:</strong></p>
+        <ul>
+          <li>Email address</li>
+          <li>Name (optional)</li>
+          <li>Company name (optional)</li>
+          <li>Password (encrypted, we never store plain text)</li>
+        </ul>
+
+        <p><strong>Billing Information:</strong></p>
+        <ul>
+          <li>Payment information is collected and processed by Stripe, Inc.</li>
+          <li>We do NOT store credit card numbers or payment credentials</li>
+          <li>We receive only payment confirmation and customer ID from Stripe</li>
+        </ul>
+
+        <p><strong>Usage Data You Send to Our API:</strong></p>
+        <ul>
+          <li>API usage metrics (tokens, calls, compute cycles)</li>
+          <li>Metadata you choose to include (model names, user IDs, etc.)</li>
+          <li>Timestamps of API requests</li>
+          <li>API key identifiers</li>
+        </ul>
+
+        <h3>2.2 Information We Collect Automatically</h3>
+        <p><strong>Technical Information:</strong></p>
+        <ul>
+          <li>IP address</li>
+          <li>Browser type and version</li>
+          <li>Device information</li>
+          <li>Operating system</li>
+          <li>Referring URLs</li>
+          <li>Pages visited and time spent</li>
+          <li>API request logs</li>
+        </ul>
+
+        <p><strong>Cookies and Similar Technologies:</strong></p>
+        <ul>
+          <li>Essential cookies (authentication, security)</li>
+          <li>Analytics cookies (Google Analytics, opt-in required)</li>
+          <li>Preference cookies (language, theme)</li>
+        </ul>
+        <p>We use cookies to enhance your experience. You can control cookies through our cookie consent banner and your browser settings.</p>
+
+        <h2>3. How We Use Your Information</h2>
+        <p>We use collected information for:</p>
+        
+        <p><strong>Service Delivery:</strong></p>
+        <ul>
+          <li>Providing usage analytics and metering services</li>
+          <li>Processing API requests</li>
+          <li>Generating usage reports and dashboards</li>
+          <li>Billing and invoicing (via Stripe)</li>
+        </ul>
+
+        <p><strong>Service Improvement:</strong></p>
+        <ul>
+          <li>Analyzing usage patterns (aggregated, anonymized)</li>
+          <li>Improving platform performance</li>
+          <li>Developing new features</li>
+          <li>Troubleshooting technical issues</li>
+        </ul>
+
+        <p><strong>Communication:</strong></p>
+        <ul>
+          <li>Sending service updates and announcements</li>
+          <li>Responding to support requests</li>
+          <li>Sending usage alerts and notifications</li>
+          <li>Marketing communications (opt-in only)</li>
+        </ul>
+
+        <p><strong>Legal and Security:</strong></p>
+        <ul>
+          <li>Preventing fraud and abuse</li>
+          <li>Complying with legal obligations</li>
+          <li>Enforcing our Terms of Service</li>
+          <li>Protecting our rights and property</li>
+        </ul>
+
+        <h2>4. How We Share Your Information</h2>
+        <p>We do NOT sell your personal information. We share data only in these limited circumstances:</p>
+
+        <p><strong>Service Providers:</strong></p>
+        <ul>
+          <li><strong>Stripe:</strong> Payment processing (PCI DSS Level 1 certified)</li>
+          <li><strong>Supabase:</strong> Database hosting (SOC 2 Type II certified)</li>
+          <li><strong>Vercel:</strong> Application hosting and CDN</li>
+          <li><strong>Sentry:</strong> Error tracking and monitoring</li>
+          <li><strong>Google Analytics:</strong> Usage analytics (anonymized, opt-in)</li>
+        </ul>
+
+        <p><strong>Legal Requirements:</strong></p>
+        <ul>
+          <li>To comply with applicable laws and regulations</li>
+          <li>In response to valid legal requests (subpoenas, court orders)</li>
+          <li>To protect our rights, property, or safety</li>
+          <li>In connection with legal proceedings</li>
+        </ul>
+
+        <p><strong>Business Transfers:</strong></p>
+        <ul>
+          <li>In the event of merger, acquisition, or sale of assets</li>
+          <li>You will be notified via email 30 days before transfer</li>
+          <li>You may delete your account before transfer completes</li>
+        </ul>
+
+        <p><strong>With Your Consent:</strong></p>
+        <ul>
+          <li>When you explicitly authorize us to share your information</li>
+          <li>For purposes you have approved</li>
+        </ul>
+
+        <h2>5. Data Retention</h2>
+        <p><strong>Account Data:</strong> Retained while your account is active</p>
+        <p><strong>Usage Events:</strong></p>
+        <ul>
+          <li>Free plan: 7 days</li>
+          <li>Pro plan: 90 days</li>
+          <li>Enterprise: Custom retention period</li>
+        </ul>
+        <p><strong>Billing Records:</strong> 7 years (legal requirement for tax purposes)</p>
+        <p><strong>Deleted Accounts:</strong></p>
+        <ul>
+          <li>Account data deleted within 30 days of account closure</li>
+          <li>Anonymized usage data may be retained for analytics</li>
+          <li>Backups purged within 90 days</li>
+        </ul>
+        <p>You can request immediate deletion by contacting legal@mnnr.app</p>
+
+        <h2>6. Your Rights</h2>
+        
+        <h3>6.1 GDPR Rights (European Users)</h3>
+        <p>If you are in the European Economic Area, you have the right to:</p>
+        <ul>
+          <li><strong>Access:</strong> Request copies of your personal data</li>
+          <li><strong>Rectification:</strong> Correct inaccurate or incomplete data</li>
+          <li><strong>Erasure:</strong> Request deletion of your data ("right to be forgotten")</li>
+          <li><strong>Restriction:</strong> Limit how we process your data</li>
+          <li><strong>Portability:</strong> Receive your data in machine-readable format</li>
+          <li><strong>Object:</strong> Object to processing based on legitimate interests</li>
+          <li><strong>Withdraw Consent:</strong> Opt out of marketing or optional processing</li>
+        </ul>
+        <p>To exercise these rights, email: gdpr@mnnr.app</p>
+        <p>We will respond within 30 days of your request.</p>
+
+        <h3>6.2 CCPA Rights (California Residents)</h3>
+        <p>California residents have the right to:</p>
+        <ul>
+          <li><strong>Know:</strong> What personal information we collect, use, and share</li>
+          <li><strong>Delete:</strong> Request deletion of your personal information</li>
+          <li><strong>Opt-Out:</strong> Opt out of sale of personal information (we do NOT sell data)</li>
+          <li><strong>Non-Discrimination:</strong> Not receive discriminatory treatment for exercising rights</li>
+        </ul>
+        <p>To exercise these rights, email: privacy@mnnr.app or call (252) 242-0710</p>
+        <p>We will respond within 45 days of your verified request.</p>
+
+        <h3>6.3 All Users</h3>
+        <p>Regardless of location, you can:</p>
+        <ul>
+          <li>Update your account information in dashboard settings</li>
+          <li>Export your usage data (JSON/CSV format)</li>
+          <li>Delete your account at any time</li>
+          <li>Opt out of marketing emails (unsubscribe link in emails)</li>
+          <li>Disable non-essential cookies via cookie settings</li>
+        </ul>
+
+        <h2>7. Data Security</h2>
+        <p>We implement industry-standard security measures:</p>
+        
+        <p><strong>Encryption:</strong></p>
+        <ul>
+          <li>TLS 1.3 for data in transit</li>
+          <li>AES-256 encryption for data at rest</li>
+          <li>Encrypted database backups</li>
+        </ul>
+
+        <p><strong>Access Controls:</strong></p>
+        <ul>
+          <li>Multi-factor authentication for admin access</li>
+          <li>Role-based access control (RBAC)</li>
+          <li>API keys with scoped permissions</li>
+          <li>Regular access reviews</li>
+        </ul>
+
+        <p><strong>Infrastructure:</strong></p>
+        <ul>
+          <li>SOC 2 compliant hosting providers</li>
+          <li>Automated security scanning</li>
+          <li>Regular penetration testing</li>
+          <li>24/7 monitoring and alerting</li>
+        </ul>
+
+        <p><strong>Incident Response:</strong></p>
+        <ul>
+          <li>Security incidents reported within 72 hours (GDPR requirement)</li>
+          <li>Affected users notified promptly</li>
+          <li>Post-incident reports published</li>
+        </ul>
+
+        <p><strong>Note:</strong> No method of transmission over the Internet is 100% secure. While we strive to protect your data, we cannot guarantee absolute security.</p>
+
+        <h2>8. International Data Transfers</h2>
+        <p>Our servers are located in the United States. If you access our Service from outside the US, your data will be transferred to and processed in the United States.</p>
+        
+        <p><strong>For EU Users:</strong></p>
+        <ul>
+          <li>We use Standard Contractual Clauses (SCCs) approved by the European Commission</li>
+          <li>Our sub-processors are GDPR-compliant</li>
+          <li>Data Processing Agreement available upon request: dpa@mnnr.app</li>
+        </ul>
+
+        <p><strong>For UK Users:</strong></p>
+        <ul>
+          <li>We comply with UK GDPR and Data Protection Act 2018</li>
+          <li>International Data Transfer Addendum available upon request</li>
+        </ul>
+
+        <h2>9. Children's Privacy</h2>
+        <p>Our Service is NOT intended for children under 16 (or 13 in the US). We do not knowingly collect personal information from children.</p>
+        <p>If you are a parent or guardian and believe your child has provided us with personal information, contact us at legal@mnnr.app and we will delete it immediately.</p>
+
+        <h2>10. Changes to This Privacy Policy</h2>
+        <p>We may update this policy from time to time. Changes will be posted on this page with updated "Last Updated" date.</p>
+        
+        <p><strong>Material Changes:</strong></p>
+        <ul>
+          <li>We will notify you via email (to address on file)</li>
+          <li>Notice will be posted on our homepage for 30 days</li>
+          <li>Continued use after changes constitutes acceptance</li>
+        </ul>
+
+        <p><strong>Your Options:</strong></p>
+        <ul>
+          <li>Review changes and decide whether to continue using the Service</li>
+          <li>Delete your account if you disagree with changes</li>
+        </ul>
+
+        <h2>11. Contact Us</h2>
+        <p>For questions about this Privacy Policy or our privacy practices:</p>
+        <p>
+          <strong>Email:</strong> privacy@mnnr.app<br />
+          <strong>Legal:</strong> legal@mnnr.app<br />
+          <strong>Support:</strong> support@mnnr.app<br />
+          <strong>Phone:</strong> (252) 242-0710
+        </p>
+        <p>
+          <strong>Mailing Address:</strong><br />
+          MNNR, LLC<br />
+          1603 Capitol Ave, Suite 413 PMB #1750<br />
+          Cheyenne, WY 82001
+        </p>
+
+        <hr />
+
+        <p><strong>Acknowledgment:</strong> By using our Service, you acknowledge that you have read and understood this Privacy Policy.</p>
+        
+        <p className="text-sm text-gray-600"><em>This Privacy Policy was last updated on January 9, 2026.</em></p>
+      </article>
+
+      {/* Footer */}
+      <footer className="border-t mt-20">
+        <div className="max-w-4xl mx-auto px-4 py-8 text-center text-gray-600">
+          <p>© 2026 MNNR, LLC. All rights reserved.</p>
+          <p className="text-sm mt-2">
+            1603 Capitol Ave, Suite 413 PMB #1750, Cheyenne, WY 82001
           </p>
         </div>
-
-        <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-white/70 prose-li:text-white/70 prose-a:text-emerald-400 prose-strong:text-white">
-          <h2>1. Introduction</h2>
-          <p>
-            MNNR ("we," "us," or "our") operates the mnnr.app website and platform (the "Service").
-            This Privacy Policy explains how we collect, use, disclose, and safeguard your information
-            when you use our billing infrastructure for autonomous systems.
-          </p>
-
-          <h2>2. Information We Collect</h2>
-
-          <h3>2.1 Information You Provide</h3>
-          <ul>
-            <li><strong>Account Information:</strong> Email address, name, company information</li>
-            <li><strong>API Usage Data:</strong> Metadata about API calls, usage metrics you track</li>
-            <li><strong>Payment Information:</strong> Processed securely through Stripe (we do not store credit card details)</li>
-            <li><strong>Communications:</strong> Support requests, feedback, and correspondence</li>
-          </ul>
-
-          <h3>2.2 Information Collected Automatically</h3>
-          <ul>
-            <li><strong>Usage Data:</strong> API calls, rate limit events, billing queries</li>
-            <li><strong>Device Information:</strong> Browser type, operating system, IP address</li>
-            <li><strong>Cookies:</strong> Authentication tokens, preferences (see Cookie Policy)</li>
-          </ul>
-
-          <h3>2.3 Information We Do NOT Collect</h3>
-          <ul>
-            <li>Your end users' personal data (unless you explicitly send it)</li>
-            <li>Payment card numbers (handled by Stripe)</li>
-            <li>Your application's actual content or data</li>
-          </ul>
-
-          <h2>3. How We Use Your Information</h2>
-          <p>We use your information to:</p>
-          <ul>
-            <li>Provide usage tracking, billing, and payment services</li>
-            <li>Process your subscription payments</li>
-            <li>Send service-related communications</li>
-            <li>Analyze usage patterns to improve our infrastructure</li>
-            <li>Detect and prevent fraud, abuse, or security incidents</li>
-            <li>Comply with legal obligations</li>
-          </ul>
-
-          <h2>4. How We Share Your Information</h2>
-
-          <h3>4.1 Service Providers</h3>
-          <p>We share information with trusted service providers who assist us:</p>
-          <ul>
-            <li><strong>Stripe:</strong> Payment processing</li>
-            <li><strong>Supabase:</strong> Database and authentication</li>
-            <li><strong>Vercel:</strong> Hosting and infrastructure</li>
-            <li><strong>Cloudflare:</strong> CDN and security</li>
-          </ul>
-
-          <h3>4.2 We Do NOT Sell Your Data</h3>
-          <p>
-            We do not sell, rent, or trade your personal information to third parties for marketing purposes.
-          </p>
-
-          <h3>4.3 Legal Requirements</h3>
-          <p>We may disclose information if required by law or to:</p>
-          <ul>
-            <li>Comply with legal process (subpoena, court order)</li>
-            <li>Enforce our Terms of Service</li>
-            <li>Protect rights, property, or safety of MNNR, our users, or others</li>
-          </ul>
-
-          <h2>5. Data Security</h2>
-          <p>
-            We implement industry-standard security measures including:
-          </p>
-          <ul>
-            <li>TLS 1.3 encryption for all data in transit</li>
-            <li>AES-256 encryption for data at rest</li>
-            <li>Row-level security policies on databases</li>
-            <li>Regular security audits and penetration testing</li>
-            <li>24/7 security monitoring</li>
-            <li>SOC 2 Type II compliance (in progress)</li>
-          </ul>
-          <p>
-            <em>No method of transmission over the Internet is 100% secure. While we strive to protect
-            your data, we cannot guarantee absolute security.</em>
-          </p>
-
-          <h2>6. Your Rights and Choices</h2>
-
-          <h3>6.1 Access and Correction</h3>
-          <p>You can access and update your account information through your dashboard.</p>
-
-          <h3>6.2 Data Export</h3>
-          <p>
-            You can export your usage data and billing history at any time from your dashboard.
-          </p>
-
-          <h3>6.3 Data Deletion</h3>
-          <p>
-            You may request deletion of your account by contacting <a href="mailto:privacy@mnnr.app">privacy@mnnr.app</a>.
-            We will delete your data within 30 days, except as required by law.
-          </p>
-
-          <h3>6.4 Marketing Communications</h3>
-          <p>You can opt out of marketing emails via the unsubscribe link. We will still send service-related emails.</p>
-
-          <h2>7. Data Retention</h2>
-          <p>We retain your information for as long as:</p>
-          <ul>
-            <li>Your account is active</li>
-            <li>Needed to provide the Service</li>
-            <li>Required by law (tax records, financial transactions)</li>
-            <li>Necessary to resolve disputes or enforce agreements</li>
-          </ul>
-          <p>Usage logs are retained for 90 days. Billing records are retained for 7 years per tax requirements.</p>
-
-          <h2>8. International Data Transfers</h2>
-          <p>
-            Your information may be transferred to and processed in the United States and other countries
-            where our service providers operate. We ensure appropriate safeguards are in place per GDPR requirements.
-          </p>
-
-          <h2>9. Children's Privacy</h2>
-          <p>
-            Our Service is not directed to individuals under 18. We do not knowingly collect information
-            from children. If you believe we have collected information from a child, contact us immediately.
-          </p>
-
-          <h2>10. Changes to This Privacy Policy</h2>
-          <p>
-            We may update this Privacy Policy periodically. We will notify you of significant changes via
-            email or prominent notice on our Service. Your continued use after changes constitutes acceptance.
-          </p>
-
-          <h2>11. Contact Us</h2>
-          <p>For privacy-related questions or requests, contact us at:</p>
-          <ul>
-            <li><strong>Email:</strong> <a href="mailto:privacy@mnnr.app">privacy@mnnr.app</a></li>
-            <li><strong>Security Issues:</strong> <a href="mailto:security@mnnr.app">security@mnnr.app</a></li>
-          </ul>
-
-          <h2>12. California Privacy Rights (CCPA)</h2>
-          <p>California residents have additional rights under the CCPA:</p>
-          <ul>
-            <li><strong>Right to Know:</strong> What personal information we collect and how it's used</li>
-            <li><strong>Right to Delete:</strong> Request deletion of your personal information</li>
-            <li><strong>Right to Opt-Out:</strong> Opt out of sale of personal information (we do not sell your data)</li>
-            <li><strong>Right to Non-Discrimination:</strong> Equal service regardless of privacy choices</li>
-          </ul>
-          <p>To exercise these rights, contact <a href="mailto:privacy@mnnr.app">privacy@mnnr.app</a></p>
-
-          <h2>13. European Users (GDPR)</h2>
-          <p>If you are in the European Economic Area, you have rights under GDPR including:</p>
-          <ul>
-            <li>Right to access, rectify, or erase your data</li>
-            <li>Right to restrict or object to processing</li>
-            <li>Right to data portability</li>
-            <li>Right to withdraw consent</li>
-            <li>Right to lodge a complaint with a supervisory authority</li>
-          </ul>
-          <p>Our legal basis for processing: Consent, contract performance, legal obligation, legitimate interests.</p>
-
-          <hr className="border-white/10 my-8" />
-
-          <p className="text-sm text-white/40">
-            This Privacy Policy is part of our Terms of Service. By using MNNR, you agree to this Privacy Policy.
-          </p>
-        </div>
-      </div>
+      </footer>
     </div>
   );
 }
