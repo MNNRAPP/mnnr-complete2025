@@ -5,6 +5,7 @@ import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
 import { PostHogProvider } from '@/providers/PostHogProvider';
 import { StructuredData } from '@/components/structured-data';
+import CookieConsent from '@/components/ui/CookieConsent';
 import { CurrencyProvider } from '@/components/providers/CurrencyProvider';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
@@ -196,6 +197,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
             <Suspense>
               <Toaster />
             </Suspense>
+            <CookieConsent />
           </CurrencyProvider>
         </PostHogProvider>
       </body>
