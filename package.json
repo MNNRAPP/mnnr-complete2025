@@ -61,6 +61,7 @@
     "next-intl": "^4.6.1",
     "next-swagger-doc": "^0.4.1",
     "openai": "^6.15.0",
+    "postgres": "^3.4.8",
     "posthog-js": "^1.310.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -98,6 +99,7 @@
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "supabase": "^1.226.4",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
