@@ -95,13 +95,7 @@ export function ProductSchema() {
         "availability": "https://schema.org/InStock"
       }
     ],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "127",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
+    // Note: aggregateRating removed - will be added when we have real reviews
     "featureList": [
       "AI agent billing and monetization",
       "Per-token pricing for LLMs (GPT, Claude, Llama)",
