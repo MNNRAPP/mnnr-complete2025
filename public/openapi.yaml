@@ -1,0 +1,810 @@
+openapi: 3.0.3
+info:
+  title: MNNR API - AI Agent Billing Infrastructure
+  description: |
+    # MNNR API
+    
+    MNNR is the universal billing infrastructure for AI agents, LLMs, and autonomous systems.
+    
+    ## What is MNNR?
+    
+    MNNR provides the billing layer that enables AI agents to:
+    - Track usage (tokens, API calls, compute time)
+    - Bill customers with usage-based pricing
+    - Manage API keys with spending limits
+    - Collect payments via Stripe or crypto
+    
+    Think of MNNR as "Stripe for AI Agents" - purpose-built for machine-to-machine commerce.
+    
+    ## Quick Start
+    
+    1. Sign up at https://mnnr.app/signup
+    2. Get your API key from the dashboard
+    3. Install the SDK (`npm install @mnnr/sdk` or `pip install mnnr`)
+    4. Track usage after each AI API call
+    
+    ## Authentication
+    
+    All API requests require a Bearer token in the Authorization header:
+    
+    ```
+    Authorization: Bearer sk_live_your_api_key
+    ```
+    
+    ## Supported AI Models
+    
+    MNNR works with any AI model:
+    - OpenAI (GPT-4, GPT-3.5, DALL-E, Whisper)
+    - Anthropic (Claude 3 Opus, Sonnet, Haiku)
+    - Meta (Llama 3, Llama 2)
+    - Google (Gemini Pro, Ultra)
+    - Mistral, Cohere, and more
+    
+    ## Rate Limits
+    
+    - Free tier: 100 requests/minute
+    - Pro tier: 1,000 requests/minute
+    - Enterprise: Unlimited
+    
+  version: 1.0.0
+  termsOfService: https://mnnr.app/legal/terms
+  contact:
+    name: MNNR Support
+    email: support@mnnr.app
+    url: https://mnnr.app/docs
+  license:
+    name: Proprietary
+    url: https://mnnr.app/legal/terms
+  x-logo:
+    url: https://mnnr.app/icon-512.png
+    altText: MNNR Logo
+
+servers:
+  - url: https://api.mnnr.app/v1
+    description: Production API
+  - url: https://api-staging.mnnr.app/v1
+    description: Staging API (for testing)
+
+tags:
+  - name: API Keys
+    description: |
+      Manage API keys for AI agents. Each key can have custom permissions, 
+      rate limits, and spending caps.
+  - name: Usage
+    description: |
+      Track and query AI usage metrics. Supports tokens, API calls, 
+      compute time, and custom metrics.
+  - name: Billing
+    description: |
+      Manage subscriptions, view invoices, and access the billing portal.
+  - name: Health
+    description: API health and status endpoints.
+
+paths:
+  /keys:
+    get:
+      operationId: listApiKeys
+      summary: List all API keys
+      description: |
+        Returns a list of all API keys for the authenticated user.
+        Keys are returned with masked values (only prefix shown).
+      tags:
+        - API Keys
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of keys to return (max 100)
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          description: Offset for pagination
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of API keys
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keys:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApiKey'
+                  total:
+                    type: integer
+                  has_more:
+                    type: boolean
+              example:
+                keys:
+                  - id: "key_abc123"
+                    name: "Production Key"
+                    key_prefix: "sk_live_abc12345"
+                    scopes: ["read", "write"]
+                    rate_limit: 1000
+                    spending_limit: 100.00
+                    last_used_at: "2026-01-10T15:30:00Z"
+                    created_at: "2026-01-01T00:00:00Z"
+                total: 1
+                has_more: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    post:
+      operationId: createApiKey
+      summary: Create a new API key
+      description: |
+        Generate a new API key for AI agent authentication.
+        
+        **Important**: The full API key is only shown once in the response.
+        Store it securely - it cannot be retrieved again.
+      tags:
+        - API Keys
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Human-readable name for the key
+                  minLength: 1
+                  maxLength: 100
+                  example: "Production AI Agent"
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    enum: [read, write, admin]
+                  default: [read, write]
+                  description: Permissions for the key
+                rate_limit:
+                  type: integer
+                  description: Max requests per minute
+                  default: 60
+                  minimum: 1
+                  maximum: 10000
+                spending_limit:
+                  type: number
+                  description: Maximum spend in USD (null = unlimited)
+                  minimum: 0
+                expires_at:
+                  type: string
+                  format: date-time
+                  description: Optional expiration date
+      responses:
+        '201':
+          description: API key created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  key:
+                    type: string
+                    description: Full API key (shown only once)
+                  key_prefix:
+                    type: string
+                    description: Key prefix for identification
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  rate_limit:
+                    type: integer
+                  spending_limit:
+                    type: number
+                  created_at:
+                    type: string
+                    format: date-time
+              example:
+                id: "key_abc123"
+                name: "Production AI Agent"
+                key: "sk_live_abc123def456ghi789jkl012mno345pqr678"
+                key_prefix: "sk_live_abc123"
+                scopes: ["read", "write"]
+                rate_limit: 60
+                spending_limit: 100.00
+                created_at: "2026-01-11T10:00:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /keys/{keyId}:
+    delete:
+      operationId: revokeApiKey
+      summary: Revoke an API key
+      description: |
+        Immediately revokes an API key. This action cannot be undone.
+        Any requests using this key will fail after revocation.
+      tags:
+        - API Keys
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          description: The ID of the key to revoke
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Key revoked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  revoked:
+                    type: boolean
+                  revoked_at:
+                    type: string
+                    format: date-time
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /keys/{keyId}/rotate:
+    post:
+      operationId: rotateApiKey
+      summary: Rotate an API key
+      description: |
+        Creates a new API key and optionally revokes the old one.
+        Use this for periodic key rotation.
+      tags:
+        - API Keys
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                revoke_old:
+                  type: boolean
+                  default: true
+                  description: Whether to revoke the old key
+                grace_period_hours:
+                  type: integer
+                  default: 0
+                  description: Hours before old key is revoked
+      responses:
+        '200':
+          description: New API key created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_key:
+                    type: string
+                  old_key_revoked:
+                    type: boolean
+                  old_key_revokes_at:
+                    type: string
+                    format: date-time
+
+  /usage/track:
+    post:
+      operationId: trackUsage
+      summary: Track AI usage
+      description: |
+        Record a usage event for AI operations. This is the core endpoint
+        for tracking tokens, API calls, compute time, or custom metrics.
+        
+        **Example: Track GPT-4 Token Usage**
+        ```javascript
+        const completion = await openai.chat.completions.create({...});
+        
+        await mnnr.track('gpt-4', {
+          tokens: completion.usage.total_tokens,
+          userId: 'user_123'
+        });
+        ```
+      tags:
+        - Usage
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - metric
+                - value
+              properties:
+                metric:
+                  type: string
+                  description: |
+                    The metric to track. Common values:
+                    - `tokens` - LLM token count
+                    - `api_calls` - Number of API calls
+                    - `compute_ms` - Compute time in milliseconds
+                    - Custom metrics are supported
+                  example: "tokens"
+                value:
+                  type: number
+                  description: The metric value
+                  minimum: 0
+                  example: 1500
+                model:
+                  type: string
+                  description: AI model used (gpt-4, claude-3, etc.)
+                  example: "gpt-4-turbo"
+                user_id:
+                  type: string
+                  description: End user identifier for billing
+                  example: "user_123"
+                metadata:
+                  type: object
+                  description: Additional metadata
+                  additionalProperties: true
+                  example:
+                    prompt_tokens: 500
+                    completion_tokens: 1000
+                    endpoint: "/v1/chat/completions"
+                idempotency_key:
+                  type: string
+                  description: Unique key for deduplication
+      responses:
+        '200':
+          description: Usage recorded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Unique event ID
+                  metric:
+                    type: string
+                  value:
+                    type: number
+                  recorded_at:
+                    type: string
+                    format: date-time
+              example:
+                id: "evt_xyz789"
+                metric: "tokens"
+                value: 1500
+                recorded_at: "2026-01-11T10:30:00Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /usage:
+    get:
+      operationId: getUsage
+      summary: Get usage statistics
+      description: |
+        Query usage statistics for a time period. Returns aggregated
+        metrics that can be used for billing and analytics.
+      tags:
+        - Usage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          description: Time period to query
+          schema:
+            type: string
+            enum: [hour, day, week, month, all]
+            default: month
+        - name: metric
+          in: query
+          description: Specific metric to query
+          schema:
+            type: string
+        - name: model
+          in: query
+          description: Filter by AI model
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          description: Filter by end user
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          description: Custom start date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          description: Custom end date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Usage statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  period:
+                    type: string
+                  date_range:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: date-time
+                      end:
+                        type: string
+                        format: date-time
+                  metrics:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        total:
+                          type: number
+                        average:
+                          type: number
+                        count:
+                          type: integer
+                  timeline:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        value:
+                          type: number
+              example:
+                period: "month"
+                date_range:
+                  start: "2026-01-01T00:00:00Z"
+                  end: "2026-01-31T23:59:59Z"
+                metrics:
+                  tokens:
+                    total: 1500000
+                    average: 50000
+                    count: 30
+                  api_calls:
+                    total: 10000
+                    average: 333
+                    count: 30
+                timeline:
+                  - date: "2026-01-01"
+                    value: 45000
+                  - date: "2026-01-02"
+                    value: 52000
+
+  /usage/export:
+    get:
+      operationId: exportUsage
+      summary: Export usage data
+      description: Export usage data as CSV or JSON for analysis
+      tags:
+        - Usage
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, json]
+            default: json
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Usage data export
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/csv:
+              schema:
+                type: string
+
+  /billing/subscriptions:
+    get:
+      operationId: getSubscription
+      summary: Get subscription details
+      description: Returns the current subscription for the authenticated user
+      tags:
+        - Billing
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+
+  /billing/portal:
+    post:
+      operationId: createBillingPortal
+      summary: Create billing portal session
+      description: |
+        Creates a Stripe Customer Portal session for managing 
+        subscriptions, payment methods, and invoices.
+      tags:
+        - Billing
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                return_url:
+                  type: string
+                  format: uri
+                  description: URL to redirect after portal session
+      responses:
+        '200':
+          description: Portal session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: URL to Stripe Customer Portal
+
+  /billing/invoices:
+    get:
+      operationId: listInvoices
+      summary: List invoices
+      description: Returns all invoices for the authenticated user
+      tags:
+        - Billing
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [paid, open, void, uncollectible]
+      responses:
+        '200':
+          description: List of invoices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoices:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Invoice'
+
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      description: Returns the health status of the API
+      tags:
+        - Health
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  timestamp:
+                    type: string
+                    format: date-time
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: |
+        API key authentication. Get your key from https://mnnr.app/dashboard/api-keys
+        
+        Format: `Authorization: Bearer sk_live_your_api_key`
+
+  schemas:
+    ApiKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        key_prefix:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        rate_limit:
+          type: integer
+        spending_limit:
+          type: number
+        last_used_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [active, trialing, past_due, canceled]
+        plan:
+          type: string
+          enum: [free, pro, team, enterprise]
+        current_period_start:
+          type: string
+          format: date-time
+        current_period_end:
+          type: string
+          format: date-time
+        cancel_at_period_end:
+          type: boolean
+
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        amount_due:
+          type: integer
+        amount_paid:
+          type: integer
+        currency:
+          type: string
+        created:
+          type: string
+          format: date-time
+        invoice_pdf:
+          type: string
+          format: uri
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          description: Additional error details
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid request body"
+            code: "BAD_REQUEST"
+    
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid API key"
+            code: "UNAUTHORIZED"
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Resource not found"
+            code: "NOT_FOUND"
+    
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Rate limit exceeded. Try again in 60 seconds."
+            code: "RATE_LIMITED"
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+
+security:
+  - bearerAuth: []
+
+externalDocs:
+  description: Full MNNR Documentation
+  url: https://mnnr.app/docs

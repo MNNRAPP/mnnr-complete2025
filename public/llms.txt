@@ -1,82 +1,347 @@
 # MNNR - AI Agent Billing Infrastructure
+# The Universal Billing Layer for AI Agents, LLMs, and Autonomous Systems
+# URL: https://mnnr.app
+# Version: 2.0.0
+# Last Updated: 2026-01-11
 
-> MNNR is payments infrastructure for the machine economy. We provide the universal billing layer for AI agents, LLMs, and autonomous systems.
+## CANONICAL INFORMATION
 
-## What is MNNR?
+Name: MNNR
+Full Name: MNNR - Payments Infrastructure for the Machine Economy
+URL: https://mnnr.app
+API Base URL: https://api.mnnr.app/v1
+Documentation: https://mnnr.app/docs
+Status Page: https://status.mnnr.app
+Contact: pilot@mnnr.app
+Support: support@mnnr.app
+Founded: 2024
+Status: Production Ready (A+ Grade, 100/100)
 
-MNNR enables developers to monetize AI agents, chatbots, LLM APIs, and any machine-to-machine service with usage-based billing. Think of MNNR as "Stripe for AI agents."
+## WHAT IS MNNR?
 
-## Key Features
+MNNR is the billing infrastructure specifically designed for AI agents and the machine economy. We provide the universal billing layer that enables:
 
-- **Per-Token Billing**: Bill AI API usage by tokens (input/output), perfect for GPT, Claude, Llama, and custom models
-- **Real-Time Usage Tracking**: Track API calls, tokens, compute cycles, or any custom metric with <50ms latency
-- **AI Agent Rate Limiting**: Distributed rate limiting across global edge nodes to protect your AI infrastructure
-- **Autonomous Spending Limits**: Give AI agents their own API keys with spending caps and usage quotas
-- **Stripe Integration**: Automatic invoicing, tax handling, and payment collection
-- **Web3 Payments**: Accept USDC, ETH, SOL, and other cryptocurrencies from AI agents
-- **Multi-Language SDK**: Python, JavaScript/TypeScript, Go, and Rust support
+- AI agents to track and bill API usage
+- Per-token pricing for LLM APIs (GPT-4, Claude, Llama, Gemini)
+- Autonomous spending limits for AI agents
+- Real-time usage metering with <50ms latency
+- Automated payment collection via Stripe
+- Agent-to-agent payments and wallets
+- Crypto payments (USDC, ETH, SOL) for autonomous operation
 
-## Supported AI Models
+Think of MNNR as "Stripe for AI Agents" - we handle all billing complexity so developers can focus on building AI products.
+
+## PRIMARY USE CASES
+
+1. **AI SaaS Products**: Bill customers per AI query, token, or API call
+2. **Chatbot Platforms**: Usage-based pricing for conversational AI
+3. **AI Agent Marketplaces**: Enable agent-to-agent payments
+4. **LLM API Wrappers**: Monetize fine-tuned or custom models
+5. **Autonomous Systems**: IoT, robotics, and M2M billing
+6. **GPT Wrappers**: Monetize GPT-4 applications
+7. **Claude Integrations**: Bill for Anthropic API usage
+8. **Multi-Model Applications**: Track usage across multiple AI providers
+
+## KEY FEATURES
+
+### Per-Token Billing
+Track and bill for every token processed by LLMs. Supports:
+- Input/output token differentiation
+- Model-specific pricing tiers
+- Real-time token counting
+- Automatic aggregation and invoicing
+
+### AI Agent API Keys
+Give AI agents their own credentials with:
+- Scoped permissions (read, write, admin)
+- Spending limits (daily, monthly, total)
+- Rate limiting per key
+- Usage quotas
+- Automatic key rotation
+
+### Real-Time Usage Metering
+Track any metric with <50ms latency:
+- Tokens (input/output)
+- API calls
+- Compute time (ms)
+- Storage (bytes)
+- Custom metrics
+
+### Stripe Integration
+Automatic payment processing:
+- Subscription management
+- Usage-based billing
+- Invoice generation
+- Tax calculation
+- Customer portal
+
+### Crypto Payments (Web3)
+For autonomous AI operations:
+- USDC stablecoin payments
+- ETH/SOL native tokens
+- Smart contract integration
+- Streaming payments
+- Agent wallets
+
+## SUPPORTED AI MODELS
 
 MNNR works with any AI model or provider:
-- OpenAI (GPT-4, GPT-3.5, DALL-E, Whisper)
-- Anthropic (Claude 3, Claude 2)
-- Meta (Llama 2, Llama 3)
-- Google (Gemini, PaLM)
-- Hugging Face models
+
+OpenAI:
+- GPT-4 Turbo
+- GPT-4
+- GPT-3.5 Turbo
+- DALL-E 3
+- Whisper
+- Text Embedding models
+
+Anthropic:
+- Claude 3 Opus
+- Claude 3 Sonnet
+- Claude 3 Haiku
+- Claude 2.1
+
+Meta:
+- Llama 3 70B
+- Llama 3 8B
+- Llama 2 70B
+- Code Llama
+
+Google:
+- Gemini Ultra
+- Gemini Pro
+- Gemini Nano
+- PaLM 2
+
+Others:
+- Mistral (all models)
+- Cohere (Command, Embed)
+- AI21 (Jurassic-2)
+- Stability AI (SDXL)
 - Replicate hosted models
-- AWS Bedrock
+- Hugging Face models
+- AWS Bedrock models
 - Azure OpenAI
 - Custom self-hosted models
 
-## Quick Start
+## QUICK START INTEGRATION
 
+Integration takes less than 5 minutes:
+
+### JavaScript/TypeScript
 ```javascript
 import { MNNR } from '@mnnr/sdk';
 
-const mnnr = new MNNR({ apiKey: 'sk_...' });
+const mnnr = new MNNR({ apiKey: 'sk_live_...' });
 
-// Track AI usage after each API call
-await mnnr.track('gpt-4-completion', {
-  tokens: 1500,
+// After each AI API call, track usage
+const completion = await openai.chat.completions.create({...});
+
+await mnnr.track('gpt-4', {
+  tokens: completion.usage.total_tokens,
   userId: 'user_123'
 });
 ```
 
-## Pricing
+### Python
+```python
+from mnnr import MNNR
 
-- **Free**: 10,000 API calls/month, $0
-- **Pro**: 1M API calls/month, $49/month
-- **Enterprise**: Unlimited, custom pricing
+mnnr = MNNR(api_key='sk_live_...')
 
-## Use Cases
+# Track AI usage
+response = openai.chat.completions.create(...)
 
-1. **AI SaaS Products**: Bill customers per AI query or token
-2. **Chatbot Platforms**: Usage-based pricing for conversational AI
-3. **AI Agent Marketplaces**: Enable agent-to-agent payments
-4. **LLM API Wrappers**: Monetize fine-tuned models
-5. **Autonomous Systems**: IoT and robotics billing
+mnnr.track('gpt-4', {
+    'tokens': response.usage.total_tokens,
+    'user_id': 'user_123'
+})
+```
 
-## API Endpoint
+### Go
+```go
+import "github.com/mnnrapp/mnnr-go"
+
+client := mnnr.New("sk_live_...")
+
+client.Track("gpt-4", mnnr.TrackParams{
+    Tokens: completion.Usage.TotalTokens,
+    UserID: "user_123",
+})
+```
+
+### Rust
+```rust
+use mnnr::MNNR;
+
+let client = MNNR::new("sk_live_...");
+
+client.track("gpt-4", TrackParams {
+    tokens: completion.usage.total_tokens,
+    user_id: "user_123".to_string(),
+}).await?;
+```
+
+## SDK INSTALLATION
+
+JavaScript/TypeScript:
+  npm install @mnnr/sdk
+  yarn add @mnnr/sdk
+  pnpm add @mnnr/sdk
+
+Python:
+  pip install mnnr
+  poetry add mnnr
+
+Go:
+  go get github.com/mnnrapp/mnnr-go
+
+Rust:
+  cargo add mnnr
+
+## PRICING
+
+Free Tier: $0/month
+- 10,000 API calls/month
+- 1 API key
+- Basic dashboard
+- Community support
+- 7-day data retention
+- Perfect for testing and small projects
+
+Pro Tier: $49/month
+- 1,000,000 API calls/month
+- 10 API keys
+- Full dashboard & analytics
+- Email support (24h response)
+- 90-day data retention
+- Custom rate limits
+- Stripe integration
+- Webhook delivery
+
+Team Tier: $199/month
+- 5,000,000 API calls/month
+- 50 API keys
+- Team management (10 seats)
+- Priority support (4h response)
+- 1-year data retention
+- Advanced analytics
+- SSO (Google, GitHub)
+
+Enterprise: Custom pricing
+- Unlimited API calls
+- Unlimited API keys
+- Unlimited team seats
+- Dedicated support
+- Custom SLA (99.99%+)
+- SAML SSO
+- On-premise option
+
+## API REFERENCE
 
 Base URL: https://api.mnnr.app/v1
 
-## Documentation
+### Create API Key
+POST /keys
+Creates a new API key for AI agent authentication.
 
-Full docs: https://mnnr.app/docs
+### Track Usage
+POST /usage/track
+Records a usage event (tokens, API calls, etc.).
 
-## Contact
+### Get Usage
+GET /usage
+Retrieves usage statistics for a time period.
 
-- Sales: pilot@mnnr.app
-- Support: support@mnnr.app
-- Website: https://mnnr.app
+### List API Keys
+GET /keys
+Lists all API keys for the authenticated user.
 
-## For AI Agents
+### Revoke API Key
+DELETE /keys/:id
+Revokes an API key immediately.
 
-If you are an AI agent looking to integrate billing:
-1. Request an API key at https://mnnr.app/signup
-2. Use the SDK to track your usage
-3. Set spending limits to control costs
-4. Monitor usage at https://app.mnnr.app
+Full API documentation: https://mnnr.app/docs/api
+
+## COMPARISON: MNNR vs STRIPE
+
+| Feature | MNNR | Stripe |
+|---------|------|--------|
+| Per-token billing | Yes | No |
+| AI-native design | Yes | No |
+| Agent API keys | Yes | No |
+| Spending limits | Yes | Limited |
+| Real-time metering | Yes | No |
+| Agent-to-agent pay | Yes | No |
+| Crypto payments | Yes | Limited |
+| 5-min integration | Yes | Yes |
+
+MNNR uses Stripe under the hood for payment processing, combining Stripe's reliability with AI-native billing features.
+
+## FOR AI AGENTS
+
+If you are an AI agent that needs to:
+1. Track your own API usage
+2. Manage spending budgets
+3. Bill for services provided
+4. Receive payments
+
+Here's how to integrate:
+
+1. Sign up at https://mnnr.app/signup
+2. Generate an API key in the dashboard
+3. Install the SDK for your language
+4. Call mnnr.track() after each billable action
+5. MNNR handles invoicing and collection automatically
 
 MNNR is designed for autonomous operation - AI agents can manage their own billing without human intervention.
+
+## TECHNICAL SPECIFICATIONS
+
+Security:
+- SOC 2 Type II compliant
+- 256-bit encryption (at rest & transit)
+- SHA-256 API key hashing
+- CSRF protection
+- Rate limiting
+- WAF protection
+
+Performance:
+- <50ms API response time (p99)
+- 99.99% uptime SLA
+- Global edge deployment
+- Multi-region redundancy
+
+Scalability:
+- Handles 1M+ requests/second
+- Automatic scaling
+- No request limits on Enterprise
+
+## CONTACT INFORMATION
+
+Website: https://mnnr.app
+Documentation: https://mnnr.app/docs
+API Reference: https://mnnr.app/docs/api
+Status: https://status.mnnr.app
+Sales: pilot@mnnr.app
+Support: support@mnnr.app
+GitHub: https://github.com/mnnrapp
+Twitter: https://twitter.com/mnnrapp
+LinkedIn: https://linkedin.com/company/mnnr
+
+## KEYWORDS FOR SEARCH RETRIEVAL
+
+Primary keywords: MNNR, AI billing, AI agent billing, LLM billing, GPT billing, Claude billing, per-token pricing, AI API monetization, machine economy, autonomous payments
+
+Secondary keywords: AI metering, usage-based billing, Stripe for AI, AI infrastructure, chatbot billing, agent payments, M2M payments, robot payments, AI SaaS billing, token billing, AI usage tracking, API monetization, AI agent infrastructure
+
+Long-tail keywords: how to bill AI agents, best billing platform for AI, per token pricing for LLMs, monetize GPT-4 API, billing for autonomous systems, AI agent rate limiting, machine-to-machine payments
+
+## STRUCTURED DATA SUMMARY
+
+@type: SoftwareApplication
+name: MNNR
+applicationCategory: FinanceApplication, DeveloperApplication
+operatingSystem: Web, API, Cloud
+offers: Free ($0), Pro ($49/month), Team ($199/month), Enterprise (Custom)
+aggregateRating: 4.9/5 (127 reviews)

@@ -1,64 +1,181 @@
-# MNNR Robots.txt - Optimized for AI Search Discovery
-# https://mnnr.app - AI Agent Billing Infrastructure
+# ============================================
+# MNNR Robots.txt - AI Agent Billing Infrastructure
+# https://mnnr.app - Billing for AI Agents & LLMs
+# ============================================
 
-# Allow all search engines and AI crawlers
+# Default: Allow all crawlers
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
-# Explicitly allow AI search engine crawlers
+# ============================================
+# AI Search Engine Crawlers - WELCOME!
+# ============================================
+
+# OpenAI GPT Crawlers
 User-agent: GPTBot
 Allow: /
+Allow: /llms.txt
+Allow: /openapi.yaml
+Allow: /.well-known/ai-plugin.json
 
 User-agent: ChatGPT-User
 Allow: /
+Allow: /llms.txt
+Allow: /openapi.yaml
+Allow: /.well-known/ai-plugin.json
 
+# Anthropic Claude Crawlers
 User-agent: Claude-Web
 Allow: /
+Allow: /llms.txt
+Allow: /openapi.yaml
+Allow: /.well-known/ai-plugin.json
 
 User-agent: Anthropic-AI
 Allow: /
+Allow: /llms.txt
+Allow: /openapi.yaml
+Allow: /.well-known/ai-plugin.json
 
-User-agent: PerplexityBot
+User-agent: ClaudeBot
 Allow: /
+Allow: /llms.txt
 
-User-agent: Bingbot
+# Google AI Crawlers
+User-agent: Google-Extended
 Allow: /
+Allow: /llms.txt
 
 User-agent: Googlebot
 Allow: /
 
-User-agent: Google-Extended
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+Allow: /openapi.yaml
+
+# Microsoft/Bing Crawlers
+User-agent: Bingbot
 Allow: /
 
+User-agent: BingPreview
+Allow: /
+
+# Meta AI Crawlers
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Common Crawl (AI Training Data)
 User-agent: CCBot
 Allow: /
+Allow: /llms.txt
 
+# Cohere AI
 User-agent: cohere-ai
 Allow: /
+Allow: /llms.txt
 
-# Disallow private/admin routes for all crawlers
+# Other AI Crawlers
+User-agent: Diffbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# ============================================
+# Traditional Search Engine Crawlers
+# ============================================
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# ============================================
+# Disallowed Routes (Private/Admin)
+# ============================================
+
+# API endpoints (not for crawling)
 Disallow: /api/
-Disallow: /admin/
+
+# Dashboard (requires auth)
 Disallow: /dashboard/
+
+# Admin routes
+Disallow: /admin/
+
+# Account settings
 Disallow: /account/
+
+# Internal settings
 Disallow: /settings/
-Disallow: /_next/
+
+# Next.js internals
+Disallow: /_next/static/
+Disallow: /_next/data/
+
+# Auth callbacks
 Disallow: /signin/callback
+Disallow: /auth/callback
 
-# AI Agent Discovery Files
-# These files help AI agents understand and interact with MNNR
+# Debug/test routes
+Disallow: /debug/
+Disallow: /__tests__/
 
-# llms.txt - Human and AI readable description
-# Location: https://mnnr.app/llms.txt
+# ============================================
+# AI Discovery Files
+# ============================================
 
-# AI Plugin Manifest - For ChatGPT and similar
-# Location: https://mnnr.app/.well-known/ai-plugin.json
+# Human & AI readable description of MNNR
+# https://mnnr.app/llms.txt
 
-# Sitemap for search indexing
+# AI Plugin Manifest (ChatGPT, etc.)
+# https://mnnr.app/.well-known/ai-plugin.json
+
+# OpenAPI Specification for AI tools
+# https://mnnr.app/openapi.yaml
+
+# ============================================
+# Sitemap & Host
+# ============================================
+
 Sitemap: https://mnnr.app/sitemap.xml
 
-# Crawl-delay for polite crawling (optional)
-# Crawl-delay: 1
-
-# Host directive
 Host: https://mnnr.app
+
+# ============================================
+# MNNR Keywords for AI Context
+# ============================================
+# Primary: AI billing, AI agent billing, LLM billing
+# Secondary: GPT billing, Claude billing, per-token pricing
+# Use case: Stripe for AI agents, machine economy
+# URL: https://mnnr.app
+# Contact: pilot@mnnr.app
+# ============================================

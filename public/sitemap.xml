@@ -1,29 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   
-  <!-- Homepage - AI Agent Billing -->
+  <!-- ============================================ -->
+  <!-- MNNR Sitemap - AI Agent Billing Infrastructure -->
+  <!-- https://mnnr.app                              -->
+  <!-- Last Updated: 2026-01-11                      -->
+  <!-- ============================================ -->
+  
+  <!-- Homepage - AI Agent Billing (Highest Priority) -->
   <url>
     <loc>https://mnnr.app/</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mnnr.app/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://mnnr.app/zh"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://mnnr.app/es"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mnnr.app/ja"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mnnr.app/"/>
+    <image:image>
+      <image:loc>https://mnnr.app/demo.webp</image:loc>
+      <image:caption>MNNR AI Agent Billing Dashboard - Track LLM usage and bill per token</image:caption>
+      <image:title>MNNR Dashboard</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://mnnr.app/architecture_diagram.webp</image:loc>
+      <image:caption>MNNR Architecture - Universal billing layer for AI agents</image:caption>
+      <image:title>MNNR Architecture</image:title>
+    </image:image>
   </url>
   
-  <!-- Pricing -->
+  <!-- Pricing Page -->
   <url>
     <loc>https://mnnr.app/pricing</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Sign Up (High Priority - Conversion) -->
+  <url>
+    <loc>https://mnnr.app/signup</loc>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
-  <!-- Documentation -->
+  <!-- Documentation Hub -->
   <url>
     <loc>https://mnnr.app/docs</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -31,23 +62,95 @@
   <!-- Quick Start Guide -->
   <url>
     <loc>https://mnnr.app/docs/quick-start</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
   
   <!-- API Reference -->
   <url>
     <loc>https://mnnr.app/docs/api</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  
+  <!-- Security Documentation -->
+  <url>
+    <loc>https://mnnr.app/docs/security</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  
+  <!-- Enterprise Documentation -->
+  <url>
+    <loc>https://mnnr.app/docs/enterprise</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Deployment Guide -->
+  <url>
+    <loc>https://mnnr.app/docs/deployment</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  
+  <!-- Marketplace Documentation -->
+  <url>
+    <loc>https://mnnr.app/docs/marketplace</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- x402 Protocol Documentation -->
+  <url>
+    <loc>https://mnnr.app/docs/x402</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Changelog -->
+  <url>
+    <loc>https://mnnr.app/docs/changelog</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Use Cases Page -->
+  <url>
+    <loc>https://mnnr.app/use-cases</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Playground -->
+  <url>
+    <loc>https://mnnr.app/playground</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  
+  <!-- About Page -->
+  <url>
+    <loc>https://mnnr.app/about</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
   
   <!-- Status Page -->
   <url>
     <loc>https://mnnr.app/status</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -55,39 +158,60 @@
   <!-- Sign In -->
   <url>
     <loc>https://mnnr.app/signin</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
-  <!-- Sign Up -->
+  <!-- SEO Monitor (Internal Tool) -->
   <url>
-    <loc>https://mnnr.app/signin/signup</loc>
-    <lastmod>2024-12-29</lastmod>
+    <loc>https://mnnr.app/seo-monitor</loc>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   
   <!-- Legal Pages -->
   <url>
     <loc>https://mnnr.app/legal/privacy</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   
   <url>
     <loc>https://mnnr.app/legal/terms</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   
   <url>
     <loc>https://mnnr.app/legal/security</loc>
-    <lastmod>2024-12-29</lastmod>
+    <lastmod>2026-01-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  
+  <!-- Legacy Routes (Redirects) -->
+  <url>
+    <loc>https://mnnr.app/privacy</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <url>
+    <loc>https://mnnr.app/terms</loc>
+    <lastmod>2026-01-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- AI Discovery Files (For AI Crawlers) -->
+  <!-- Note: These are referenced for AI agents to find -->
+  <!-- llms.txt: https://mnnr.app/llms.txt -->
+  <!-- ai-plugin.json: https://mnnr.app/.well-known/ai-plugin.json -->
+  <!-- openapi.yaml: https://mnnr.app/openapi.yaml -->
   
 </urlset>

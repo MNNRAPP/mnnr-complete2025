@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "generated": "2026-01-11",
+    "purpose": "SEO keyword targeting for AI billing space",
+    "target_domain": "mnnr.app"
+  },
+  "primary_keywords": [
+    {
+      "keyword": "AI agent billing",
+      "volume": 320,
+      "difficulty": 10,
+      "intent": "commercial",
+      "priority": "P0",
+      "current_rank": null,
+      "target_rank": 1,
+      "content_needed": ["pillar page", "comparison", "how-to"]
+    },
+    {
+      "keyword": "LLM billing",
+      "volume": 210,
+      "difficulty": 12,
+      "intent": "commercial",
+      "priority": "P0",
+      "current_rank": null,
+      "target_rank": 1,
+      "content_needed": ["guide", "API docs"]
+    },
+    {
+      "keyword": "AI API monetization",
+      "volume": 480,
+      "difficulty": 20,
+      "intent": "commercial",
+      "priority": "P0",
+      "current_rank": null,
+      "target_rank": 3,
+      "content_needed": ["strategy guide", "case studies"]
+    },
+    {
+      "keyword": "per token pricing",
+      "volume": 390,
+      "difficulty": 18,
+      "intent": "informational",
+      "priority": "P0",
+      "current_rank": null,
+      "target_rank": 1,
+      "content_needed": ["explainer", "calculator"]
+    },
+    {
+      "keyword": "GPT billing platform",
+      "volume": 260,
+      "difficulty": 14,
+      "intent": "commercial",
+      "priority": "P0",
+      "current_rank": null,
+      "target_rank": 1,
+      "content_needed": ["integration guide"]
+    }
+  ],
+  "secondary_keywords": [
+    {
+      "keyword": "Claude billing API",
+      "volume": 140,
+      "difficulty": 8,
+      "intent": "commercial",
+      "priority": "P1"
+    },
+    {
+      "keyword": "AI usage metering",
+      "volume": 170,
+      "difficulty": 15,
+      "intent": "informational",
+      "priority": "P1"
+    },
+    {
+      "keyword": "chatbot billing",
+      "volume": 520,
+      "difficulty": 25,
+      "intent": "commercial",
+      "priority": "P1"
+    },
+    {
+      "keyword": "usage based billing API",
+      "volume": 290,
+      "difficulty": 22,
+      "intent": "commercial",
+      "priority": "P1"
+    },
+    {
+      "keyword": "AI agent payments",
+      "volume": 180,
+      "difficulty": 10,
+      "intent": "commercial",
+      "priority": "P1"
+    },
+    {
+      "keyword": "Llama billing",
+      "volume": 90,
+      "difficulty": 5,
+      "intent": "commercial",
+      "priority": "P1"
+    },
+    {
+      "keyword": "machine economy",
+      "volume": 1200,
+      "difficulty": 30,
+      "intent": "informational",
+      "priority": "P1"
+    },
+    {
+      "keyword": "autonomous agent billing",
+      "volume": 70,
+      "difficulty": 5,
+      "intent": "commercial",
+      "priority": "P1"
+    }
+  ],
+  "long_tail_keywords": [
+    "how to bill AI agents for API usage",
+    "best billing platform for AI agents",
+    "Stripe vs custom billing for AI",
+    "implementing per token billing for LLMs",
+    "AI agent rate limiting best practices",
+    "monetizing GPT-4 API wrapper",
+    "AI billing architecture guide",
+    "machine to machine payment solutions",
+    "how do autonomous AI agents pay for APIs",
+    "AI SaaS billing infrastructure",
+    "usage based pricing for AI startups",
+    "billing for multi-model AI applications",
+    "crypto payments for AI agents",
+    "Web3 AI billing",
+    "agent to agent payments blockchain"
+  ],
+  "competitor_keywords": {
+    "stripe": [
+      "Stripe for AI",
+      "Stripe AI billing",
+      "Stripe usage metering",
+      "Stripe alternative for AI"
+    ],
+    "chargebee": [
+      "Chargebee AI billing",
+      "Chargebee usage based"
+    ],
+    "paddle": [
+      "Paddle AI billing"
+    ]
+  },
+  "brand_keywords": [
+    "MNNR",
+    "mnnr.app",
+    "MNNR billing",
+    "MNNR AI",
+    "MNNR vs Stripe"
+  ],
+  "content_clusters": {
+    "ai_billing_guide": {
+      "pillar": "The Complete Guide to AI Agent Billing",
+      "clusters": [
+        "Per-Token Billing Explained",
+        "AI Agent API Key Management",
+        "Rate Limiting for AI Agents",
+        "Usage Metering Best Practices",
+        "Stripe Integration for AI"
+      ]
+    },
+    "machine_economy": {
+      "pillar": "Understanding the Machine Economy",
+      "clusters": [
+        "Agent to Agent Payments",
+        "Autonomous AI Wallets",
+        "Crypto for AI Agents",
+        "M2M Payment Infrastructure"
+      ]
+    },
+    "ai_monetization": {
+      "pillar": "Monetizing AI APIs",
+      "clusters": [
+        "Pricing Strategies for AI",
+        "Usage-Based vs Subscription",
+        "AI SaaS Business Models",
+        "Revenue Optimization"
+      ]
+    }
+  },
+  "tracking": {
+    "tools": [
+      "Google Search Console",
+      "Ahrefs",
+      "SEMrush",
+      "SE Ranking"
+    ],
+    "frequency": "weekly",
+    "report_to": ["marketing", "product"]
+  }
+}
