@@ -5,6 +5,7 @@
 
 import { db } from '@/lib/db';
 import DemoDashboard from './DemoDashboard';
+import UsageCharts from '@/components/analytics/UsageCharts';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,7 +59,7 @@ export default async function DemoPage() {
   
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
@@ -75,8 +76,89 @@ export default async function DemoPage() {
           </p>
         </div>
 
-        {/* Dashboard */}
-        <DemoDashboard initialData={data} />
+        {/* Tabs */}
+        <div className="mb-8">
+          <nav className="flex gap-4 border-b border-white/10">
+            <TabLink href="#keys" active>API Keys</TabLink>
+            <TabLink href="#analytics">Analytics</TabLink>
+            <TabLink href="#quickstart">Quick Start</TabLink>
+          </nav>
+        </div>
+
+        {/* API Keys Section */}
+        <section id="keys" className="mb-16">
+          <DemoDashboard initialData={data} />
+        </section>
+
+        {/* Analytics Section */}
+        <section id="analytics" className="mb-16">
+          <UsageCharts />
+        </section>
+
+        {/* Live Usage Simulator */}
+        <section className="mb-16">
+          <LiveUsageSimulator />
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function TabLink({ href, children, active }: { href: string; children: React.ReactNode; active?: boolean }) {
+  return (
+    <a 
+      href={href}
+      className={`px-4 py-3 text-sm font-medium transition border-b-2 -mb-px ${
+        active 
+          ? 'text-emerald-400 border-emerald-400' 
+          : 'text-white/60 border-transparent hover:text-white hover:border-white/20'
+      }`}
+    >
+      {children}
+    </a>
+  );
+}
+
+function LiveUsageSimulator() {
+  return (
+    <div className="bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20 rounded-xl p-8">
+      <h2 className="text-2xl font-bold text-white mb-4">Try It Live</h2>
+      <p className="text-white/60 mb-6">
+        Test the MNNR API by tracking some usage. Copy the curl command below and run it in your terminal.
+      </p>
+      
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-white font-medium mb-2">1. Create an API Key</h3>
+          <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto text-sm">
+            <code className="text-emerald-300">
+              curl -X POST https://mnnr.app/api/v1/keys \{'\n'}
+              {'  '}-H &quot;Content-Type: application/json&quot; \{'\n'}
+              {'  '}-d &apos;{`{"name": "My Test Key"}`}&apos;
+            </code>
+          </pre>
+        </div>
+
+        <div>
+          <h3 className="text-white font-medium mb-2">2. Track Usage</h3>
+          <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto text-sm">
+            <code className="text-cyan-300">
+              curl -X POST https://mnnr.app/api/v1/track \{'\n'}
+              {'  '}-H &quot;Authorization: Bearer YOUR_API_KEY&quot; \{'\n'}
+              {'  '}-H &quot;Content-Type: application/json&quot; \{'\n'}
+              {'  '}-d &apos;{`{"model": "gpt-4", "tokens": 1500}`}&apos;
+            </code>
+          </pre>
+        </div>
+
+        <div>
+          <h3 className="text-white font-medium mb-2">3. View Analytics</h3>
+          <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto text-sm">
+            <code className="text-purple-300">
+              curl https://mnnr.app/api/v1/analytics?period=7d
+            </code>
+          </pre>
+        </div>
       </div>
     </div>
   );
