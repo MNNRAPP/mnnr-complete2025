@@ -1,0 +1,36 @@
+{
+  "appId": "app.mnnr.mobile",
+  "appName": "MNNR",
+  "webDir": "../out",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://mnnr.app",
+    "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#111827",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#111827"
+    },
+    "Keyboard": {
+      "resize": "ionic",
+      "resizeOnFullScreen": true
+    }
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "scheme": "MNNR"
+  },
+  "android": {
+    "backgroundColor": "#111827",
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

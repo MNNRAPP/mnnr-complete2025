@@ -1,0 +1,32 @@
+{
+  "name": "mnnr-mobile",
+  "version": "1.0.0",
+  "description": "MNNR Mobile App - iOS and Android",
+  "private": true,
+  "scripts": {
+    "prebuild": "cd .. && npm run build -- --config next.config.mobile.js",
+    "build": "npm run prebuild && npx cap sync",
+    "init": "npx cap init MNNR app.mnnr.mobile --web-dir=../out",
+    "add:ios": "npx cap add ios",
+    "add:android": "npx cap add android",
+    "sync": "npx cap sync",
+    "open:ios": "npx cap open ios",
+    "open:android": "npx cap open android",
+    "run:ios": "npm run build && npm run open:ios",
+    "run:android": "npm run build && npm run open:android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/keyboard": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/preferences": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
