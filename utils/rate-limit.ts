@@ -192,8 +192,8 @@ export const rateLimitConfigs = {
     maxRequests: 100 // 100 requests per minute
   },
   auth: {
-    interval: 15 * 60 * 1000, // 15 minutes
-    maxRequests: 5 // 5 attempts per 15 minutes
+    interval: 60 * 1000, // 1 minute
+    maxRequests: 20 // 20 attempts per minute (Clerk has its own rate limiting)
   },
   api: {
     interval: 60 * 1000, // 1 minute
