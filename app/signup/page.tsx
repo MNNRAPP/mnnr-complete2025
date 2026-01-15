@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
 export default function SignUpPage() {
-  // Redirect to signin page which handles both sign in and sign up
-  redirect('/signin/signup');
+  // Redirect to Clerk sign-up page
+  redirect('/sign-up');
 }
