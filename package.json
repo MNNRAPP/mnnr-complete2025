@@ -102,6 +102,7 @@
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "supabase": "^1.226.4",
+    "tar": "^7.5.3",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
