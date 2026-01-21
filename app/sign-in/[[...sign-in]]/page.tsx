@@ -1,30 +1,52 @@
-import { SignIn } from "@clerk/nextjs";
+'use client';
 
-export default function Page() {
+import { SignIn } from '@clerk/nextjs';
+
+export default function SignInPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your MNNR account
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <a href="/" className="text-3xl font-bold text-white">
+            $MNNR
+          </a>
+          <p className="text-gray-400 mt-2">
+            Sign in to your account
           </p>
         </div>
-        <SignIn 
+
+        {/* Clerk SignIn Component */}
+        <SignIn
           appearance={{
             elements: {
-              formButtonPrimary: 
-                'bg-blue-600 hover:bg-blue-700 text-sm normal-case',
-              card: 'shadow-lg',
-              headerTitle: 'hidden',
-              headerSubtitle: 'hidden'
-            }
+              rootBox: 'w-full',
+              card: 'bg-gray-800/50 backdrop-blur border border-gray-700 shadow-2xl',
+              headerTitle: 'text-white',
+              headerSubtitle: 'text-gray-400',
+              socialButtonsBlockButton: 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600',
+              socialButtonsBlockButtonText: 'text-white',
+              dividerLine: 'bg-gray-600',
+              dividerText: 'text-gray-400',
+              formFieldLabel: 'text-gray-300',
+              formFieldInput: 'bg-gray-700 border-gray-600 text-white placeholder-gray-400',
+              formButtonPrimary: 'bg-blue-600 hover:bg-blue-700',
+              footerActionLink: 'text-blue-400 hover:text-blue-300',
+              identityPreviewText: 'text-white',
+              identityPreviewEditButton: 'text-blue-400',
+            },
           }}
           redirectUrl="/dashboard"
           signUpUrl="/sign-up"
         />
+
+        {/* Footer */}
+        <p className="text-center text-gray-500 text-sm mt-8">
+          Don't have an account?{' '}
+          <a href="/sign-up" className="text-blue-400 hover:underline">
+            Sign up for free
+          </a>
+        </p>
       </div>
     </div>
   );
