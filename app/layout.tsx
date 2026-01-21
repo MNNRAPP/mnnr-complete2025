@@ -1,5 +1,6 @@
 import { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { ClerkProvider } from '@clerk/nextjs';
 import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
@@ -177,29 +178,31 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="MNNR" />
       </head>
       <body className={`${inter.className} bg-black antialiased`}>
-        <PostHogProvider>
-          <CurrencyProvider>
-            {/* Skip to main content link for accessibility */}
-            <a 
-              href="#main-content" 
-              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:rounded-lg"
-            >
-              Skip to main content
-            </a>
-            <Navbar />
-            <main
-              id="main-content"
-              className="min-h-[calc(100dvh-4rem)] md:min-h-[calc(100dvh-5rem)]"
-            >
-              {children}
-            </main>
-            <Footer />
-            <Suspense>
-              <Toaster />
-            </Suspense>
-            <CookieConsent />
-          </CurrencyProvider>
-        </PostHogProvider>
+        <ClerkProvider>
+          <PostHogProvider>
+            <CurrencyProvider>
+              {/* Skip to main content link for accessibility */}
+              <a 
+                href="#main-content" 
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-emerald-500 focus:text-black focus:rounded-lg"
+              >
+                Skip to main content
+              </a>
+              <Navbar />
+              <main
+                id="main-content"
+                className="min-h-[calc(100dvh-4rem)] md:min-h-[calc(100dvh-5rem)]"
+              >
+                {children}
+              </main>
+              <Footer />
+              <Suspense>
+                <Toaster />
+              </Suspense>
+              <CookieConsent />
+            </CurrencyProvider>
+          </PostHogProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
