@@ -1,0 +1,5 @@
+=== Git Status ===
+
+=== Adding files ===
+
+=== Staged Changes ===

@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - MNNR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #111827, #1f2937); min-height: 100vh; display: flex; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
+    .container { max-width: 400px; }
+    .logo { font-size: 3rem; font-weight: bold; color: #60a5fa; margin-bottom: 1.5rem; }
+    .icon { font-size: 4rem; margin-bottom: 1rem; }
+    h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    p { color: #9ca3af; margin-bottom: 2rem; line-height: 1.6; }
+    button { background: #2563eb; color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">$MNNR</div>
+    <div class="icon">📡</div>
+    <h1>You are Offline</h1>
+    <p>Please check your internet connection and try again.</p>
+    <button onclick="location.reload()">Try Again</button>
+  </div>
+  <script>window.addEventListener('online', () => location.reload());</script>
+</body>
+</html>
