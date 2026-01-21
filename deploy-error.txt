@@ -1,0 +1,8 @@
+warning: in the working copy of 'deploy.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'run-git.bat', LF will be replaced by CRLF the next time Git touches it
+remote: Bypassed rule violations for refs/heads/main:        
+remote: 
+remote: - Code scanning is waiting for results from CodeQL for the commit a466903. Existing alerts might have been detected because the code changes were too large.        
+remote: 
+To https://github.com/MNNRAPP/mnnr-complete2025.git
+   ceb830c..a466903  main -> main
