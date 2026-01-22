@@ -18,7 +18,7 @@ const initPostHog = (): PostHog | null => {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
       person_profiles: 'identified_only',
-      loaded: (posthog: PostHog) => {
+      loaded: (ph) => {
         logger.debug('PostHog loaded successfully');
       },
       autocapture: {
