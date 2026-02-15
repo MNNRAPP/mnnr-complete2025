@@ -109,5 +109,5 @@
     "overrides":  {
                       "tar":  "^7.5.3"
                   },
-    "packageManager":  "npm@10.2.0"
+    "packageManager": "npm@10.2.0"
 }
