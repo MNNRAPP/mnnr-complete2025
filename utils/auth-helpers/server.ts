@@ -1,3 +1,12 @@
+/**
+ * @module auth-helpers/server
+ * @description Server-side authentication actions for Supabase Auth.
+ *
+ * These Next.js Server Actions handle all auth flows: email magic-link sign-in,
+ * password sign-in/sign-up, password reset, profile updates, and sign-out.
+ * Each function accepts `FormData`, communicates with Supabase, and returns a
+ * redirect path encoded with toast notification query parameters.
+ */
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
@@ -6,15 +15,22 @@ import { cookies } from 'next/headers';
 import { getURL, getStatusRedirect, getErrorRedirect } from '@/utils/helpers';
 import { getAuthTypes } from '@/utils/auth-helpers/settings';
 
+/** Validates an email address against a basic regex pattern. */
 function isValidEmail(email: string) {
   var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   return regex.test(email);
 }
 
+/** Performs a server-side redirect to the given path using Next.js `redirect()`. */
 export async function redirectToPath(path: string) {
   return redirect(path);
 }
 
+/**
+ * Signs the user out via Supabase and redirects to `/signin`.
+ * @param formData - Form data containing `pathName` for error redirect fallback.
+ * @returns Redirect path string.
+ */
 export async function SignOut(formData: FormData) {
   const pathName = String(formData.get('pathName')).trim();
 
@@ -32,6 +48,12 @@ export async function SignOut(formData: FormData) {
   return '/signin';
 }
 
+/**
+ * Signs the user in via email magic link (OTP).
+ * Sends a one-time-password email and redirects with a success/error toast.
+ * @param formData - Form data containing `email`.
+ * @returns Redirect path string with toast params.
+ */
 export async function signInWithEmail(formData: FormData) {
   const cookieStore = cookies();
   const callbackURL = getURL('/auth/callback');
@@ -87,6 +109,11 @@ export async function signInWithEmail(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Sends a password reset email to the user.
+ * @param formData - Form data containing `email`.
+ * @returns Redirect path string with toast params.
+ */
 export async function requestPasswordUpdate(formData: FormData) {
   const callbackURL = getURL('/auth/reset_password');
 
@@ -133,6 +160,11 @@ export async function requestPasswordUpdate(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Signs the user in with email and password.
+ * @param formData - Form data containing `email` and `password`.
+ * @returns Redirect path string with toast params.
+ */
 export async function signInWithPassword(formData: FormData) {
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
@@ -165,6 +197,12 @@ export async function signInWithPassword(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Registers a new user with email and password.
+ * Handles duplicate accounts and sends email confirmation.
+ * @param formData - Form data containing `email` and `password`.
+ * @returns Redirect path string with toast params.
+ */
 export async function signUp(formData: FormData) {
   const callbackURL = getURL('/auth/callback');
 
@@ -225,6 +263,11 @@ export async function signUp(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Updates the authenticated user's password after validating confirmation match.
+ * @param formData - Form data containing `password` and `passwordConfirm`.
+ * @returns Redirect path string with toast params.
+ */
 export async function updatePassword(formData: FormData) {
   const password = String(formData.get('password')).trim();
   const passwordConfirm = String(formData.get('passwordConfirm')).trim();
@@ -268,6 +311,12 @@ export async function updatePassword(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Updates the authenticated user's email address.
+ * Sends confirmation links to both old and new email addresses.
+ * @param formData - Form data containing `newEmail`.
+ * @returns Redirect path string with toast params.
+ */
 export async function updateEmail(formData: FormData) {
   // Get form data
   const newEmail = String(formData.get('newEmail')).trim();
@@ -309,6 +358,11 @@ export async function updateEmail(formData: FormData) {
   }
 }
 
+/**
+ * Updates the authenticated user's display name.
+ * @param formData - Form data containing `fullName`.
+ * @returns Redirect path string with toast params.
+ */
 export async function updateName(formData: FormData) {
   // Get form data
   const fullName = String(formData.get('fullName')).trim();

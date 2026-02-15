@@ -1,6 +1,20 @@
+/**
+ * @module supabase/middleware
+ * @description Supabase client factory for Next.js middleware.
+ *
+ * Creates a Supabase server client that reads/writes auth cookies on both the
+ * incoming request and outgoing response, enabling session refresh in middleware.
+ */
+
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
+/**
+ * Creates a Supabase client for use in Next.js middleware.
+ * Synchronizes cookie changes across both request and response objects.
+ * @param request - The incoming Next.js middleware request.
+ * @returns An object with the `supabase` client and the `response` to return.
+ */
 export const createClient = (request: NextRequest) => {
   // Create an unmodified response
   let response = NextResponse.next({
@@ -60,6 +74,12 @@ export const createClient = (request: NextRequest) => {
   return { supabase, response };
 };
 
+/**
+ * Refreshes the Supabase auth session in middleware.
+ * Call this from `middleware.ts` to keep the user's session alive.
+ * @param request - The incoming Next.js middleware request.
+ * @returns The response with updated session cookies.
+ */
 export const updateSession = async (request: NextRequest) => {
   try {
     const { supabase, response } = createClient(request);

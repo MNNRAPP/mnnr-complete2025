@@ -1,3 +1,16 @@
+/**
+ * @module supabase/admin
+ * @description Server-side admin utilities for syncing Stripe data with Supabase.
+ *
+ * Uses the Supabase SERVICE_ROLE_KEY to bypass RLS and perform privileged operations:
+ * - Upsert / delete Stripe products and prices into the local database
+ * - Create or retrieve Stripe customers linked to Supabase user UUIDs
+ * - Manage subscription lifecycle (create, update, cancel) triggered by webhooks
+ * - Copy billing details from Stripe payment methods to the user record
+ *
+ * **Security:** The admin client must only be used in server-side contexts.
+ */
+
 import { toDateTime } from '@/utils/helpers';
 import { getStripeClient } from '@/utils/stripe/config';
 import { createClient } from '@supabase/supabase-js';
@@ -18,11 +31,12 @@ const supabaseAdmin = createClient<Database>(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-// Expose a factory to access the admin client where needed (e.g., in webhooks)
+/** Returns the privileged Supabase admin client (SERVICE_ROLE_KEY). Server-side only. */
 export function createAdminClient() {
   return supabaseAdmin;
 }
 
+/** Inserts or updates a Stripe product in the `products` table. */
 const upsertProductRecord = async (product: Stripe.Product) => {
   const productData: Product = {
     id: product.id,
@@ -41,6 +55,7 @@ const upsertProductRecord = async (product: Stripe.Product) => {
   logger.info(`Product inserted/updated`, { productId: product.id });
 };
 
+/** Inserts or updates a Stripe price in the `prices` table, with FK-constraint retry logic. */
 const upsertPriceRecord = async (
   price: Stripe.Price,
   retryCount = 0,
@@ -79,6 +94,7 @@ const upsertPriceRecord = async (
   }
 };
 
+/** Deletes a product record from the `products` table by Stripe product ID. */
 const deleteProductRecord = async (product: Stripe.Product) => {
   const { error: deletionError } = await supabaseAdmin
     .from('products')
@@ -89,6 +105,7 @@ const deleteProductRecord = async (product: Stripe.Product) => {
   logger.info('Product deleted', { productId: product.id });
 };
 
+/** Deletes a price record from the `prices` table by Stripe price ID. */
 const deletePriceRecord = async (price: Stripe.Price) => {
   const { error: deletionError } = await supabaseAdmin
     .from('prices')
@@ -98,6 +115,7 @@ const deletePriceRecord = async (price: Stripe.Price) => {
   logger.info('Price deleted', { priceId: price.id });
 };
 
+/** Links a Supabase user UUID to a Stripe customer ID in the `customers` table. */
 const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
   const { error: upsertError } = await supabaseAdmin
     .from('customers')
@@ -109,6 +127,7 @@ const upsertCustomerToSupabase = async (uuid: string, customerId: string) => {
   return customerId;
 };
 
+/** Creates a new Stripe customer with the Supabase UUID stored in metadata. */
 const createCustomerInStripe = async (uuid: string, email: string) => {
   const stripe = getStripeClient();
   const customerData = { metadata: { supabaseUUID: uuid }, email: email };
@@ -118,6 +137,10 @@ const createCustomerInStripe = async (uuid: string, email: string) => {
   return newCustomer.id;
 };
 
+/**
+ * Retrieves an existing Stripe customer for a Supabase user, or creates one.
+ * Looks up by Supabase UUID first, then by email, creating a new Stripe customer as a last resort.
+ */
 const createOrRetrieveCustomer = async ({
   email,
   uuid
@@ -228,6 +251,11 @@ const copyBillingDetailsToCustomer = async (
   if (updateError) throw new Error(`Customer update failed: ${updateError.message}`);
 };
 
+/**
+ * Syncs a Stripe subscription's current state into the `subscriptions` table.
+ * Called from webhook handlers on subscription create/update/delete events.
+ * On creation, also copies billing details from the default payment method to the customer.
+ */
 const manageSubscriptionStatusChange = async (
   subscriptionId: string,
   customerId: string,

@@ -1,3 +1,14 @@
+/**
+ * @module stripe/server
+ * @description Server Actions for Stripe Checkout and Billing Portal.
+ *
+ * Provides two main server actions:
+ * - `checkoutWithStripe` — creates a Stripe Checkout Session for a given price
+ * - `createStripePortal` — creates a Stripe Billing Portal session for subscription management
+ *
+ * Both actions authenticate the user via Supabase, resolve or create the
+ * Stripe customer, and return either a session ID / URL or an error redirect path.
+ */
 'use server';
 
 import Stripe from 'stripe';
@@ -21,6 +32,13 @@ type CheckoutResponse = {
   sessionId?: string;
 };
 
+/**
+ * Creates a Stripe Checkout Session for a given price.
+ * Supports both recurring subscriptions (with optional trial) and one-time payments.
+ * @param price - The price record from the database.
+ * @param redirectPath - Path to redirect to on success (default: `/account`).
+ * @returns Object with either `sessionId` on success or `errorRedirect` path on failure.
+ */
 export async function checkoutWithStripe(
   price: Price,
   redirectPath: string = '/account'
@@ -133,6 +151,11 @@ export async function checkoutWithStripe(
   }
 }
 
+/**
+ * Creates a Stripe Billing Portal session for the authenticated user.
+ * @param currentPath - The current page path (used for error redirects).
+ * @returns The portal URL string on success, or an error redirect path on failure.
+ */
 export async function createStripePortal(currentPath: string) {
   try {
     const stripe = getStripeClient();

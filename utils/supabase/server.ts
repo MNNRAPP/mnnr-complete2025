@@ -1,9 +1,21 @@
+/**
+ * @module supabase/server
+ * @description Creates a typed Supabase client for server-side operations
+ * (Server Components, Route Handlers, Server Actions).
+ *
+ * Wires Next.js `cookies()` into the `@supabase/ssr` server client so that
+ * auth tokens are automatically read from / written to HTTP-only cookies.
+ */
+
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { Database } from '@/types_db';
 
-// Define a function to create a Supabase client for server-side operations
-// The function takes a cookie store created with next/headers cookies as an argument
+/**
+ * Creates a Supabase server client with cookie-based session management.
+ * Reads `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from env.
+ * @returns A typed `SupabaseClient<Database>` for server-side use.
+ */
 export const createClient = () => {
   const cookieStore = cookies();
 

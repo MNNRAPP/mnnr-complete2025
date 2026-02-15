@@ -1,3 +1,12 @@
+/**
+ * @module stripe/config
+ * @description Server-side Stripe SDK configuration and singleton client.
+ *
+ * Provides a lazy-initialized Stripe Node.js client using the secret key from
+ * environment variables. Throws `StripeNotConfiguredError` if no key is set,
+ * allowing callers to gracefully degrade when Stripe is not configured.
+ */
+
 import Stripe from 'stripe';
 
 const STRIPE_APP_INFO = {
@@ -8,6 +17,7 @@ const STRIPE_APP_INFO = {
 
 let stripeClient: Stripe | null = null;
 
+/** Thrown when Stripe secret key environment variables are missing. */
 export class StripeNotConfiguredError extends Error {
   constructor() {
     super(
@@ -17,12 +27,17 @@ export class StripeNotConfiguredError extends Error {
   }
 }
 
+/** Returns `true` if a Stripe secret key is available in environment variables. */
 export function isStripeConfigured(): boolean {
   return Boolean(
     process.env.STRIPE_SECRET_KEY_LIVE ?? process.env.STRIPE_SECRET_KEY
   );
 }
 
+/**
+ * Returns the singleton Stripe Node.js client.
+ * @throws {StripeNotConfiguredError} If no secret key is set.
+ */
 export function getStripeClient(): Stripe {
   const secretKey =
     process.env.STRIPE_SECRET_KEY_LIVE ?? process.env.STRIPE_SECRET_KEY;
