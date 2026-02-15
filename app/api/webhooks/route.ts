@@ -22,7 +22,12 @@ const relevantEvents = new Set([
   'checkout.session.completed',
   'customer.subscription.created',
   'customer.subscription.updated',
-  'customer.subscription.deleted'
+  'customer.subscription.deleted',
+  'invoice.paid',
+  'invoice.payment_failed',
+  'charge.refunded',
+  'payment_method.attached',
+  'payment_method.detached'
 ]);
 
 export async function POST(req: Request) {
@@ -99,7 +104,10 @@ export async function POST(req: Request) {
         upsertPriceRecord,
         manageSubscriptionStatusChange,
         deleteProductRecord,
-        deletePriceRecord
+        deletePriceRecord,
+        handleInvoicePaid,
+        handleInvoicePaymentFailed,
+        handleChargeRefunded
       } = await import('@/utils/supabase/admin');
 
       switch (event.type) {
@@ -119,7 +127,7 @@ export async function POST(req: Request) {
           break;
         case 'customer.subscription.created':
         case 'customer.subscription.updated':
-        case 'customer.subscription.deleted':
+        case 'customer.subscription.deleted': {
           const subscription = event.data.object as Stripe.Subscription;
           await manageSubscriptionStatusChange(
             subscription.id,
@@ -127,7 +135,8 @@ export async function POST(req: Request) {
             event.type === 'customer.subscription.created'
           );
           break;
-        case 'checkout.session.completed':
+        }
+        case 'checkout.session.completed': {
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
           if (checkoutSession.mode === 'subscription') {
             const subscriptionId = checkoutSession.subscription;
@@ -138,6 +147,39 @@ export async function POST(req: Request) {
             );
           }
           break;
+        }
+        case 'invoice.paid': {
+          const invoice = event.data.object as Stripe.Invoice;
+          await handleInvoicePaid(invoice);
+          break;
+        }
+        case 'invoice.payment_failed': {
+          const invoice = event.data.object as Stripe.Invoice;
+          await handleInvoicePaymentFailed(invoice);
+          break;
+        }
+        case 'charge.refunded': {
+          const charge = event.data.object as Stripe.Charge;
+          await handleChargeRefunded(charge);
+          break;
+        }
+        case 'payment_method.attached': {
+          const paymentMethod = event.data.object as Stripe.PaymentMethod;
+          logger.info('Payment method attached', {
+            paymentMethodId: paymentMethod.id,
+            customerId: typeof paymentMethod.customer === 'string'
+              ? paymentMethod.customer
+              : paymentMethod.customer?.id
+          });
+          break;
+        }
+        case 'payment_method.detached': {
+          const paymentMethod = event.data.object as Stripe.PaymentMethod;
+          logger.info('Payment method detached', {
+            paymentMethodId: paymentMethod.id
+          });
+          break;
+        }
         default:
           logger.error('Unhandled relevant event type', undefined, { eventType: event.type, eventId: event.id });
           throw new Error('Unhandled relevant event!');

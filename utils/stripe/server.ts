@@ -65,6 +65,7 @@ export async function checkoutWithStripe(
           quantity: 1
         }
       ],
+      automatic_tax: { enabled: true },
       cancel_url: getURL(),
       success_url: getURL(redirectPath)
     };
