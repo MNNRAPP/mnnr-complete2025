@@ -1,17 +1,36 @@
 /**
- * Rate Limiting Middleware using Upstash Redis
- * 
- * Implements sliding window rate limiting to prevent API abuse
+ * @module lib/rate-limit
+ * @description Rate limiting middleware using Upstash Redis with sliding window algorithm.
+ *
+ * Provides pre-configured rate limiters for different endpoint categories:
+ * - `apiKeys` — 10 req / 10s for API key CRUD operations
+ * - `auth` — 5 req / 60s for authentication endpoints
+ * - `api` — 100 req / 60s for general API usage
+ * - `webhooks` — 1000 req / 60s for Stripe webhook handlers
+ *
+ * Also exports `rateLimit()` to apply limiting and `getClientIdentifier()` to
+ * resolve the caller identity (user ID or IP address).
+ *
+ * @example
+ * ```ts
+ * import { rateLimit, rateLimiters, getClientIdentifier } from '@/lib/rate-limit';
+ *
+ * const id = getClientIdentifier(userId, request);
+ * const limited = await rateLimit(id, rateLimiters.api);
+ * if (limited) return limited; // 429 response
+ * ```
  */
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
 
-// Initialize Redis client
 const redis = Redis.fromEnv();
 
-// Create rate limiter instances for different endpoints
+/**
+ * Pre-configured rate limiter instances keyed by endpoint category.
+ * Each uses a sliding window algorithm backed by Upstash Redis.
+ */
 export const rateLimiters = {
   // API key operations: 10 requests per 10 seconds
   apiKeys: new Ratelimit({

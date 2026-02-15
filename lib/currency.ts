@@ -1,5 +1,21 @@
-// Currency conversion and formatting utilities for MNNR
+/**
+ * @module lib/currency
+ * @description Currency conversion, formatting, and locale-detection utilities.
+ *
+ * Supports fiat currencies (USD, EUR, GBP, JPY, CNY) with static exchange rates
+ * and stablecoins (USDC, USDT, DAI) for crypto payment display.
+ *
+ * @example
+ * ```ts
+ * import { formatCurrency, convertCurrency, getCurrencyFromLocale } from '@/lib/currency';
+ *
+ * formatCurrency(19.99, 'USD');            // "$19.99"
+ * convertCurrency(100, 'USD', 'EUR');      // 92
+ * getCurrencyFromLocale('ja');             // "JPY"
+ * ```
+ */
 
+/** Supported fiat currency codes. */
 export const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY'] as const;
 export type Currency = (typeof currencies)[number];
 
