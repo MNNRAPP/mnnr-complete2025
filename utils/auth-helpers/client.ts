@@ -1,3 +1,12 @@
+/**
+ * @module auth-helpers/client
+ *
+ * Client-side authentication helpers for handling form submissions and OAuth
+ * sign-in flows. This module runs in the browser (`'use client'`) and provides
+ * utilities for intercepting auth-related form events, dispatching them to
+ * server actions, and routing the user to the resulting redirect path using
+ * either the Next.js client-side router or a server-side redirect.
+ */
 'use client';
 
 import { createClient } from '@/utils/supabase/client';

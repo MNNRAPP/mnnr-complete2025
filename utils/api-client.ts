@@ -40,12 +40,34 @@ interface RequestOptions extends RequestInit {
   showErrorToast?: boolean;
 }
 
+/**
+ * A centralized HTTP client for making API requests from the frontend.
+ *
+ * Wraps the native `fetch` API with automatic JSON serialization/deserialization,
+ * configurable timeouts, automatic retries on network failures, query-parameter
+ * building, and unified error handling via toast notifications.
+ *
+ * @example
+ * ```ts
+ * const client = new ApiClient({ baseUrl: '/api', timeout: 10000, retries: 2 });
+ * const { data, error, success } = await client.get<User>('/user/profile');
+ * ```
+ */
 class ApiClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
   private timeout: number;
   private retries: number;
 
+  /**
+   * Creates a new ApiClient instance.
+   *
+   * @param config - Optional configuration for the client.
+   * @param config.baseUrl - The base URL prepended to every request path. Defaults to `'/api'`.
+   * @param config.headers - Additional default headers merged into every request.
+   * @param config.timeout - Request timeout in milliseconds. Defaults to `30000` (30 seconds).
+   * @param config.retries - Number of automatic retries on network errors. Defaults to `3`.
+   */
   constructor(config: ApiClientConfig = {}) {
     this.baseUrl = config.baseUrl || '/api';
     this.defaultHeaders = {
@@ -57,7 +79,15 @@ class ApiClient {
   }
 
   /**
-   * Make an HTTP request
+   * Internal method that executes an HTTP request with timeout, retry, and
+   * error-handling logic.
+   *
+   * @typeParam T - The expected shape of the response data.
+   * @param endpoint - The API endpoint path (appended to `baseUrl`).
+   * @param options - Fetch options extended with `params`, `timeout`, `retries`,
+   *   and `showErrorToast`.
+   * @returns A promise that resolves to an {@link ApiResponse} containing either
+   *   the parsed JSON `data` on success or an `error` message on failure.
    */
   private async request<T>(
     endpoint: string,
