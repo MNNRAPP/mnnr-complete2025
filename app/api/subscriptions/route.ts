@@ -151,6 +151,7 @@ export async function POST(request: Request) {
       payment_settings: {
         save_default_payment_method: 'on_subscription',
       },
+      automatic_tax: { enabled: true },
       expand: ['latest_invoice.payment_intent'],
     };
 

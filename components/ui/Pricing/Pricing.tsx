@@ -296,9 +296,9 @@ export default function Pricing({ user, products, subscription }: Props) {
             );
             if (!price) return null;
             
-            const currency = price.currency ?? 'USD';
+            const currency = price.currency ?? 'usd';
             const amount = price.unit_amount ?? 0;
-            const priceString = new Intl.NumberFormat('en-US', {
+            const priceString = new Intl.NumberFormat(undefined, {
               style: 'currency',
               currency,
               minimumFractionDigits: 0

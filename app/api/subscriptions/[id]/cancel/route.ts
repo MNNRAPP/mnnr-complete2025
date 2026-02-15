@@ -11,6 +11,11 @@ export const dynamic = 'force-dynamic';
 /**
  * POST /api/subscriptions/[id]/cancel
  * Cancel a subscription
+ *
+ * Body:
+ * - immediately (boolean): If true, cancel immediately with proration.
+ *   If false (default), set cancel_at_period_end so the user retains access
+ *   until the current billing period ends.
  */
 export async function POST(
   request: Request,
@@ -18,8 +23,7 @@ export async function POST(
 ) {
   try {
     const supabase = await createClient();
-    
-    // Get current user
+
     const {
       data: { user },
       error: authError,
@@ -37,7 +41,7 @@ export async function POST(
     // Verify subscription belongs to user
     const { data: subscription } = await supabase
       .from('subscriptions')
-      .select('id')
+      .select('id, status')
       .eq('id', subscriptionId)
       .eq('user_id', user.id)
       .single();
@@ -49,18 +53,34 @@ export async function POST(
       );
     }
 
-    // Parse request body for cancellation options
+    if (subscription.status === 'canceled') {
+      return NextResponse.json(
+        { error: 'Subscription already canceled' },
+        { status: 400 }
+      );
+    }
+
     const body = await request.json().catch(() => ({}));
     const { immediately = false } = body;
 
-    // Cancel subscription in Stripe
-    const canceledSubscription = await stripe.subscriptions.cancel(
-      subscriptionId,
-      {
-        invoice_now: immediately,
-        prorate: immediately,
-      }
-    );
+    let canceledSubscription: Stripe.Subscription;
+
+    if (immediately) {
+      // Cancel immediately — generates a prorated invoice
+      canceledSubscription = await stripe.subscriptions.cancel(
+        subscriptionId,
+        {
+          invoice_now: true,
+          prorate: true,
+        }
+      );
+    } else {
+      // Cancel at the end of the current billing period
+      canceledSubscription = await stripe.subscriptions.update(
+        subscriptionId,
+        { cancel_at_period_end: true }
+      );
+    }
 
     return NextResponse.json({
       success: true,

@@ -256,9 +256,7 @@ const manageSubscriptionStatusChange = async (
     metadata: subscription.metadata,
     status: subscription.status,
     price_id: subscription.items.data[0].price.id,
-    //TODO check quantity on subscription
-    // @ts-ignore
-    quantity: subscription.quantity,
+    quantity: subscription.items.data[0]?.quantity ?? 1,
     cancel_at_period_end: subscription.cancel_at_period_end,
     cancel_at: subscription.cancel_at
       ? toDateTime(subscription.cancel_at).toISOString()
@@ -302,11 +300,101 @@ const manageSubscriptionStatusChange = async (
   }
 };
 
+/**
+ * Handle invoice.paid webhook event.
+ * When an invoice is paid, ensure the related subscription is marked active.
+ */
+const handleInvoicePaid = async (invoice: Stripe.Invoice) => {
+  const subscriptionId =
+    typeof invoice.subscription === 'string'
+      ? invoice.subscription
+      : invoice.subscription?.id;
+
+  if (!subscriptionId) {
+    logger.info('Invoice paid (no subscription attached)', { invoiceId: invoice.id });
+    return;
+  }
+
+  const customerId =
+    typeof invoice.customer === 'string'
+      ? invoice.customer
+      : invoice.customer?.id ?? '';
+
+  // Sync the subscription status — Stripe will have already set it to 'active'
+  await manageSubscriptionStatusChange(subscriptionId, customerId, false);
+
+  logger.info('Invoice paid — subscription synced', {
+    invoiceId: invoice.id,
+    subscriptionId,
+    amountPaid: invoice.amount_paid
+  });
+};
+
+/**
+ * Handle invoice.payment_failed webhook event (dunning).
+ * Logs the failure and syncs subscription status (Stripe sets it to past_due).
+ */
+const handleInvoicePaymentFailed = async (invoice: Stripe.Invoice) => {
+  const subscriptionId =
+    typeof invoice.subscription === 'string'
+      ? invoice.subscription
+      : invoice.subscription?.id;
+
+  const customerId =
+    typeof invoice.customer === 'string'
+      ? invoice.customer
+      : invoice.customer?.id ?? '';
+
+  if (subscriptionId) {
+    // Sync the subscription — Stripe marks it past_due / unpaid automatically
+    await manageSubscriptionStatusChange(subscriptionId, customerId, false);
+  }
+
+  // Look up the user for logging
+  const { data: customerData } = await supabaseAdmin
+    .from('customers')
+    .select('id')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle();
+
+  logger.warn('Invoice payment failed (dunning)', {
+    invoiceId: invoice.id,
+    subscriptionId: subscriptionId ?? 'none',
+    userId: customerData?.id ?? 'unknown',
+    attemptCount: invoice.attempt_count,
+    nextPaymentAttempt: invoice.next_payment_attempt
+  });
+};
+
+/**
+ * Handle charge.refunded webhook event.
+ * Logs the refund details for auditing.
+ */
+const handleChargeRefunded = async (charge: Stripe.Charge) => {
+  const customerId =
+    typeof charge.customer === 'string'
+      ? charge.customer
+      : charge.customer?.id;
+
+  logger.info('Charge refunded', {
+    chargeId: charge.id,
+    amount: charge.amount,
+    amountRefunded: charge.amount_refunded,
+    paymentIntent: typeof charge.payment_intent === 'string'
+      ? charge.payment_intent
+      : charge.payment_intent?.id,
+    customerId: customerId ?? 'unknown'
+  });
+};
+
 export {
   upsertProductRecord,
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,
   createOrRetrieveCustomer,
-  manageSubscriptionStatusChange
+  manageSubscriptionStatusChange,
+  handleInvoicePaid,
+  handleInvoicePaymentFailed,
+  handleChargeRefunded
 };
