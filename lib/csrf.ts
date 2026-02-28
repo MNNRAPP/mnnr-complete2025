@@ -7,10 +7,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 
-const CSRF_SECRET = process.env.CSRF_SECRET;
-
-if (!CSRF_SECRET) {
-  throw new Error("CSRF_SECRET environment variable is required");
+function getCsrfSecret(): string {
+  const secret = process.env.CSRF_SECRET;
+  if (!secret) {
+    throw new Error("CSRF_SECRET environment variable is required");
+  }
+  return secret;
 }
 const CSRF_TOKEN_LENGTH = 32;
 
@@ -19,7 +21,7 @@ const CSRF_TOKEN_LENGTH = 32;
  */
 export function generateCsrfToken(): string {
   const token = randomBytes(CSRF_TOKEN_LENGTH).toString("hex");
-  const signature = createHmac("sha256", CSRF_SECRET)
+  const signature = createHmac("sha256", getCsrfSecret())
     .update(token)
     .digest("hex");
   
@@ -37,7 +39,7 @@ export function verifyCsrfToken(token: string): boolean {
       return false;
     }
 
-    const expectedSignature = createHmac("sha256", CSRF_SECRET)
+    const expectedSignature = createHmac("sha256", getCsrfSecret())
       .update(tokenPart)
       .digest("hex");
 

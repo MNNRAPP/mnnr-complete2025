@@ -367,6 +367,19 @@ export const db = {
     `;
   },
 
+  async getActiveProductsWithPrices(): Promise<(Product & { prices: Price[] })[]> {
+    const products = await sql<Product[]>`
+      SELECT * FROM products WHERE active = true ORDER BY name
+    `;
+    const prices = await sql<Price[]>`
+      SELECT * FROM prices WHERE active = true ORDER BY unit_amount
+    `;
+    return products.map(product => ({
+      ...product,
+      prices: prices.filter(price => price.product_id === product.id),
+    }));
+  },
+
   // ─── Prices ──────────────────────────────────────────────────────────────
 
   async upsertPrice(price: Price): Promise<void> {
@@ -383,6 +396,16 @@ export const db = {
         interval_count = ${price.interval_count},
         trial_period_days = ${price.trial_period_days}
     `;
+  },
+
+  async getPriceById(priceId: string): Promise<Price | null> {
+    const result = await sql<Price[]>`SELECT * FROM prices WHERE id = ${priceId}`;
+    return result[0] || null;
+  },
+
+  async getProductById(productId: string): Promise<Product | null> {
+    const result = await sql<Product[]>`SELECT * FROM products WHERE id = ${productId}`;
+    return result[0] || null;
   },
 
   async deletePrice(priceId: string): Promise<void> {

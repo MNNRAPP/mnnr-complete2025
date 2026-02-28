@@ -79,10 +79,7 @@ export interface AuditEvent {
 }
 
 // Audit trail configuration
-const AUDIT_SECRET = process.env.AUDIT_TRAIL_SECRET;
-if (!AUDIT_SECRET) {
-  console.warn('[AUDIT] AUDIT_TRAIL_SECRET not set — audit signatures will be disabled');
-}
+const AUDIT_SECRET = process.env.AUDIT_TRAIL_SECRET || '';
 const HASH_ALGORITHM = 'sha256';
 
 /**
