@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { maskApiKey } from '@/utils/api-keys';
+// Mask an API key for display
+function maskApiKey(prefix: string): string {
+  return `${prefix}${'*'.repeat(20)}`;
+}
 
 interface ApiKey {
   id: string;

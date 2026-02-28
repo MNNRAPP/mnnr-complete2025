@@ -1,66 +1,36 @@
-import { createClient } from '@/utils/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { getStripeClient } from '@/utils/stripe/config';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
 
 export const dynamic = 'force-dynamic';
 
-/**
- * POST /api/subscriptions/[id]/cancel
- * Cancel a subscription
- */
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const subscriptionId = params.id;
 
     // Verify subscription belongs to user
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('id')
-      .eq('id', subscriptionId)
-      .eq('user_id', user.id)
-      .single();
-
+    const subscription = await db.getSubscriptionById(subscriptionId, user.id);
     if (!subscription) {
-      return NextResponse.json(
-        { error: 'Subscription not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
     }
 
-    // Parse request body for cancellation options
     const body = await request.json().catch(() => ({}));
     const { immediately = false } = body;
 
-    // Cancel subscription in Stripe
-    const canceledSubscription = await stripe.subscriptions.cancel(
-      subscriptionId,
-      {
-        invoice_now: immediately,
-        prorate: immediately,
-      }
-    );
+    const stripe = getStripeClient();
+    const canceledSubscription = await stripe.subscriptions.cancel(subscriptionId, {
+      invoice_now: immediately,
+      prorate: immediately,
+    });
 
     return NextResponse.json({
       success: true,
@@ -73,7 +43,6 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error('Subscription cancellation error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to cancel subscription' },
       { status: 500 }

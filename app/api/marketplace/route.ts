@@ -13,7 +13,7 @@
  * This transforms MNNR from a billing tool into an ECONOMY.
  */
 
-import { createClient } from '@/utils/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -297,10 +297,8 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient();
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

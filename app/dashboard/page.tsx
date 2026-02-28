@@ -1,21 +1,6 @@
-/**
- * Dashboard Page
- * 
- * Created: 2025-12-26 23:07:00 EST
- * Action #15 in 19-hour optimization
- * 
- * Purpose: Main dashboard with user analytics, subscription status, and quick actions
- * 
- * Features:
- * - Subscription status card
- * - Usage metrics
- * - Recent invoices
- * - Quick actions
- * - Analytics charts
- */
-
 import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth';
+import { db } from '@/lib/db';
 import DashboardContent from './DashboardContent';
 
 export const metadata = {
@@ -24,45 +9,18 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-
-  // Check authentication
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
 
   if (!user) {
-    redirect('/signin');
+    redirect('/sign-in');
   }
 
-  // Fetch user profile
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  // Fetch subscription data
-  const { data: subscriptions } = await supabase
-    .from('subscriptions')
-    .select(`
-      *,
-      prices (
-        *,
-        products (*)
-      )
-    `)
-    .eq('user_id', user.id)
-    .order('created', { ascending: false });
-
-  const activeSubscription = subscriptions?.find(
-    (sub) => sub.status === 'active' || sub.status === 'trialing'
-  );
+  const profile = await db.getUserById(user.id);
+  const subscription = await db.getActiveSubscription(user.id);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Dashboard
@@ -72,11 +30,10 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {/* Dashboard Content */}
         <DashboardContent
           user={user}
           profile={profile}
-          subscription={activeSubscription}
+          subscription={subscription}
         />
       </div>
     </div>

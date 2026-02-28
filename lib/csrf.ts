@@ -5,9 +5,13 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createHmac, randomBytes } from "crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 
-const CSRF_SECRET = process.env.CSRF_SECRET || "default-csrf-secret-change-in-production";
+const CSRF_SECRET = process.env.CSRF_SECRET;
+
+if (!CSRF_SECRET) {
+  throw new Error("CSRF_SECRET environment variable is required");
+}
 const CSRF_TOKEN_LENGTH = 32;
 
 /**
@@ -37,7 +41,10 @@ export function verifyCsrfToken(token: string): boolean {
       .update(tokenPart)
       .digest("hex");
 
-    return signature === expectedSignature;
+    if (signature.length !== expectedSignature.length) {
+      return false;
+    }
+    return timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   } catch (error) {
     return false;
   }

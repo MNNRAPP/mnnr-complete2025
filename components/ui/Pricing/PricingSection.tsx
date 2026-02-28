@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Pricing from './Pricing';
-import { createClient } from '@/utils/supabase/client';
-import type { Tables } from '@/types_db';
-import { User } from '@supabase/supabase-js';
-
-type Subscription = Tables<'subscriptions'>;
-type Product = Tables<'products'>;
-type Price = Tables<'prices'>;
+import type { Product, Price, Subscription } from '@/lib/db';
 
 interface ProductWithPrices extends Product {
   prices: Price[];
@@ -46,28 +40,28 @@ function StaticPricing() {
                 <span className="text-gray-400">/month</span>
               </div>
             </div>
-            
+
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">10,000 API calls/month</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Basic usage analytics</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">API key management</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Community support</span>
               </li>
             </ul>
 
             <a
-              href="/signin/signup"
+              href="/sign-up"
               className="block w-full text-center bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 rounded-lg transition-colors"
             >
               Start Free
@@ -79,7 +73,7 @@ function StaticPricing() {
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-sm font-bold px-4 py-1 rounded-full">
               MOST POPULAR
             </div>
-            
+
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
               <div className="flex items-baseline gap-2">
@@ -87,32 +81,32 @@ function StaticPricing() {
                 <span className="text-gray-400">/month</span>
               </div>
             </div>
-            
+
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">1M API calls/month</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
-                <span className="text-gray-300">Advanced analytics & insights</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
+                <span className="text-gray-300">Advanced analytics &amp; insights</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Custom rate limits</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Stripe billing integration</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Email support</span>
               </li>
             </ul>
 
             <a
-              href="/signin/signup"
+              href="/sign-up"
               className="block w-full text-center bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3 rounded-lg transition-colors"
             >
               Start Pro Trial
@@ -127,26 +121,26 @@ function StaticPricing() {
                 <span className="text-5xl font-bold text-white">Custom</span>
               </div>
             </div>
-            
+
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Unlimited API calls</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Dedicated infrastructure</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
-                <span className="text-gray-300">SSO & advanced security</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
+                <span className="text-gray-300">SSO &amp; advanced security</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Custom SLA</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-emerald-400 mt-1">✓</span>
+                <span className="text-emerald-400 mt-1">&#10003;</span>
                 <span className="text-gray-300">Dedicated support</span>
               </li>
             </ul>
@@ -162,7 +156,7 @@ function StaticPricing() {
 
         <div className="mt-16 text-center">
           <p className="text-gray-400 text-sm">
-            All plans include uptime monitoring • Cancel anytime • No credit card required for free tier
+            All plans include uptime monitoring - Cancel anytime - No credit card required for free tier
           </p>
         </div>
       </div>
@@ -171,63 +165,6 @@ function StaticPricing() {
 }
 
 export default function PricingSection() {
-  const [user, setUser] = useState<User | null>(null);
-  const [products, setProducts] = useState<ProductWithPrices[]>([]);
-  const [subscription, setSubscription] = useState<SubscriptionWithProduct | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const supabase = createClient();
-        
-        // Get user
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
-
-        // Get products with prices
-        const { data: productsData } = await supabase
-          .from('products')
-          .select('*, prices(*)')
-          .eq('active', true)
-          .order('metadata->index')
-          .order('unit_amount', { referencedTable: 'prices' });
-        
-        if (productsData) {
-          setProducts(productsData as ProductWithPrices[]);
-        }
-
-        // Get subscription if user exists
-        if (user) {
-          const { data: subscriptionData } = await supabase
-            .from('subscriptions')
-            .select('*, prices(*, products(*))')
-            .in('status', ['trialing', 'active'])
-            .maybeSingle();
-          
-          setSubscription(subscriptionData as SubscriptionWithProduct | null);
-        }
-      } catch (error) {
-        console.error('Error loading pricing data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  // Show static pricing immediately, then hydrate with dynamic data
-  // This ensures fast LCP while still supporting Stripe products
-  if (loading || products.length === 0) {
-    return <StaticPricing />;
-  }
-
-  return (
-    <Pricing
-      user={user}
-      products={products}
-      subscription={subscription}
-    />
-  );
+  // Always show static pricing - dynamic pricing fetched on pricing page
+  return <StaticPricing />;
 }

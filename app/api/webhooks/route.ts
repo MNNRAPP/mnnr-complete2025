@@ -2,14 +2,15 @@ import Stripe from 'stripe';
 import {
   getStripeClient,
   isStripeConfigured,
-  StripeNotConfiguredError
+  StripeNotConfiguredError,
 } from '@/utils/stripe/config';
 import { logger } from '@/utils/logger';
+import { db } from '@/lib/db';
 import {
   checkRateLimit,
   getClientIp,
   rateLimitConfigs,
-  createRateLimitResponse
+  createRateLimitResponse,
 } from '@/utils/rate-limit';
 
 const relevantEvents = new Set([
@@ -22,24 +23,19 @@ const relevantEvents = new Set([
   'checkout.session.completed',
   'customer.subscription.created',
   'customer.subscription.updated',
-  'customer.subscription.deleted'
+  'customer.subscription.deleted',
 ]);
 
 export async function POST(req: Request) {
-  // Skip during build time when env vars aren't available
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     return new Response('Webhook not configured', { status: 500 });
   }
 
   if (!isStripeConfigured()) {
     logger.error('Stripe webhook invoked without secret key configured');
-    return new Response(
-      'Stripe is not configured. Set STRIPE_SECRET_KEY to handle webhooks.',
-      { status: 500 }
-    );
+    return new Response('Stripe is not configured.', { status: 500 });
   }
 
-  // Apply enterprise rate limiting
   const clientIp = getClientIp(req);
   const rateLimit = await checkRateLimit(clientIp, rateLimitConfigs.webhook);
 
@@ -64,43 +60,32 @@ export async function POST(req: Request) {
   } catch (err: unknown) {
     if (err instanceof StripeNotConfiguredError) {
       logger.error('Stripe client unavailable during webhook validation');
-      return new Response('Stripe is not configured on this deployment.', {
-        status: 500
-      });
+      return new Response('Stripe is not configured on this deployment.', { status: 500 });
     }
     logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
-    // Return generic error message to prevent XSS (detailed error is logged above)
     return new Response('Webhook validation failed', { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
     try {
-      // PAY-020: Idempotency check - prevent duplicate processing
-      const { createAdminClient } = await import('@/utils/supabase/admin');
-      const supabase = createAdminClient();
-
-      const { data: existingEvent } = await supabase
-        .from('stripe_events')
-        .select('id')
-        .eq('id', event.id)
-        .single();
-
+      // Idempotency check
+      const existingEvent = await db.getStripeEvent(event.id);
       if (existingEvent) {
         logger.info('Webhook already processed (idempotency)', { eventId: event.id, eventType: event.type });
         return new Response(JSON.stringify({ received: true, processed: 'already' }), {
           status: 200,
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         });
       }
 
-      // Dynamically import admin functions to avoid build-time issues
+      // Dynamically import to avoid build-time issues
       const {
         upsertProductRecord,
         upsertPriceRecord,
         manageSubscriptionStatusChange,
         deleteProductRecord,
-        deletePriceRecord
-      } = await import('@/utils/supabase/admin');
+        deletePriceRecord,
+      } = await import('@/lib/stripe-sync');
 
       switch (event.type) {
         case 'product.created':
@@ -130,9 +115,8 @@ export async function POST(req: Request) {
         case 'checkout.session.completed':
           const checkoutSession = event.data.object as Stripe.Checkout.Session;
           if (checkoutSession.mode === 'subscription') {
-            const subscriptionId = checkoutSession.subscription;
             await manageSubscriptionStatusChange(
-              subscriptionId as string,
+              checkoutSession.subscription as string,
               checkoutSession.customer as string,
               true
             );
@@ -143,29 +127,18 @@ export async function POST(req: Request) {
           throw new Error('Unhandled relevant event!');
       }
 
-      // PAY-020: Record successful processing for idempotency
-      await supabase
-        .from('stripe_events')
-        .insert({
-          id: event.id,
-          event_type: event.type
-        });
+      // Record successful processing for idempotency
+      await db.recordStripeEvent(event.id, event.type);
 
       logger.info('Webhook processed successfully', { eventType: event.type, eventId: event.id });
     } catch (error) {
       logger.error('Webhook processing failed', error, { eventType: event.type, eventId: event.id });
-      return new Response(
-        'Webhook handler failed. View your Next.js function logs.',
-        {
-          status: 400
-        }
-      );
+      return new Response('Webhook handler failed.', { status: 400 });
     }
   } else {
     logger.warn('Unsupported webhook event type', { eventType: event.type, eventId: event.id });
-    return new Response(`Unsupported event type: ${event.type}`, {
-      status: 400
-    });
+    return new Response(`Unsupported event type: ${event.type}`, { status: 400 });
   }
+
   return new Response(JSON.stringify({ received: true }));
 }

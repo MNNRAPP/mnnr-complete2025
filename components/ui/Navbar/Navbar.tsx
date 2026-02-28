@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth';
 import s from './Navbar.module.css';
 import Navlinks from './Navlinks';
 
@@ -6,14 +6,9 @@ export default async function Navbar() {
   let user = null;
 
   try {
-    const supabase = createClient();
-    const response = await Promise.race([
-      supabase.auth.getUser(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
-    ]);
-    user = (response as any)?.data?.user || null;
+    user = await getAuthenticatedUser();
   } catch (error) {
-    console.warn('Failed to get user, continuing without auth:', error);
+    // Continue without auth - user is null
   }
 
   return (

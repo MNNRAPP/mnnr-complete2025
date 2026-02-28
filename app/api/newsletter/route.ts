@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { db } from '@/lib/db';
 import { Resend } from 'resend';
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY || 're_eE4ZM9xZ_9439bS3mLZJYUAhLjxfTkzoT');
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || '';
+// Initialize Resend with API key from environment - NEVER hardcode
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Welcome email HTML template
 const getWelcomeEmailHtml = () => `
@@ -86,25 +83,11 @@ export async function POST(request: NextRequest) {
     // Normalize email
     const normalizedEmail = email.toLowerCase().trim();
 
-    // If Supabase is configured, store in database
-    if (supabaseUrl && supabaseServiceKey) {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .upsert(
-          { 
-            email: normalizedEmail, 
-            subscribed_at: new Date().toISOString(),
-            source: 'website',
-            status: 'active'
-          },
-          { onConflict: 'email' }
-        );
-
-      if (error) {
-        console.log('Newsletter subscription note:', error.message);
-      }
+    // Store in Neon database
+    try {
+      await db.upsertNewsletterSubscriber(normalizedEmail, 'website');
+    } catch (dbError) {
+      console.log('Newsletter subscription note:', dbError);
     }
 
     // Send welcome email via Resend

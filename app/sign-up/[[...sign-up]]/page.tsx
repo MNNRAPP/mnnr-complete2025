@@ -1,55 +1,115 @@
 'use client';
 
-import { SignUp } from '@clerk/nextjs';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Sign up failed');
+        return;
+      }
+
+      router.push('/dashboard');
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="text-3xl font-bold text-white">
-            $MNNR
-          </a>
-          <p className="text-gray-400 mt-2">
-            Create your account to start tracking AI usage
-          </p>
+          <a href="/" className="text-3xl font-bold text-white">$MNNR</a>
+          <p className="text-gray-400 mt-2">Create your account to start tracking AI usage</p>
         </div>
 
-        {/* Clerk SignUp Component */}
-        <SignUp
-          appearance={{
-            elements: {
-              rootBox: 'w-full',
-              card: 'bg-gray-800/50 backdrop-blur border border-gray-700 shadow-2xl',
-              headerTitle: 'text-white',
-              headerSubtitle: 'text-gray-400',
-              socialButtonsBlockButton: 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600',
-              socialButtonsBlockButtonText: 'text-white',
-              dividerLine: 'bg-gray-600',
-              dividerText: 'text-gray-400',
-              formFieldLabel: 'text-gray-300',
-              formFieldInput: 'bg-gray-700 border-gray-600 text-white placeholder-gray-400',
-              formButtonPrimary: 'bg-blue-600 hover:bg-blue-700',
-              footerActionLink: 'text-blue-400 hover:text-blue-300',
-              identityPreviewText: 'text-white',
-              identityPreviewEditButton: 'text-blue-400',
-            },
-          }}
-          redirectUrl="/dashboard"
-          signInUrl="/sign-in"
-        />
+        <form onSubmit={handleSubmit} className="bg-gray-800/50 backdrop-blur border border-gray-700 shadow-2xl rounded-xl p-8 space-y-6">
+          {error && (
+            <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
-        {/* Footer */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Name (optional)</label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-gray-700 border border-gray-600 text-white placeholder-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Your name"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full bg-gray-700 border border-gray-600 text-white placeholder-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+              className="w-full bg-gray-700 border border-gray-600 text-white placeholder-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="At least 8 characters"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg px-4 py-3 transition-colors"
+          >
+            {loading ? 'Creating account...' : 'Create Account'}
+          </button>
+        </form>
+
         <p className="text-center text-gray-500 text-sm mt-8">
           By signing up, you agree to our{' '}
-          <a href="/legal/terms" className="text-blue-400 hover:underline">
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a href="/legal/privacy" className="text-blue-400 hover:underline">
-            Privacy Policy
-          </a>
+          <a href="/legal/terms" className="text-blue-400 hover:underline">Terms of Service</a>
+          {' '}and{' '}
+          <a href="/legal/privacy" className="text-blue-400 hover:underline">Privacy Policy</a>
+        </p>
+        <p className="text-center text-gray-500 text-sm mt-2">
+          Already have an account?{' '}
+          <a href="/sign-in" className="text-blue-400 hover:underline">Sign in</a>
         </p>
       </div>
     </div>

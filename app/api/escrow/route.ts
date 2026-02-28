@@ -3,7 +3,7 @@
  * Hold payments in escrow until conditions are cryptographically verified.
  */
 
-import { createClient } from '@/utils/supabase/server';
+import { getAuthenticatedUser } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import crypto from 'crypto';
@@ -33,9 +33,8 @@ const CreateEscrowSchema = z.object({
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient() as any;
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -71,9 +70,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient() as any;
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

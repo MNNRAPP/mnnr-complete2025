@@ -10,10 +10,8 @@ import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import { CurrencySelector } from '@/components/ui/CurrencySelector';
 import s from './Navbar.module.css';
 
-import { User } from '@supabase/supabase-js';
-
 interface NavlinksProps {
-  user?: User | null;
+  user?: { id: string; email: string } | null;
 }
 
 export default function Navlinks({ user }: NavlinksProps) {

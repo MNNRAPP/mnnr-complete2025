@@ -5,16 +5,14 @@ import {
   getStripeClient,
   StripeNotConfiguredError
 } from '@/utils/stripe/config';
-import { createClient } from '@/utils/supabase/server';
-import { createOrRetrieveCustomer } from '@/utils/supabase/admin';
+import { getAuthenticatedUser } from '@/lib/auth';
+import { createOrRetrieveCustomer } from '@/lib/stripe-sync';
+import type { Price } from '@/lib/db';
 import {
   getURL,
   getErrorRedirect,
   calculateTrialEndUnixTimestamp
 } from '@/utils/helpers';
-import { Tables } from '@/types_db';
-
-type Price = Tables<'prices'>;
 
 type CheckoutResponse = {
   errorRedirect?: string;
@@ -28,24 +26,16 @@ export async function checkoutWithStripe(
   try {
     const stripe = getStripeClient();
 
-    // Get the user from Supabase auth
-    const supabase = createClient();
-    const {
-      error,
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (error || !user) {
-      console.error(error);
+    const user = await getAuthenticatedUser();
+    if (!user) {
       throw new Error('Could not get user session.');
     }
 
-    // Retrieve or create the customer in Stripe
     let customer: string;
     try {
       customer = await createOrRetrieveCustomer({
-        uuid: user?.id || '',
-        email: user?.email || ''
+        uuid: user.id,
+        email: user.email,
       });
     } catch (err) {
       console.error(err);
@@ -69,10 +59,6 @@ export async function checkoutWithStripe(
       success_url: getURL(redirectPath)
     };
 
-    console.log(
-      'Trial end:',
-      calculateTrialEndUnixTimestamp(price.trial_period_days)
-    );
     if (price.type === 'recurring') {
       params = {
         ...params,
@@ -88,7 +74,6 @@ export async function checkoutWithStripe(
       };
     }
 
-    // Create a checkout session in Stripe
     let session;
     try {
       session = await stripe.checkout.sessions.create(params);
@@ -97,7 +82,6 @@ export async function checkoutWithStripe(
       throw new Error('Unable to create checkout session.');
     }
 
-    // Instead of returning a Response, just return the data or error.
     if (session) {
       return { sessionId: session.id };
     } else {
@@ -137,24 +121,16 @@ export async function createStripePortal(currentPath: string) {
   try {
     const stripe = getStripeClient();
 
-    const supabase = createClient();
-    const {
-      error,
-      data: { user }
-    } = await supabase.auth.getUser();
-
+    const user = await getAuthenticatedUser();
     if (!user) {
-      if (error) {
-        console.error(error);
-      }
       throw new Error('Could not get user session.');
     }
 
     let customer;
     try {
       customer = await createOrRetrieveCustomer({
-        uuid: user.id || '',
-        email: user.email || ''
+        uuid: user.id,
+        email: user.email,
       });
     } catch (err) {
       console.error(err);
