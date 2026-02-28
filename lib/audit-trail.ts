@@ -11,8 +11,7 @@
  * - Compliance-ready (SOC 2, GDPR, PCI DSS)
  */
 
-import { createClient } from '@/utils/supabase/server';
-import { createHmac, randomBytes } from 'crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
 // Audit event types
 export enum AuditEventType {
@@ -80,7 +79,10 @@ export interface AuditEvent {
 }
 
 // Audit trail configuration
-const AUDIT_SECRET = process.env.AUDIT_TRAIL_SECRET || 'change-this-in-production';
+const AUDIT_SECRET = process.env.AUDIT_TRAIL_SECRET;
+if (!AUDIT_SECRET) {
+  console.warn('[AUDIT] AUDIT_TRAIL_SECRET not set — audit signatures will be disabled');
+}
 const HASH_ALGORITHM = 'sha256';
 
 /**
@@ -107,8 +109,13 @@ function generateSignature(event: Omit<AuditEvent, 'signature'>): string {
  */
 export function verifySignature(event: AuditEvent): boolean {
   const { signature, ...eventWithoutSignature } = event;
+  if (!signature) return false;
   const expectedSignature = generateSignature(eventWithoutSignature);
-  return signature === expectedSignature;
+  if (signature.length !== expectedSignature.length) return false;
+  return timingSafeEqual(
+    Buffer.from(signature, 'utf-8'),
+    Buffer.from(expectedSignature, 'utf-8')
+  );
 }
 
 /**
@@ -118,7 +125,7 @@ export function verifySignature(event: AuditEvent): boolean {
 async function getLastEventHash(): Promise<string | null> {
   try {
     // For now, return null to skip chain verification
-    // The audit_logs table needs to be created in Supabase
+    // The audit_logs table needs to be created in the database
     console.log('[AUDIT] Skipping chain verification - audit_logs table not configured');
     return null;
   } catch (error) {

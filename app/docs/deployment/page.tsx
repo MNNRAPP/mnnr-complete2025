@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Deployment Guide - MNNR',
-  description: 'Step-by-step production deployment guide with Vercel, Supabase, and monitoring setup.',
+  description: 'Step-by-step production deployment guide with Vercel, Neon, and monitoring setup.',
 };
 
 const deploymentSteps = [
@@ -14,7 +14,7 @@ const deploymentSteps = [
     gradient: 'from-blue-500/20 to-indigo-500/20',
     borderColor: 'border-blue-500/30',
     items: [
-      'Database URL (Supabase PostgreSQL)',
+      'Database URL (Neon PostgreSQL)',
       'Stripe API keys (publishable + secret)',
       'Redis connection string for rate limiting',
       'Sentry DSN for error monitoring',
@@ -35,20 +35,17 @@ MNNR_API_KEY="mnnr_test_..."`,
     gradient: 'from-green-500/20 to-emerald-500/20',
     borderColor: 'border-green-500/30',
     items: [
-      'Create Supabase project',
+      'Create Neon project',
       'Run schema migrations',
-      'Configure Row Level Security (RLS)',
+      'Configure indexes and constraints',
       'Set up agent_identities table',
       'Create transaction indexes',
     ],
     code: `# Run migrations
-npx prisma migrate deploy
+npm run db:migrate
 
-# Seed agent economy tables
-npx prisma db seed
-
-# Verify RLS policies
-supabase db diff --linked`,
+# Verify schema
+psql $DATABASE_URL -c "\\dt"`,
   },
   {
     number: 3,
@@ -159,7 +156,7 @@ export default function DeploymentPage() {
               </span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Deploy your agent infrastructure to production with Vercel, Supabase, 
+              Deploy your agent infrastructure to production with Vercel, Neon,
               and enterprise-grade monitoring.
             </p>
           </div>
@@ -175,7 +172,7 @@ export default function DeploymentPage() {
               </div>
               <div className="text-center p-4 bg-black/40 rounded-lg">
                 <span className="text-2xl mb-2 block">⚡</span>
-                <div className="text-white font-medium">Supabase</div>
+                <div className="text-white font-medium">Neon</div>
                 <div className="text-gray-400 text-sm">PostgreSQL</div>
               </div>
               <div className="text-center p-4 bg-black/40 rounded-lg">

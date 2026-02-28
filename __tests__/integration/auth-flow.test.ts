@@ -1,41 +1,27 @@
 /**
  * Authentication Flow Integration Tests
- * 
- * Created: 2025-12-27 00:35:00 EST
- * Updated: 2025-12-28 - Fixed vitest mock syntax
- * Part of 2-hour completion plan - Phase 5
+ *
+ * Tests the session-based auth system using Neon PostgreSQL.
+ * Uses mocked db layer to avoid hitting the actual database.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
-import { createClient } from '@supabase/supabase-js';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Mock Supabase client
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(),
+// Mock lib/db
+vi.mock('@/lib/db', () => ({
+  db: {
+    getUserByEmail: vi.fn(),
+    getUserById: vi.fn(),
+    createUser: vi.fn(),
+    createSession: vi.fn(),
+    getSessionByTokenHash: vi.fn(),
+    deleteSession: vi.fn(),
+  },
 }));
 
 describe('Authentication Flow', () => {
-  let supabase: {
-    auth: {
-      signUp: Mock;
-      signInWithPassword: Mock;
-      signOut: Mock;
-      getUser: Mock;
-      resetPasswordForEmail: Mock;
-    };
-  };
-
   beforeEach(() => {
-    supabase = {
-      auth: {
-        signUp: vi.fn(),
-        signInWithPassword: vi.fn(),
-        signOut: vi.fn(),
-        getUser: vi.fn(),
-        resetPasswordForEmail: vi.fn(),
-      },
-    };
-    vi.mocked(createClient).mockReturnValue(supabase as any);
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -43,246 +29,143 @@ describe('Authentication Flow', () => {
   });
 
   describe('Sign Up Flow', () => {
-    it('successfully creates a new user account', async () => {
-      const mockUser = {
+    it('should create a new user successfully', async () => {
+      const { db } = await import('@/lib/db');
+
+      vi.mocked(db.getUserByEmail).mockResolvedValue(null);
+      vi.mocked(db.createUser).mockResolvedValue({
         id: 'user-123',
         email: 'test@example.com',
-        user_metadata: {},
-      };
+        full_name: 'Test User',
+        password_hash: 'hashed',
+        billing_address: null,
+        payment_method: null,
+        created_at: new Date().toISOString(),
+      } as any);
 
-      supabase.auth.signUp.mockResolvedValue({
-        data: { user: mockUser, session: { access_token: 'token-123' } },
-        error: null,
-      });
+      const user = await db.createUser(
+        'test@example.com',
+        'hashed-password',
+        'Test User'
+      );
 
-      const result = await supabase.auth.signUp({
-        email: 'test@example.com',
-        password: 'password123',
-      });
-
-      expect(result.data.user).toEqual(mockUser);
-      expect(result.error).toBeNull();
-      expect(supabase.auth.signUp).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      expect(user).toBeDefined();
+      expect(user!.email).toBe('test@example.com');
+      expect(db.createUser).toHaveBeenCalledWith(
+        'test@example.com',
+        'hashed-password',
+        'Test User'
+      );
     });
 
-    it('handles duplicate email error', async () => {
-      supabase.auth.signUp.mockResolvedValue({
-        data: { user: null, session: null },
-        error: { message: 'User already registered' },
-      });
+    it('should reject duplicate email', async () => {
+      const { db } = await import('@/lib/db');
 
-      const result = await supabase.auth.signUp({
+      vi.mocked(db.getUserByEmail).mockResolvedValue({
+        id: 'existing-user',
         email: 'existing@example.com',
-        password: 'password123',
-      });
+        full_name: null,
+        password_hash: 'hashed',
+        billing_address: null,
+        payment_method: null,
+        created_at: new Date().toISOString(),
+      } as any);
 
-      expect(result.data.user).toBeNull();
-      expect(result.error).toBeDefined();
-      expect(result.error.message).toBe('User already registered');
-    });
-
-    it('handles weak password error', async () => {
-      supabase.auth.signUp.mockResolvedValue({
-        data: { user: null, session: null },
-        error: { message: 'Password should be at least 6 characters' },
-      });
-
-      const result = await supabase.auth.signUp({
-        email: 'test@example.com',
-        password: '123',
-      });
-
-      expect(result.error.message).toContain('at least 6 characters');
+      const existingUser = await db.getUserByEmail('existing@example.com');
+      expect(existingUser).not.toBeNull();
     });
   });
 
   describe('Sign In Flow', () => {
-    it('successfully logs in existing user', async () => {
-      const mockSession = {
-        access_token: 'token-123',
-        refresh_token: 'refresh-123',
-        user: {
-          id: 'user-123',
-          email: 'test@example.com',
-        },
-      };
+    it('should authenticate valid user', async () => {
+      const { db } = await import('@/lib/db');
 
-      supabase.auth.signInWithPassword.mockResolvedValue({
-        data: { session: mockSession },
-        error: null,
-      });
-
-      const result = await supabase.auth.signInWithPassword({
+      vi.mocked(db.getUserByEmail).mockResolvedValue({
+        id: 'user-123',
         email: 'test@example.com',
-        password: 'password123',
-      });
+        full_name: 'Test User',
+        password_hash: 'correct-hash',
+        billing_address: null,
+        payment_method: null,
+        created_at: new Date().toISOString(),
+      } as any);
 
-      expect(result.data.session).toEqual(mockSession);
-      expect(result.error).toBeNull();
+      const user = await db.getUserByEmail('test@example.com');
+      expect(user).toBeDefined();
+      expect(user!.email).toBe('test@example.com');
     });
 
-    it('handles invalid credentials', async () => {
-      supabase.auth.signInWithPassword.mockResolvedValue({
-        data: { session: null },
-        error: { message: 'Invalid login credentials' },
-      });
+    it('should reject non-existent user', async () => {
+      const { db } = await import('@/lib/db');
 
-      const result = await supabase.auth.signInWithPassword({
-        email: 'test@example.com',
-        password: 'wrongpassword',
-      });
+      vi.mocked(db.getUserByEmail).mockResolvedValue(null);
 
-      expect(result.data.session).toBeNull();
-      expect(result.error.message).toBe('Invalid login credentials');
-    });
-
-    it('handles non-existent user', async () => {
-      supabase.auth.signInWithPassword.mockResolvedValue({
-        data: { session: null },
-        error: { message: 'Invalid login credentials' },
-      });
-
-      const result = await supabase.auth.signInWithPassword({
-        email: 'nonexistent@example.com',
-        password: 'password123',
-      });
-
-      expect(result.error).toBeDefined();
-    });
-  });
-
-  describe('Sign Out Flow', () => {
-    it('successfully logs out user', async () => {
-      supabase.auth.signOut.mockResolvedValue({
-        error: null,
-      });
-
-      const result = await supabase.auth.signOut();
-
-      expect(result.error).toBeNull();
-      expect(supabase.auth.signOut).toHaveBeenCalled();
-    });
-
-    it('handles sign out error', async () => {
-      supabase.auth.signOut.mockResolvedValue({
-        error: { message: 'Failed to sign out' },
-      });
-
-      const result = await supabase.auth.signOut();
-
-      expect(result.error).toBeDefined();
-    });
-  });
-
-  describe('Password Reset Flow', () => {
-    it('successfully sends password reset email', async () => {
-      supabase.auth.resetPasswordForEmail.mockResolvedValue({
-        data: {},
-        error: null,
-      });
-
-      const result = await supabase.auth.resetPasswordForEmail(
-        'test@example.com',
-        { redirectTo: 'https://example.com/reset-password' }
-      );
-
-      expect(result.error).toBeNull();
-      expect(supabase.auth.resetPasswordForEmail).toHaveBeenCalledWith(
-        'test@example.com',
-        { redirectTo: 'https://example.com/reset-password' }
-      );
-    });
-
-    it('handles invalid email format', async () => {
-      supabase.auth.resetPasswordForEmail.mockResolvedValue({
-        data: {},
-        error: { message: 'Invalid email format' },
-      });
-
-      const result = await supabase.auth.resetPasswordForEmail('invalid-email');
-
-      expect(result.error.message).toBe('Invalid email format');
+      const user = await db.getUserByEmail('nonexistent@example.com');
+      expect(user).toBeNull();
     });
   });
 
   describe('Session Management', () => {
-    it('successfully retrieves current user', async () => {
-      const mockUser = {
-        id: 'user-123',
-        email: 'test@example.com',
-      };
+    it('should create session for authenticated user', async () => {
+      const { db } = await import('@/lib/db');
 
-      supabase.auth.getUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
+      vi.mocked(db.createSession).mockResolvedValue({
+        id: 'session-123',
+        user_id: 'user-123',
+        token_hash: 'hashed-token',
+        ip_address: '127.0.0.1',
+        user_agent: 'test-agent',
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        created_at: new Date().toISOString(),
+      } as any);
 
-      const result = await supabase.auth.getUser();
+      const session = await db.createSession(
+        'user-123',
+        'hashed-token',
+        '127.0.0.1',
+        'test-agent'
+      );
 
-      expect(result.data.user).toEqual(mockUser);
-      expect(result.error).toBeNull();
+      expect(session).toBeDefined();
+      expect(session!.user_id).toBe('user-123');
     });
 
-    it('handles unauthenticated user', async () => {
-      supabase.auth.getUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: 'Not authenticated' },
-      });
+    it('should retrieve session by token hash', async () => {
+      const { db } = await import('@/lib/db');
 
-      const result = await supabase.auth.getUser();
+      vi.mocked(db.getSessionByTokenHash).mockResolvedValue({
+        id: 'session-123',
+        user_id: 'user-123',
+        token_hash: 'hashed-token',
+        ip_address: '127.0.0.1',
+        user_agent: 'test-agent',
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        created_at: new Date().toISOString(),
+      } as any);
 
-      expect(result.data.user).toBeNull();
-      expect(result.error).toBeDefined();
+      const session = await db.getSessionByTokenHash('hashed-token');
+      expect(session).toBeDefined();
+      expect(session!.user_id).toBe('user-123');
+    });
+
+    it('should return null for expired/invalid session', async () => {
+      const { db } = await import('@/lib/db');
+
+      vi.mocked(db.getSessionByTokenHash).mockResolvedValue(null);
+
+      const session = await db.getSessionByTokenHash('invalid-token');
+      expect(session).toBeNull();
     });
   });
 
-  describe('Complete Auth Flow', () => {
-    it('completes full signup → login → logout flow', async () => {
-      // Sign up
-      supabase.auth.signUp.mockResolvedValue({
-        data: {
-          user: { id: 'user-123', email: 'test@example.com' },
-          session: { access_token: 'token-123' },
-        },
-        error: null,
-      });
+  describe('Sign Out Flow', () => {
+    it('should destroy session', async () => {
+      const { db } = await import('@/lib/db');
 
-      const signUpResult = await supabase.auth.signUp({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+      vi.mocked(db.deleteSession).mockResolvedValue(undefined);
 
-      expect(signUpResult.data.user).toBeDefined();
-
-      // Sign in
-      supabase.auth.signInWithPassword.mockResolvedValue({
-        data: {
-          session: {
-            access_token: 'token-456',
-            user: { id: 'user-123', email: 'test@example.com' },
-          },
-        },
-        error: null,
-      });
-
-      const signInResult = await supabase.auth.signInWithPassword({
-        email: 'test@example.com',
-        password: 'password123',
-      });
-
-      expect(signInResult.data.session).toBeDefined();
-
-      // Sign out
-      supabase.auth.signOut.mockResolvedValue({
-        error: null,
-      });
-
-      const signOutResult = await supabase.auth.signOut();
-
-      expect(signOutResult.error).toBeNull();
+      await db.deleteSession('hashed-token');
+      expect(db.deleteSession).toHaveBeenCalledWith('hashed-token');
     });
   });
 });

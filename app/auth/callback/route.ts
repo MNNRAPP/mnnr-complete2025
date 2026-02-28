@@ -1,88 +1,17 @@
-import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
+import { getErrorRedirect } from '@/utils/helpers';
 
 export async function GET(request: NextRequest) {
-  // The `/auth/callback` route handles both OAuth code exchange and magic link verification
-  // OAuth: code parameter for OAuth flows
-  // Magic Link: token_hash + type parameters for email-based OTP authentication
+  // OAuth callback route - currently not in use (email/password auth only)
+  // This route can be extended to support OAuth providers in the future
   const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const token_hash = requestUrl.searchParams.get('token_hash');
-  const type = requestUrl.searchParams.get('type');
 
-  const supabase = createClient();
-
-  // Handle OAuth code exchange
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (error) {
-      return NextResponse.redirect(
-        getErrorRedirect(
-          `${requestUrl.origin}/signin`,
-          error.name,
-          "Sorry, we weren't able to log you in. Please try again."
-        )
-      );
-    }
-
-    // OAuth successful, redirect to account
-    return NextResponse.redirect(
-      getStatusRedirect(
-        `${requestUrl.origin}/account`,
-        'Success!',
-        'You are now signed in.'
-      )
-    );
-  }
-
-  // Handle magic link (OTP token_hash from email)
-  if (token_hash && type) {
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        token_hash,
-        type: type as 'signup' | 'recovery' | 'invite' | 'email' | 'magiclink'
-      });
-
-      if (error) {
-        console.error('Magic link verification error:', error);
-        return NextResponse.redirect(
-          getErrorRedirect(
-            `${requestUrl.origin}/signin`,
-            'Invalid or expired magic link',
-            'Please request a new sign in link.'
-          )
-        );
-      }
-
-      // Magic link successful, redirect to account
-      return NextResponse.redirect(
-        getStatusRedirect(
-          `${requestUrl.origin}/account`,
-          'Success!',
-          'You are now signed in.'
-        )
-      );
-    } catch (err) {
-      console.error('Magic link error:', err);
-      return NextResponse.redirect(
-        getErrorRedirect(
-          `${requestUrl.origin}/signin`,
-          'Authentication failed',
-          'Please try again or request a new magic link.'
-        )
-      );
-    }
-  }
-
-  // No code or token provided, redirect to signin
   return NextResponse.redirect(
     getErrorRedirect(
-      `${requestUrl.origin}/signin`,
-      'Invalid callback',
-      'No authentication code or token provided.'
+      `${requestUrl.origin}/sign-in`,
+      'OAuth not configured',
+      'Please sign in with email and password.'
     )
   );
 }

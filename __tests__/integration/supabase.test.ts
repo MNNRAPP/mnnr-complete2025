@@ -1,262 +1,131 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 /**
- * Supabase Integration Tests
- * 
- * These tests verify the Supabase integration works correctly.
+ * Database Integration Tests
+ *
+ * These tests verify the Neon database integration works correctly.
  * They use mocked responses to avoid hitting the actual database in CI.
  */
 
-// Create chainable mock functions
-const createChainableMock = () => {
-  const mock: any = {
-    data: null,
-    error: null,
-  };
-  
-  mock.from = vi.fn().mockReturnValue(mock);
-  mock.select = vi.fn().mockReturnValue(mock);
-  mock.insert = vi.fn().mockReturnValue(mock);
-  mock.update = vi.fn().mockReturnValue(mock);
-  mock.delete = vi.fn().mockReturnValue(mock);
-  mock.eq = vi.fn().mockReturnValue(mock);
-  mock.single = vi.fn().mockImplementation(() => Promise.resolve({ data: mock.data, error: mock.error }));
-  mock.then = vi.fn().mockImplementation((resolve) => Promise.resolve({ data: mock.data, error: mock.error }).then(resolve));
-  
-  mock.setResponse = (data: any, error: any = null) => {
-    mock.data = data;
-    mock.error = error;
-  };
-  
-  return mock;
-};
-
-const mockSupabaseClient = createChainableMock();
-
-// Add auth methods
-mockSupabaseClient.auth = {
-  getUser: vi.fn(),
-  signInWithPassword: vi.fn(),
-  signOut: vi.fn(),
-};
-
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => mockSupabaseClient),
+// Mock the db module
+vi.mock('@/lib/db', () => ({
+  db: {
+    getUserById: vi.fn(),
+    getUserByEmail: vi.fn(),
+    createUser: vi.fn(),
+    updateUser: vi.fn(),
+    getApiKeysByUserId: vi.fn(),
+    createApiKey: vi.fn(),
+    revokeApiKey: vi.fn(),
+    getApiKeyByHash: vi.fn(),
+    healthCheck: vi.fn(),
+  },
 }));
 
-describe('Supabase Client', () => {
+describe('Database Client', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockSupabaseClient.setResponse(null, null);
   });
 
-  describe('Authentication', () => {
-    it('should handle user authentication', async () => {
-      mockSupabaseClient.auth.getUser.mockResolvedValue({
-        data: {
-          user: {
-            id: 'test-user-id',
-            email: 'test@example.com',
-          },
-        },
-        error: null,
-      });
-
-      const result = await mockSupabaseClient.auth.getUser();
-
-      expect(result.data.user).toBeDefined();
-      expect(result.data.user.email).toBe('test@example.com');
-      expect(result.error).toBeNull();
-    });
-
-    it('should handle authentication errors', async () => {
-      mockSupabaseClient.auth.getUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: 'Invalid token' },
-      });
-
-      const result = await mockSupabaseClient.auth.getUser();
-
-      expect(result.data.user).toBeNull();
-      expect(result.error).toBeDefined();
-    });
-
-    it('should handle sign in', async () => {
-      mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
-        data: {
-          user: { id: 'test-user-id', email: 'test@example.com' },
-          session: { access_token: 'test-token' },
-        },
-        error: null,
-      });
-
-      const result = await mockSupabaseClient.auth.signInWithPassword({
+  describe('User Operations', () => {
+    it('should retrieve user by ID', async () => {
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.getUserById).mockResolvedValue({
+        id: 'test-user-id',
         email: 'test@example.com',
-        password: 'password123',
-      });
+        full_name: 'Test User',
+        password_hash: 'hashed',
+        billing_address: null,
+        payment_method: null,
+        created_at: new Date().toISOString(),
+      } as any);
 
-      expect(result.data.user).toBeDefined();
-      expect(result.data.session).toBeDefined();
-      expect(result.error).toBeNull();
+      const user = await db.getUserById('test-user-id');
+      expect(user).toBeDefined();
+      expect(user!.email).toBe('test@example.com');
     });
 
-    it('should handle sign out', async () => {
-      mockSupabaseClient.auth.signOut.mockResolvedValue({
-        error: null,
-      });
+    it('should return null for non-existent user', async () => {
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.getUserById).mockResolvedValue(null);
 
-      const result = await mockSupabaseClient.auth.signOut();
-
-      expect(result.error).toBeNull();
-    });
-  });
-
-  describe('Database Operations', () => {
-    it('should query data from tables', async () => {
-      mockSupabaseClient.setResponse({ id: '1', name: 'Test' }, null);
-
-      const result = await mockSupabaseClient
-        .from('test_table')
-        .select('*')
-        .eq('id', '1')
-        .single();
-
-      expect(result.data).toBeDefined();
-      expect(result.error).toBeNull();
+      const user = await db.getUserById('nonexistent-id');
+      expect(user).toBeNull();
     });
 
-    it('should insert data into tables', async () => {
-      mockSupabaseClient.setResponse({ id: '2', name: 'New Item' }, null);
+    it('should create new user', async () => {
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.createUser).mockResolvedValue({
+        id: 'new-user-id',
+        email: 'new@example.com',
+        full_name: 'New User',
+        password_hash: 'hashed',
+        billing_address: null,
+        payment_method: null,
+        created_at: new Date().toISOString(),
+      } as any);
 
-      const result = await mockSupabaseClient
-        .from('test_table')
-        .insert({ name: 'New Item' })
-        .select()
-        .single();
-
-      expect(result.data).toBeDefined();
-      expect(result.error).toBeNull();
-    });
-
-    it('should update data in tables', async () => {
-      mockSupabaseClient.setResponse({ id: '1', name: 'Updated' }, null);
-
-      const result = await mockSupabaseClient
-        .from('test_table')
-        .update({ name: 'Updated' })
-        .eq('id', '1')
-        .select()
-        .single();
-
-      expect(result.data).toBeDefined();
-      expect(result.error).toBeNull();
-    });
-
-    it('should delete data from tables', async () => {
-      mockSupabaseClient.setResponse(null, null);
-
-      const result = await mockSupabaseClient
-        .from('test_table')
-        .delete()
-        .eq('id', '1');
-
-      // Result is the mock itself which has error: null
-      expect(result.error).toBeNull();
-    });
-
-    it('should handle database errors', async () => {
-      mockSupabaseClient.setResponse(null, { message: 'Row not found', code: 'PGRST116' });
-
-      const result = await mockSupabaseClient
-        .from('test_table')
-        .select('*')
-        .eq('id', 'nonexistent')
-        .single();
-
-      expect(result.data).toBeNull();
-      expect(result.error).toBeDefined();
+      const user = await db.createUser('new@example.com', 'hashed-password', 'New User');
+      expect(user).toBeDefined();
+      expect(user!.email).toBe('new@example.com');
     });
   });
 
-  describe('API Keys Table', () => {
+  describe('API Keys Operations', () => {
     it('should create API key record', async () => {
-      mockSupabaseClient.setResponse({
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.createApiKey).mockResolvedValue({
         id: 'key-1',
         user_id: 'user-1',
         name: 'Production Key',
-        key_prefix: 'sk_live_abc',
         key_hash: 'hashed_value',
+        key_prefix: 'mnnr_live_abc',
+        scopes: null,
+        rate_limit: null,
+        is_active: true,
         created_at: new Date().toISOString(),
-      }, null);
+        last_used_at: null,
+      } as any);
 
-      const result = await mockSupabaseClient
-        .from('api_keys')
-        .insert({
-          user_id: 'user-1',
-          name: 'Production Key',
-          key_prefix: 'sk_live_abc',
-          key_hash: 'hashed_value',
-        })
-        .select()
-        .single();
-
-      expect(result.data).toBeDefined();
-      expect(result.data.name).toBe('Production Key');
-      expect(result.error).toBeNull();
+      const key = await db.createApiKey('user-1', 'Production Key', 'hashed_value', 'mnnr_live_abc');
+      expect(key).toBeDefined();
+      expect(key.name).toBe('Production Key');
     });
 
     it('should list user API keys', async () => {
-      mockSupabaseClient.setResponse([
-        { id: 'key-1', name: 'Key 1', key_prefix: 'sk_live_abc' },
-        { id: 'key-2', name: 'Key 2', key_prefix: 'sk_live_def' },
-      ], null);
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.getApiKeysByUserId).mockResolvedValue([
+        { id: 'key-1', user_id: 'user-1', name: 'Key 1', key_hash: 'h1', key_prefix: 'mnnr_live_abc', scopes: null, rate_limit: null, is_active: true, created_at: '', last_used_at: null },
+        { id: 'key-2', user_id: 'user-1', name: 'Key 2', key_hash: 'h2', key_prefix: 'mnnr_live_def', scopes: null, rate_limit: null, is_active: true, created_at: '', last_used_at: null },
+      ] as any);
 
-      const result = await mockSupabaseClient
-        .from('api_keys')
-        .select('id, name, key_prefix')
-        .eq('user_id', 'user-1');
-
-      expect(result.data).toHaveLength(2);
-      expect(result.error).toBeNull();
+      const keys = await db.getApiKeysByUserId('user-1');
+      expect(keys).toHaveLength(2);
     });
 
-    it('should soft delete API key', async () => {
-      mockSupabaseClient.setResponse({ id: 'key-1', deleted_at: new Date().toISOString() }, null);
+    it('should revoke API key', async () => {
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.revokeApiKey).mockResolvedValue(true);
 
-      const result = await mockSupabaseClient
-        .from('api_keys')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', 'key-1')
-        .select()
-        .single();
-
-      expect(result.data.deleted_at).toBeDefined();
-      expect(result.error).toBeNull();
+      const result = await db.revokeApiKey('key-1', 'user-1');
+      expect(result).toBe(true);
     });
   });
 
-  describe('Row Level Security', () => {
-    it('should enforce RLS on API keys', async () => {
-      mockSupabaseClient.setResponse(null, { message: 'Row not found', code: 'PGRST116' });
+  describe('Health Check', () => {
+    it('should report healthy database', async () => {
+      const { db } = await import('@/lib/db');
+      vi.mocked(db.healthCheck).mockResolvedValue(true);
 
-      const result = await mockSupabaseClient
-        .from('api_keys')
-        .select('*')
-        .eq('user_id', 'other-user-id')
-        .single();
-
-      expect(result.data).toBeNull();
+      const isHealthy = await db.healthCheck();
+      expect(isHealthy).toBe(true);
     });
   });
 });
 
-describe('Supabase Environment', () => {
+describe('Database Environment', () => {
   it('should have required environment variables', () => {
-    const requiredVars = [
-      'NEXT_PUBLIC_SUPABASE_URL',
-      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    ];
-
-    expect(requiredVars).toHaveLength(2);
+    const requiredVars = ['DATABASE_URL'];
+    expect(requiredVars).toHaveLength(1);
   });
 });

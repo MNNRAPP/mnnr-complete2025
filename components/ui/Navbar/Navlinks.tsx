@@ -56,11 +56,11 @@ export default function Navlinks({ user }: NavlinksProps) {
           </form>
         ) : (
           <>
-            <Link href="/signin" className={s.link}>
+            <Link href="/sign-in" className={s.link}>
               Sign In
             </Link>
-            <Link 
-              href="/signup" 
+            <Link
+              href="/sign-up"
               className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
             >
               Start Building

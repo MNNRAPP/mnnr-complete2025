@@ -48,7 +48,7 @@ test.describe('Health Check API', () => {
     const body = await response.json();
     
     expect(body).toHaveProperty('config');
-    expect(body.config).toHaveProperty('supabaseConfigured');
+    expect(body.config).toHaveProperty('databaseConfigured');
     expect(body.config).toHaveProperty('stripeConfigured');
   });
 });

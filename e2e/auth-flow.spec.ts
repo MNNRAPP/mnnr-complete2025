@@ -182,9 +182,9 @@ test.describe('Session Security', () => {
     
     // Check for any auth-related cookies
     const authCookies = cookies.filter(c => 
-      c.name.includes('auth') || 
-      c.name.includes('session') || 
-      c.name.includes('supabase')
+      c.name.includes('auth') ||
+      c.name.includes('session') ||
+      c.name.includes('mnnr_session')
     );
     
     // If auth cookies exist, they should be secure

@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const INTEGRATIONS = [
   { name: 'Stripe', src: '/stripe.svg', category: 'Payments' },
-  { name: 'Supabase', src: '/supabase.svg', category: 'Database' },
+  { name: 'Neon', src: '/neon.svg', category: 'Database' },
   { name: 'Vercel', src: '/vercel.svg', category: 'Deployment' },
   { name: 'GitHub', src: '/github.svg', category: 'DevOps' },
 ];

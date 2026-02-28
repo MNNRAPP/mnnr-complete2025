@@ -298,8 +298,7 @@ export const swaggerSpec = {
       bearerAuth: {
         type: "http",
         scheme: "bearer",
-        bearerFormat: "JWT",
-        description: "Supabase JWT token",
+        description: "Session cookie or API key authentication",
       },
     },
   },

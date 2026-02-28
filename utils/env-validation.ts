@@ -7,8 +7,7 @@
 // when optional backend integrations are not yet configured. Specific routes
 // (like /api/webhooks) will still check their own required secrets at runtime.
 const requiredEnvVars = [
-  'NEXT_PUBLIC_SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY'
+  'DATABASE_URL',
 ] as const;
 
 const optionalEnvVars = [
@@ -63,31 +62,31 @@ export function validateEnv(): ValidationResult {
     );
   }
 
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env.CSRF_SECRET) {
     warnings.push(
-      'SUPABASE_SERVICE_ROLE_KEY not set. Admin operations (e.g., in Stripe webhook handlers) will not function.'
+      'CSRF_SECRET not set. CSRF protection will not function.'
     );
   }
 
-  // Check for common mistakes
-  if (process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY) {
-    warnings.push(
-      'WARNING: Found NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY - this exposes admin privileges! Use SUPABASE_SERVICE_ROLE_KEY instead.'
-    );
-  }
-
+  // Check for common mistakes — secrets exposed to client
   if (process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY) {
     warnings.push(
       'CRITICAL: Found NEXT_PUBLIC_STRIPE_SECRET_KEY - this exposes your Stripe secret key! Use STRIPE_SECRET_KEY instead.'
     );
   }
 
+  if (process.env.NEXT_PUBLIC_DATABASE_URL) {
+    warnings.push(
+      'CRITICAL: Found NEXT_PUBLIC_DATABASE_URL - this exposes your database credentials! Use DATABASE_URL instead.'
+    );
+  }
+
   // Validate URL formats
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (process.env.DATABASE_URL) {
     try {
-      new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
+      new URL(process.env.DATABASE_URL);
     } catch {
-      warnings.push('NEXT_PUBLIC_SUPABASE_URL is not a valid URL');
+      warnings.push('DATABASE_URL is not a valid URL');
     }
   }
 
@@ -114,13 +113,13 @@ export function assertValidEnv(): void {
 
   if (result.warnings.length > 0) {
     result.warnings.forEach(warning => {
-      console.warn(`⚠️  ${warning}`);
+      console.warn(`[ENV] ${warning}`);
     });
   }
 
   if (!result.valid) {
     const errorMessage = [
-      '❌ Environment validation failed!',
+      'Environment validation failed!',
       '',
       'Missing required environment variables:',
       ...result.missing.map(key => `  - ${key}`),
@@ -132,7 +131,7 @@ export function assertValidEnv(): void {
     throw new Error(errorMessage);
   }
 
-  console.log('✅ Environment variables validated successfully');
+  console.log('[ENV] Environment variables validated successfully');
 }
 
 /**
@@ -152,10 +151,8 @@ export function getEnv(key: string, defaultValue?: string): string {
  * Type-safe environment variable access
  */
 export const env = {
-  supabase: {
-    url: () => getEnv('NEXT_PUBLIC_SUPABASE_URL'),
-    anonKey: () => getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
-    serviceRoleKey: () => getEnv('SUPABASE_SERVICE_ROLE_KEY')
+  database: {
+    url: () => getEnv('DATABASE_URL'),
   },
   stripe: {
     secretKey: () => getEnv('STRIPE_SECRET_KEY'),

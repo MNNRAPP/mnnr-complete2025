@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
             <h3 className="text-xl font-semibold text-white mt-6 mb-3">4.1 Service Providers</h3>
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li><strong>Stripe:</strong> Payment processing</li>
-              <li><strong>Supabase:</strong> Database and authentication services</li>
+              <li><strong>Neon:</strong> Database services</li>
               <li><strong>Vercel:</strong> Hosting and edge infrastructure</li>
               <li><strong>Analytics Providers:</strong> Usage analytics and monitoring</li>
             </ul>

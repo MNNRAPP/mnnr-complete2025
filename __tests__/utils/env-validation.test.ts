@@ -19,11 +19,10 @@ describe('Environment Validation', () => {
 
   describe('Required Variables', () => {
     it('should pass with all required variables set', async () => {
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+      process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
       process.env.STRIPE_SECRET_KEY = 'sk_test_123';
       process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
+      process.env.CSRF_SECRET = 'test-csrf-secret';
 
       const { validateEnv } = await import('@/utils/env-validation');
       const result = validateEnv();
@@ -33,41 +32,35 @@ describe('Environment Validation', () => {
     });
 
     it('should fail with missing required variable', async () => {
-      // Only set one of the required vars
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-      // Missing NEXT_PUBLIC_SUPABASE_ANON_KEY
+      // Missing DATABASE_URL
 
       const { validateEnv } = await import('@/utils/env-validation');
       const result = validateEnv();
 
       expect(result.valid).toBe(false);
       expect(result.missing.length).toBeGreaterThan(0);
-      expect(result.missing).toContain('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+      expect(result.missing).toContain('DATABASE_URL');
     });
   });
 
   describe('Security Checks', () => {
-    it('should warn about exposed service role key', async () => {
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+    it('should warn about exposed database URL', async () => {
+      process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
       process.env.STRIPE_SECRET_KEY = 'sk_test_123';
       process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
 
-      // This should trigger a warning
-      process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY = 'exposed-key';
+      // This should trigger a CRITICAL warning
+      process.env.NEXT_PUBLIC_DATABASE_URL = 'exposed-url';
 
       const { validateEnv } = await import('@/utils/env-validation');
       const result = validateEnv();
 
-      expect(result.warnings.length).toBeGreaterThan(0);
-      expect(result.warnings.some(w => w.includes('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY'))).toBe(true);
+      expect(result.warnings.some(w => w.includes('CRITICAL'))).toBe(true);
+      expect(result.warnings.some(w => w.includes('NEXT_PUBLIC_DATABASE_URL'))).toBe(true);
     });
 
     it('should warn about exposed Stripe secret', async () => {
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+      process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
       process.env.STRIPE_SECRET_KEY = 'sk_test_123';
       process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
 
@@ -77,37 +70,30 @@ describe('Environment Validation', () => {
       const { validateEnv } = await import('@/utils/env-validation');
       const result = validateEnv();
 
-      // The implementation adds a CRITICAL warning but may not set valid to false
       expect(result.warnings.some(w => w.includes('CRITICAL'))).toBe(true);
       expect(result.warnings.some(w => w.includes('NEXT_PUBLIC_STRIPE_SECRET_KEY'))).toBe(true);
     });
   });
 
   describe('URL Validation', () => {
-    it('should validate Supabase URL format', async () => {
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'not-a-valid-url';
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+    it('should validate DATABASE_URL format', async () => {
+      process.env.DATABASE_URL = 'not-a-valid-url';
       process.env.STRIPE_SECRET_KEY = 'sk_test_123';
       process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
 
       const { validateEnv } = await import('@/utils/env-validation');
       const result = validateEnv();
 
-      // Check if there's a URL validation warning
-      const hasUrlWarning = result.warnings.some(w => 
-        w.toLowerCase().includes('url') || w.includes('not-a-valid-url')
+      const hasUrlWarning = result.warnings.some(w =>
+        w.toLowerCase().includes('url') || w.includes('not a valid URL')
       );
-      // The implementation may or may not validate URL format
       expect(result).toBeDefined();
     });
   });
 
   describe('Webhook Secret Validation', () => {
     it('should warn about missing webhook secret', async () => {
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+      process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
       process.env.STRIPE_SECRET_KEY = 'sk_test_123';
       // Missing STRIPE_WEBHOOK_SECRET
 
@@ -120,9 +106,7 @@ describe('Environment Validation', () => {
 
   describe('Optional Variables', () => {
     it('should not fail when optional variables are missing', async () => {
-      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-      process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+      process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
       process.env.STRIPE_SECRET_KEY = 'sk_test_123';
       process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
       // Not setting optional vars like UPSTASH_REDIS_REST_URL
@@ -191,9 +175,7 @@ describe('assertValidEnv Function', () => {
   });
 
   it('should log success when all required vars are set', async () => {
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
     process.env.STRIPE_SECRET_KEY = 'sk_test_123';
     process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
 
@@ -203,15 +185,14 @@ describe('assertValidEnv Function', () => {
   });
 
   it('should log warnings for missing optional vars', async () => {
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
     // Missing STRIPE_SECRET_KEY should trigger warning
 
     const { assertValidEnv } = await import('@/utils/env-validation');
     try {
       assertValidEnv();
     } catch (e) {
-      // Expected to throw due to missing required vars
+      // May throw if required vars change
     }
     expect(consoleWarnSpy).toHaveBeenCalled();
   });
@@ -229,10 +210,10 @@ describe('env Object', () => {
     process.env = originalEnv;
   });
 
-  it('should access supabase url', async () => {
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+  it('should access database url', async () => {
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
     const { env } = await import('@/utils/env-validation');
-    expect(env.supabase.url()).toBe('https://test.supabase.co');
+    expect(env.database.url()).toBe('postgresql://test:test@localhost:5432/test');
   });
 
   it('should access site url with default', async () => {
@@ -284,6 +265,18 @@ describe('env Object', () => {
     const { env } = await import('@/utils/env-validation');
     expect(env.logging.enableAggregation()).toBe(false);
   });
+
+  it('should access stripe secret key', async () => {
+    process.env.STRIPE_SECRET_KEY = 'sk_test_123';
+    const { env } = await import('@/utils/env-validation');
+    expect(env.stripe.secretKey()).toBe('sk_test_123');
+  });
+
+  it('should access stripe webhook secret', async () => {
+    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123';
+    const { env } = await import('@/utils/env-validation');
+    expect(env.stripe.webhookSecret()).toBe('whsec_test123');
+  });
 });
 
 describe('Webhook Secret Length Validation', () => {
@@ -299,8 +292,7 @@ describe('Webhook Secret Length Validation', () => {
   });
 
   it('should warn about short webhook secret', async () => {
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
     process.env.STRIPE_SECRET_KEY = 'sk_test_123';
     process.env.STRIPE_WEBHOOK_SECRET = 'short'; // Less than 20 chars
 
@@ -324,54 +316,14 @@ describe('Stripe Secret Key Alternatives', () => {
   });
 
   it('should accept STRIPE_SECRET_KEY_LIVE as alternative', async () => {
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
     process.env.STRIPE_SECRET_KEY_LIVE = 'sk_live_123';
     process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123456789012345';
-    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
 
     const { validateEnv } = await import('@/utils/env-validation');
     const result = validateEnv();
 
     // Should not have warning about missing Stripe secret
     expect(result.warnings.some(w => w.includes('Stripe secret key not set'))).toBe(false);
-  });
-});
-
-
-describe('Additional env Object Coverage', () => {
-  const originalEnv = process.env;
-
-  beforeEach(() => {
-    vi.resetModules();
-    process.env = { ...originalEnv };
-  });
-
-  afterEach(() => {
-    process.env = originalEnv;
-  });
-
-  it('should access supabase anon key', async () => {
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-    const { env } = await import('@/utils/env-validation');
-    expect(env.supabase.anonKey()).toBe('test-anon-key');
-  });
-
-  it('should access supabase service role key', async () => {
-    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
-    const { env } = await import('@/utils/env-validation');
-    expect(env.supabase.serviceRoleKey()).toBe('test-service-role-key');
-  });
-
-  it('should access stripe secret key', async () => {
-    process.env.STRIPE_SECRET_KEY = 'sk_test_123';
-    const { env } = await import('@/utils/env-validation');
-    expect(env.stripe.secretKey()).toBe('sk_test_123');
-  });
-
-  it('should access stripe webhook secret', async () => {
-    process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test123';
-    const { env } = await import('@/utils/env-validation');
-    expect(env.stripe.webhookSecret()).toBe('whsec_test123');
   });
 });

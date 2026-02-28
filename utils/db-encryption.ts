@@ -213,10 +213,10 @@ export class FieldEncryptor {
  * Database migration helper: Encrypt existing plaintext data
  *
  * Example usage:
- * const users = await supabase.from('users').select('*');
+ * const users = await database.from('users').select('*');
  * for (const user of users.data || []) {
  *   const encrypted = encryptExistingData(user.ssn);
- *   await supabase.from('users')
+ *   await database.from('users')
  *     .update({
  *       ssn_encrypted: encrypted.encrypted,
  *       ssn_iv: encrypted.iv,
@@ -257,7 +257,7 @@ export function createSearchHash(value: string): string {
  *
  * Usage:
  * const hash = createSearchHash('123-45-6789');
- * const user = await supabase.from('users')
+ * const user = await database.from('users')
  *   .select('*')
  *   .eq('ssn_hash', hash)
  *   .single();

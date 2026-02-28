@@ -321,7 +321,7 @@ export const clientSideEncryption = {
 
 /**
  * Database column-level encryption helpers
- * Use these to encrypt sensitive columns before storing in Supabase
+ * Use these to encrypt sensitive columns before storing in database
  */
 export const databaseEncryption = {
   /**

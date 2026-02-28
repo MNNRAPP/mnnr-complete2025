@@ -56,8 +56,6 @@ const defaultConfig: SecurityConfig = {
   trustedDomains: [
     'mnnr.app',
     '*.mnnr.app',
-    'supabase.co',
-    '*.supabase.co',
     'stripe.com',
     '*.stripe.com',
     'sentry.io',
@@ -83,7 +81,7 @@ function generateCSP(trustedDomains: string[]): string {
     `style-src 'self' 'unsafe-inline' ${domains}`,
     `img-src 'self' data: blob: ${domains}`,
     `font-src 'self' data: ${domains}`,
-    `connect-src 'self' ${domains} wss://*.supabase.co`,
+    `connect-src 'self' ${domains}`,
     `frame-src 'self' ${domains}`,
     `frame-ancestors 'self'`,
     `form-action 'self'`,
