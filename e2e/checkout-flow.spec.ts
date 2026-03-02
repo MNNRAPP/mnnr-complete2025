@@ -112,8 +112,8 @@ test.describe('Checkout Flow', () => {
     if (await proCta.isVisible()) {
       await proCta.click();
       
-      // Should redirect to signin
-      await page.waitForURL(/signin|signup|auth/, { timeout: 5000 }).catch(() => {});
+      // Should redirect to sign-in
+      await page.waitForURL(/sign-in|sign-up|auth/, { timeout: 5000 }).catch(() => {});
     }
   });
 });

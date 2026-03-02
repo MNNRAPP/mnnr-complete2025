@@ -232,7 +232,7 @@ export default function UseCasesPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link
-                    href="/signup"
+                    href="/sign-up"
                     className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold px-6 py-3 rounded-lg hover:scale-105 transition-transform"
                   >
                     Start Building Free

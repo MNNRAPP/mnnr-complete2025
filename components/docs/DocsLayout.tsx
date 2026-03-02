@@ -28,7 +28,7 @@ export default function DocsLayout({ children }: PropsWithChildren) {
               Dashboard
             </Link>
             <Link 
-              href="/signin" 
+              href="/sign-in" 
               className="hidden sm:inline-flex px-4 py-2 text-sm font-medium text-zinc-900 bg-emerald-400 rounded-lg hover:bg-emerald-300 transition-colors"
             >
               Get Started

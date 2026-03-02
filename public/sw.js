@@ -62,11 +62,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip Clerk auth requests
-  if (url.hostname.includes('clerk')) {
-    return;
-  }
-
   // Network first strategy for HTML pages
   if (request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(

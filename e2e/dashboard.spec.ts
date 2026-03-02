@@ -14,13 +14,13 @@ test.describe('Dashboard (Unauthenticated)', () => {
   test('should redirect to sign in when not authenticated', async ({ page }) => {
     await page.goto('/dashboard');
     
-    // Should redirect to signin or show auth required message
-    await page.waitForURL(/signin|login|auth/, { timeout: 5000 }).catch(() => {
+    // Should redirect to sign-in or show auth required message
+    await page.waitForURL(/sign-in|login|auth/, { timeout: 5000 }).catch(() => {
       // If no redirect, check for auth message
     });
     
     const currentUrl = page.url();
-    const hasAuthContent = currentUrl.includes('signin') || 
+    const hasAuthContent = currentUrl.includes('sign-in') || 
                           currentUrl.includes('login') ||
                           await page.locator('text=/sign in|log in|authenticate/i').isVisible().catch(() => false);
     
@@ -36,7 +36,7 @@ test.describe('API Keys Page (Unauthenticated)', () => {
     await page.waitForTimeout(1000);
     
     const currentUrl = page.url();
-    const requiresAuth = currentUrl.includes('signin') || 
+    const requiresAuth = currentUrl.includes('sign-in') || 
                         currentUrl.includes('login') ||
                         !currentUrl.includes('api-keys');
     
@@ -85,7 +85,7 @@ test.describe('Billing Page (Unauthenticated)', () => {
     await page.waitForTimeout(1000);
     
     const currentUrl = page.url();
-    const requiresAuth = currentUrl.includes('signin') || 
+    const requiresAuth = currentUrl.includes('sign-in') || 
                         currentUrl.includes('login') ||
                         !currentUrl.includes('billing');
     
@@ -100,7 +100,7 @@ test.describe('Account Settings (Unauthenticated)', () => {
     await page.waitForTimeout(1000);
     
     const currentUrl = page.url();
-    const requiresAuth = currentUrl.includes('signin') || 
+    const requiresAuth = currentUrl.includes('sign-in') || 
                         currentUrl.includes('login') ||
                         !currentUrl.includes('account');
     
@@ -122,7 +122,7 @@ test.describe('Dashboard (Authenticated)', () => {
 
   test.beforeEach(async ({ page }) => {
     // Login flow
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     await page.fill('input[type="email"]', process.env.TEST_USER_EMAIL || '');
     await page.fill('input[type="password"]', process.env.TEST_USER_PASSWORD || '');

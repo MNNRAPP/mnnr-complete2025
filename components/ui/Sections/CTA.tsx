@@ -57,7 +57,7 @@ export default function CTA() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Link 
-                href="/signup"
+                href="/sign-up"
                 className="group relative inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold text-lg px-10 py-5 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-[0_0_50px_rgba(16,185,129,0.5)]"
               >
                 <span>Start Building Free</span>

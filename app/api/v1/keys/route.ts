@@ -3,31 +3,18 @@
  * POST /api/v1/keys - Create new API key
  * GET /api/v1/keys - List API keys
  * DELETE /api/v1/keys?id=xxx - Revoke API key
- * 
- * Uses Neon directly - no Supabase dependency
+ *
+ * Authenticates via session cookie or API key in Authorization header
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getAuthenticatedUserFromRequest } from '@/lib/auth';
 import { generateApiKey } from '@/lib/api-key-utils';
-
-// Simple auth: check for user_id in header or session
-// TODO: Replace with proper auth
-async function getAuthenticatedUser(request: NextRequest) {
-  // For now, use a header-based auth or default test user
-  const userId = request.headers.get('x-user-id');
-  
-  if (userId) {
-    return db.getUserById(userId);
-  }
-  
-  // Default to test user for development
-  return db.getUserByEmail('test@mnnr.app');
-}
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(request);
+    const user = await getAuthenticatedUserFromRequest(request);
     
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -59,7 +46,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(request);
+    const user = await getAuthenticatedUserFromRequest(request);
     
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -108,7 +95,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(request);
+    const user = await getAuthenticatedUserFromRequest(request);
     
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

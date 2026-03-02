@@ -79,7 +79,7 @@ test.describe('Pricing Page', () => {
 
 test.describe('Authentication', () => {
   test('should display sign in page', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     // Check sign in form elements
     const emailInput = page.getByRole('textbox', { name: /email/i }).or(
@@ -93,7 +93,7 @@ test.describe('Authentication', () => {
   });
 
   test('should have OAuth options', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     // Check for OAuth buttons (GitHub, Google, etc.)
     const oauthButtons = page.getByRole('button').filter({ 
@@ -106,7 +106,7 @@ test.describe('Authentication', () => {
   });
 
   test('should show validation errors for invalid input', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     // Try to submit with invalid email
     const emailInput = page.locator('input[type="email"]').first();

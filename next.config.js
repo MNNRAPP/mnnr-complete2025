@@ -59,7 +59,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https: blob:",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.sentry.io https://*.upstash.io",
+      "connect-src 'self' https://api.stripe.com https://*.sentry.io https://*.upstash.io",
       "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
       "media-src 'self' blob:",
       "object-src 'none'",

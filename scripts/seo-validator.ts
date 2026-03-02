@@ -95,7 +95,7 @@ validateFile('public/sitemap.xml', [
   { name: 'Has homepage', check: (c) => c.includes('<loc>https://mnnr.app/</loc>') },
   { name: 'Has pricing page', check: (c) => c.includes('mnnr.app/pricing') },
   { name: 'Has docs page', check: (c) => c.includes('mnnr.app/docs') },
-  { name: 'Has signup page', check: (c) => c.includes('mnnr.app/signup') },
+  { name: 'Has sign-up page', check: (c) => c.includes('mnnr.app/sign-up') },
   { name: 'Has lastmod dates', check: (c) => c.includes('<lastmod>') },
   { name: 'Has priority values', check: (c) => c.includes('<priority>') },
   { name: 'Has changefreq values', check: (c) => c.includes('<changefreq>') },

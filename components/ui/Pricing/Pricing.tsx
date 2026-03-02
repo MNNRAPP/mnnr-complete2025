@@ -46,7 +46,7 @@ export default function Pricing({ user, products, subscription }: Props) {
 
     if (!user) {
       setPriceIdLoading(undefined);
-      return router.push('/signin/signup');
+      return router.push('/sign-up');
     }
 
     const { errorRedirect, sessionId } = await checkoutWithStripe(
@@ -123,7 +123,7 @@ export default function Pricing({ user, products, subscription }: Props) {
               </ul>
 
               <Link
-                href="/signup"
+                href="/sign-up"
                 className="block w-full text-center bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 rounded-lg transition-colors"
               >
                 Start Free
@@ -168,7 +168,7 @@ export default function Pricing({ user, products, subscription }: Props) {
               </ul>
 
               <Link
-                href="/signup"
+                href="/sign-up"
                 className="block w-full text-center bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3 rounded-lg transition-colors"
               >
                 Start Pro Trial

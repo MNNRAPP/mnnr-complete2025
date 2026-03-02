@@ -13,7 +13,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Sign Up Flow', () => {
   test('should display sign up page with all required fields', async ({ page }) => {
-    await page.goto('/signin/signup');
+    await page.goto('/sign-up');
     
     // Check for email input
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
@@ -29,7 +29,7 @@ test.describe('Sign Up Flow', () => {
   });
 
   test('should show validation error for invalid email', async ({ page }) => {
-    await page.goto('/signin/signup');
+    await page.goto('/sign-up');
     
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
     await emailInput.fill('invalid-email');
@@ -45,11 +45,11 @@ test.describe('Sign Up Flow', () => {
     
     // Should show error or stay on page
     const url = page.url();
-    expect(url).toContain('signin');
+    expect(url).toContain('sign-in');
   });
 
   test('should show validation error for weak password', async ({ page }) => {
-    await page.goto('/signin/signup');
+    await page.goto('/sign-up');
     
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
     await emailInput.fill('test@example.com');
@@ -65,11 +65,11 @@ test.describe('Sign Up Flow', () => {
     
     // Should show error or stay on page
     const url = page.url();
-    expect(url).toContain('signin');
+    expect(url).toContain('sign-in');
   });
 
   test('should have link to sign in page', async ({ page }) => {
-    await page.goto('/signin/signup');
+    await page.goto('/sign-up');
     
     const signInLink = page.getByRole('link', { name: /sign in|log in|already have/i });
     await expect(signInLink).toBeVisible();
@@ -78,7 +78,7 @@ test.describe('Sign Up Flow', () => {
 
 test.describe('Sign In Flow', () => {
   test('should display sign in page with all required fields', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     // Check for email input
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
@@ -94,7 +94,7 @@ test.describe('Sign In Flow', () => {
   });
 
   test('should show error for invalid credentials', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     const emailInput = page.locator('input[type="email"], input[name="email"]').first();
     await emailInput.fill('nonexistent@example.com');
@@ -108,13 +108,13 @@ test.describe('Sign In Flow', () => {
     // Wait for response
     await page.waitForTimeout(1000);
     
-    // Should show error message or stay on signin page
+    // Should show error message or stay on sign-in page
     const url = page.url();
-    expect(url).toContain('signin');
+    expect(url).toContain('sign-in');
   });
 
   test('should have forgot password link', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     const forgotLink = page.getByRole('link', { name: /forgot|reset|password/i });
     // May or may not exist depending on implementation
@@ -123,7 +123,7 @@ test.describe('Sign In Flow', () => {
   });
 
   test('should have link to sign up page', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     const signUpLink = page.getByRole('link', { name: /sign up|create|register|don.*t have/i });
     await expect(signUpLink).toBeVisible();
@@ -132,7 +132,7 @@ test.describe('Sign In Flow', () => {
 
 test.describe('OAuth Integration', () => {
   test('should display GitHub OAuth button', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     const githubButton = page.getByRole('button', { name: /github/i }).or(
       page.locator('button:has-text("GitHub")')
@@ -144,7 +144,7 @@ test.describe('OAuth Integration', () => {
   });
 
   test('should display Google OAuth button if configured', async ({ page }) => {
-    await page.goto('/signin');
+    await page.goto('/sign-in');
     
     const googleButton = page.getByRole('button', { name: /google/i }).or(
       page.locator('button:has-text("Google")')
@@ -157,20 +157,20 @@ test.describe('OAuth Integration', () => {
 });
 
 test.describe('Protected Routes', () => {
-  test('should redirect to signin when accessing dashboard without auth', async ({ page }) => {
+  test('should redirect to sign-in when accessing dashboard without auth', async ({ page }) => {
     await page.goto('/dashboard');
     
-    // Should redirect to signin
-    await page.waitForURL(/signin|login|auth/);
+    // Should redirect to sign-in
+    await page.waitForURL(/sign-in|login|auth/);
     const url = page.url();
-    expect(url).toMatch(/signin|login|auth/);
+    expect(url).toMatch(/sign-in|login|auth/);
   });
 
-  test('should redirect to signin when accessing account without auth', async ({ page }) => {
+  test('should redirect to sign-in when accessing account without auth', async ({ page }) => {
     await page.goto('/account');
     
-    // Should redirect to signin
-    await page.waitForURL(/signin|login|auth|404/);
+    // Should redirect to sign-in
+    await page.waitForURL(/sign-in|login|auth|404/);
   });
 });
 

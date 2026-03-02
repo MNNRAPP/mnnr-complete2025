@@ -6,10 +6,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
+import { getAuthenticatedUserFromRequest } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const user = await getAuthenticatedUserFromRequest(request);
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const period = searchParams.get('period') || '30d';
   
@@ -17,36 +23,42 @@ export async function GET(request: NextRequest) {
   const days = period === '7d' ? 7 : period === '90d' ? 90 : 30;
 
   try {
-    // Get daily usage for the period
+    const userId = user.id;
+
+    // Get daily usage for the period (scoped to user's keys)
     const dailyUsage = await sql`
-      SELECT 
-        DATE(created_at) as date,
+      SELECT
+        DATE(ue.created_at) as date,
         COUNT(*) as requests,
-        COALESCE(SUM(quantity), 0) as tokens,
-        COUNT(DISTINCT api_key_id) as active_keys,
-        COUNT(DISTINCT unit) as models
-      FROM usage_events
-      WHERE created_at > NOW() - INTERVAL '1 day' * ${days}
-      GROUP BY DATE(created_at)
+        COALESCE(SUM(ue.quantity), 0) as tokens,
+        COUNT(DISTINCT ue.api_key_id) as active_keys,
+        COUNT(DISTINCT ue.unit) as models
+      FROM usage_events ue
+      JOIN api_keys ak ON ue.api_key_id = ak.id
+      WHERE ak.user_id = ${userId}
+        AND ue.created_at > NOW() - INTERVAL '1 day' * ${days}
+      GROUP BY DATE(ue.created_at)
       ORDER BY date ASC
     `;
 
     // Get usage by model/unit
     const usageByModel = await sql`
-      SELECT 
-        unit as model,
+      SELECT
+        ue.unit as model,
         COUNT(*) as requests,
-        COALESCE(SUM(quantity), 0) as tokens
-      FROM usage_events
-      WHERE created_at > NOW() - INTERVAL '1 day' * ${days}
-      GROUP BY unit
+        COALESCE(SUM(ue.quantity), 0) as tokens
+      FROM usage_events ue
+      JOIN api_keys ak ON ue.api_key_id = ak.id
+      WHERE ak.user_id = ${userId}
+        AND ue.created_at > NOW() - INTERVAL '1 day' * ${days}
+      GROUP BY ue.unit
       ORDER BY tokens DESC
       LIMIT 10
     `;
 
     // Get usage by API key
     const usageByKey = await sql`
-      SELECT 
+      SELECT
         ak.name as key_name,
         ak.key_prefix,
         COUNT(ue.id) as requests,
@@ -55,43 +67,49 @@ export async function GET(request: NextRequest) {
       FROM api_keys ak
       LEFT JOIN usage_events ue ON ak.id = ue.api_key_id
         AND ue.created_at > NOW() - INTERVAL '1 day' * ${days}
-      WHERE ak.revoked_at IS NULL
+      WHERE ak.user_id = ${userId} AND ak.revoked_at IS NULL
       GROUP BY ak.id, ak.name, ak.key_prefix
       ORDER BY tokens DESC
     `;
 
     // Get hourly distribution (last 24 hours)
     const hourlyDistribution = await sql`
-      SELECT 
-        EXTRACT(HOUR FROM created_at) as hour,
+      SELECT
+        EXTRACT(HOUR FROM ue.created_at) as hour,
         COUNT(*) as requests,
-        COALESCE(SUM(quantity), 0) as tokens
-      FROM usage_events
-      WHERE created_at > NOW() - INTERVAL '24 hours'
-      GROUP BY EXTRACT(HOUR FROM created_at)
+        COALESCE(SUM(ue.quantity), 0) as tokens
+      FROM usage_events ue
+      JOIN api_keys ak ON ue.api_key_id = ak.id
+      WHERE ak.user_id = ${userId}
+        AND ue.created_at > NOW() - INTERVAL '24 hours'
+      GROUP BY EXTRACT(HOUR FROM ue.created_at)
       ORDER BY hour ASC
     `;
 
     // Get totals
     const totals = await sql`
-      SELECT 
+      SELECT
         COUNT(*) as total_requests,
-        COALESCE(SUM(quantity), 0) as total_tokens,
-        COUNT(DISTINCT api_key_id) as active_keys,
-        COUNT(DISTINCT unit) as models_used,
-        COUNT(DISTINCT DATE(created_at)) as active_days
-      FROM usage_events
-      WHERE created_at > NOW() - INTERVAL '1 day' * ${days}
+        COALESCE(SUM(ue.quantity), 0) as total_tokens,
+        COUNT(DISTINCT ue.api_key_id) as active_keys,
+        COUNT(DISTINCT ue.unit) as models_used,
+        COUNT(DISTINCT DATE(ue.created_at)) as active_days
+      FROM usage_events ue
+      JOIN api_keys ak ON ue.api_key_id = ak.id
+      WHERE ak.user_id = ${userId}
+        AND ue.created_at > NOW() - INTERVAL '1 day' * ${days}
     `;
 
     // Calculate trends (compare to previous period)
     const previousTotals = await sql`
-      SELECT 
+      SELECT
         COUNT(*) as total_requests,
-        COALESCE(SUM(quantity), 0) as total_tokens
-      FROM usage_events
-      WHERE created_at > NOW() - INTERVAL '1 day' * ${days * 2}
-        AND created_at <= NOW() - INTERVAL '1 day' * ${days}
+        COALESCE(SUM(ue.quantity), 0) as total_tokens
+      FROM usage_events ue
+      JOIN api_keys ak ON ue.api_key_id = ak.id
+      WHERE ak.user_id = ${userId}
+        AND ue.created_at > NOW() - INTERVAL '1 day' * ${days * 2}
+        AND ue.created_at <= NOW() - INTERVAL '1 day' * ${days}
     `;
 
     const currentRequests = Number(totals[0]?.total_requests || 0);

@@ -10,7 +10,7 @@ export default function BetaProgramCTA() {
           the future of AI usage analytics.
         </p>
         <a 
-          href="/signin/signup" 
+          href="/sign-up" 
           className="inline-block px-8 py-4 bg-white text-blue-600 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors"
         >
           Start Free Beta →

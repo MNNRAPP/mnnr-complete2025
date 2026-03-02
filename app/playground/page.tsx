@@ -238,7 +238,7 @@ export default function PlaygroundPage() {
                   📚 Full API Reference
                 </Link>
                 <Link
-                  href="/signup"
+                  href="/sign-up"
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm"
                 >
                   🚀 Get Your API Key

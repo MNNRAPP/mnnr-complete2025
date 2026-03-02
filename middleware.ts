@@ -6,8 +6,6 @@ const PUBLIC_ROUTES = [
   '/',
   '/sign-in',
   '/sign-up',
-  '/signin',
-  '/signup',
   '/api/health',
   '/api/v1/usage',
   '/api/v1/keys',

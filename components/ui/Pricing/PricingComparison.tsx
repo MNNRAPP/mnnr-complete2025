@@ -148,7 +148,7 @@ export default function PricingComparison() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="/signin/signup"
+              href="/sign-up"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black font-semibold transition-colors"
             >
               Start Free
