@@ -2,8 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY || 're_eE4ZM9xZ_9439bS3mLZJYUAhLjxfTkzoT');
+export const dynamic = 'force-dynamic';
+
+// Initialize Resend lazily to avoid build-time errors
+function getResend() {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.warn('RESEND_API_KEY not set, email sending disabled');
+    return null;
+  }
+  return new Resend(key);
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || '';
@@ -109,7 +118,12 @@ export async function POST(request: NextRequest) {
 
     // Send welcome email via Resend
     try {
-      const { data, error } = await resend.emails.send({
+      const resendClient = getResend();
+      if (!resendClient) {
+        console.log('Resend not configured, skipping welcome email');
+        throw new Error('Resend not configured');
+      }
+      const { data, error } = await resendClient.emails.send({
         from: 'MNNR <onboarding@resend.dev>',
         to: [normalizedEmail],
         subject: "Welcome to MNNR - Let's Build the Machine Economy! 🚀",
