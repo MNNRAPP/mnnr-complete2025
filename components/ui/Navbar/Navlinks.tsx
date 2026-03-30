@@ -7,7 +7,6 @@ import Logo from '@/components/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
-import { CurrencySelector } from '@/components/ui/CurrencySelector';
 import s from './Navbar.module.css';
 
 import { User } from '@supabase/supabase-js';
@@ -29,11 +28,17 @@ export default function Navlinks({ user }: NavlinksProps) {
           <Logo />
         </Link>
         <nav className="ml-6 space-x-1 lg:block hidden md:flex">
-          <Link href="/#pricing" className={s.link}>
-            Pricing
+          <Link href="/#authority" className={s.link}>
+            Authority Gap
+          </Link>
+          <Link href="/#architecture" className={s.link}>
+            Architecture
+          </Link>
+          <Link href="/#compliance" className={s.link}>
+            Compliance
           </Link>
           <Link href="/docs/quick-start" className={s.link}>
-            Documentation
+            Docs
           </Link>
           {user && (
             <Link href="/account" className={s.link}>
@@ -43,12 +48,11 @@ export default function Navlinks({ user }: NavlinksProps) {
         </nav>
       </div>
       <div className="flex justify-end items-center space-x-3">
-        {/* Language and Currency Selectors - Hidden on mobile */}
+        {/* Language Selector - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-2">
           <LanguageSelector />
-          <CurrencySelector />
         </div>
-        
+
         {user ? (
           <form onSubmit={(e) => handleRequest(e, SignOut, activeRouter)}>
             <input type="hidden" name="pathName" value={pathname} />
@@ -61,11 +65,11 @@ export default function Navlinks({ user }: NavlinksProps) {
             <Link href="/signin" className={s.link}>
               Sign In
             </Link>
-            <Link 
-              href="/signup" 
-              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+            <Link
+              href="/signup"
+              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]"
             >
-              Start Building
+              Become a Partner
             </Link>
           </>
         )}
