@@ -4,13 +4,22 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'ko', name: '한국어', flag: '🇰🇷' },
+  { code: 'en', name: 'English', flag: '🇬🇧' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+  { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+  { code: 'pt', name: 'Português', flag: '🇵🇹' },
+  { code: 'pl', name: 'Polski', flag: '🇵🇱' },
+  { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
+  { code: 'da', name: 'Dansk', flag: '🇩🇰' },
+  { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
+  { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
+  { code: 'ro', name: 'Română', flag: '🇷🇴' },
+  { code: 'bg', name: 'Български', flag: '🇧🇬' },
+  { code: 'hr', name: 'Hrvatski', flag: '🇭🇷' },
 ];
 
 export function LanguageSelector() {
@@ -18,12 +27,11 @@ export function LanguageSelector() {
   const [currentLocale, setCurrentLocale] = React.useState('en');
 
   React.useEffect(() => {
-    // Get current locale from cookie or detect from browser
     const savedLocale = document.cookie
       .split('; ')
       .find(row => row.startsWith('NEXT_LOCALE='))
       ?.split('=')[1];
-    
+
     if (savedLocale) {
       setCurrentLocale(savedLocale);
     } else {
@@ -36,21 +44,17 @@ export function LanguageSelector() {
   }, []);
 
   const handleLanguageChange = (locale: string) => {
-    // Set cookie for server-side detection
     document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000`;
     setCurrentLocale(locale);
-    // Refresh to apply new locale
     router.refresh();
   };
-
-  const currentLang = languages.find(l => l.code === currentLocale) || languages[0];
 
   return (
     <div className="relative inline-block">
       <select
         value={currentLocale}
         onChange={(e) => handleLanguageChange(e.target.value)}
-        className="appearance-none bg-transparent border border-zinc-700 rounded-lg px-3 py-1.5 pr-8 text-sm text-zinc-300 hover:border-zinc-500 focus:border-emerald-500 focus:outline-none cursor-pointer"
+        className="appearance-none bg-transparent border border-zinc-700 rounded-lg px-3 py-1.5 pr-8 text-sm text-zinc-300 hover:border-amber-500/50 focus:border-amber-500 focus:outline-none cursor-pointer"
         aria-label="Select language"
       >
         {languages.map((lang) => (

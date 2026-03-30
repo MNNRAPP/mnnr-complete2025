@@ -17,7 +17,7 @@
 }
 
 .link:focus {
-  @apply outline-none ring-2 ring-emerald-500 ring-opacity-50;
+  @apply outline-none ring-2 ring-amber-500 ring-opacity-50;
   color: rgba(255, 255, 255, 1);
 }
 
