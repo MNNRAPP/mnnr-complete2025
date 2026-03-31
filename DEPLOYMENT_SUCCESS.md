@@ -39,7 +39,7 @@
   - Pro: $29.99/month
   - Enterprise: $99.99/month
 - ✅ **Webhook**: Configured
-- ✅ **Webhook Secret**: ***REMOVED***
+- ✅ **Webhook Secret**: ***REDACTED***
 
 ---
 

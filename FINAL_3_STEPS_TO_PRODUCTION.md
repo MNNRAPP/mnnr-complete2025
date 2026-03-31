@@ -9,7 +9,7 @@
    
 2. ✅ **Stripe Webhook Configured**
    - Endpoint: `https://your-app.vercel.app/api/webhooks`
-   - Secret: `***REMOVED***`
+   - Secret: `***REDACTED***`
 
 3. ✅ **Application Code** (7,231 lines)
    - 14 API endpoints
@@ -90,7 +90,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 [GET_FROM_STRIPE_DASHBOARD]
 
 STRIPE_WEBHOOK_SECRET
-***REMOVED***
+***REDACTED***
 
 # Application
 NODE_ENV

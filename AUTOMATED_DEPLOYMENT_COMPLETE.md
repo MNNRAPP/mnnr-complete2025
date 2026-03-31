@@ -15,7 +15,7 @@ I've automated everything possible! Here's what's done and what's left.
 
 **Webhook Configured**:
 - ✅ URL: `https://mnnr-complete2025.vercel.app/api/webhooks`
-- ✅ Secret: `***REMOVED***`
+- ✅ Secret: `***REDACTED***`
 - ✅ Events: 7 events configured
 
 **Price IDs** (use in your app):
@@ -58,7 +58,7 @@ SUPABASE_SERVICE_ROLE_KEY=sb_publishable_xXbFuzZXbBB4YHTDbZ7l4A_wiffwk5I
 
 # Stripe
 STRIPE_SECRET_KEY=sk_test_51S6R0T8CWPGKXcGknkw727t8KJ8DyQyIqwtgGxJolLRvnupNPUnIYoAHmlAC9JmSYAoEjTq3rWiv0VJEa8YWuJNg00xzZvkFFx
-STRIPE_WEBHOOK_SECRET=***REMOVED***
+STRIPE_WEBHOOK_SECRET=***REDACTED***
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=(get from dashboard)
 
 # Stripe Price IDs
