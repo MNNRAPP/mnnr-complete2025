@@ -1,0 +1,24 @@
+/*
+  # Security Headers — MNNR.app European Sovereignty Stack
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(self)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.mnnr.app https://api.stripe.com; frame-src https://js.stripe.com; object-src 'none'; base-uri 'self'
+  # EU Data Sovereignty Headers
+  X-EU-Compliance: PSD3,MiCA,GDPR,eIDAS2
+  X-Data-Region: EU-West
+  X-Served-By: Cloudflare-EU
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
+
+/api/*
+  # API Security Headers
+  Access-Control-Allow-Origin: https://mnnr.app
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-MNNR-Agent-ID, X-MNNR-Grant-ID
+  Access-Control-Max-Age: 86400
+  Cache-Control: no-store, no-cache, must-revalidate

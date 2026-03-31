@@ -1,0 +1,8 @@
+# MNNR.app Cloudflare Pages Redirects
+# Redirect www to apex
+https://www.mnnr.app/* https://mnnr.app/:splat 301
+
+# Legacy routes
+/home / 301
+/landing / 301
+/api/auth/* /api/auth/:splat 200
