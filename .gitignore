@@ -49,6 +49,12 @@ __pycache__/
 *.pyc
 .secrets.baseline
 
+# Secrets and config files with credentials
+stripe-config.json
+*.secret
+*.secrets
+.env.production
+
 # Backup files
 *.bak
 *.backup

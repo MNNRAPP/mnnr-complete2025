@@ -1,17 +1,26 @@
 /**
  * Neon PostgreSQL Database Connection
  * Direct connection to Neon - no Supabase dependency
+ *
+ * IMPORTANT: Database URL must be set via DATABASE_URL environment variable.
+ * Never hardcode credentials in source code.
  */
 
 import postgres from 'postgres';
 
-// Connection string from environment or hardcoded for now
-const connectionString = process.env.DATABASE_URL || 
-  'postgresql://neondb_owner:***REMOVED***@ep-solitary-leaf-afsaf73w-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require';
+// Connection string from environment variable only - never hardcode credentials
+const connectionString = process.env.DATABASE_URL;
 
-// Create SQL client
-export const sql = postgres(connectionString, {
-  ssl: 'require',
+if (!connectionString) {
+  console.warn(
+    '[Database] DATABASE_URL environment variable is not set. ' +
+    'Database operations will fail. Set it in your Vercel environment variables.'
+  );
+}
+
+// Create SQL client (lazy - will fail on first query if no URL)
+export const sql = postgres(connectionString || 'postgresql://localhost:5432/placeholder', {
+  ssl: connectionString ? 'require' : false,
   max: 10,
   idle_timeout: 20,
   connect_timeout: 10,
