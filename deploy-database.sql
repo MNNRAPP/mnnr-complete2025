@@ -1,200 +1,190 @@
--- MNNR Application Database Schema
--- Production Deployment
+-- MNNR.APP — Vanilla Postgres reference schema for Neon
+--
+-- Rewritten 2026-06-19 as part of the Supabase → Neon migration. This file is
+-- NOT the source of truth — that is `prisma/schema.prisma` plus the migrations
+-- under `prisma/migrations/`. This file exists as a reference for DBAs and
+-- external tooling that cannot run Prisma.
+--
+-- Differences vs. the prior Supabase-flavored schema:
+--   - No FK to `auth.users` (Supabase Auth is gone; auth is Clerk).
+--   - No `auth.uid()` calls. RLS uses `current_setting('app.current_user_id', true)::uuid`,
+--     which the application binds per-request via lib/rls.ts#withUserContext.
+--   - No `SUPABASE_SERVICE_ROLE_KEY` bypass; service-role flows use a Postgres role
+--     with BYPASSRLS (`app_service`) granted to the admin connection user.
 
--- Enable UUID extension
+-- ---------------------------------------------------------------------------
+-- Extensions
+-- ---------------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Users table (extends Supabase auth.users)
+-- ---------------------------------------------------------------------------
+-- Tables
+-- ---------------------------------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS public.users (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  email TEXT UNIQUE NOT NULL,
-  full_name TEXT,
-  avatar_url TEXT,
-  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin', 'moderator')),
-  subscription_status TEXT DEFAULT 'none',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email       TEXT UNIQUE NOT NULL,
+  clerk_id    TEXT UNIQUE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Subscriptions table
-CREATE TABLE IF NOT EXISTS public.subscriptions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  stripe_subscription_id TEXT UNIQUE NOT NULL,
-  stripe_customer_id TEXT NOT NULL,
-  status TEXT NOT NULL CHECK (status IN ('active', 'canceled', 'past_due', 'trialing', 'incomplete')),
-  plan_id TEXT NOT NULL,
-  current_period_start TIMESTAMP WITH TIME ZONE,
-  current_period_end TIMESTAMP WITH TIME ZONE,
-  cancel_at_period_end BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Invoices table
-CREATE TABLE IF NOT EXISTS public.invoices (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  stripe_invoice_id TEXT UNIQUE NOT NULL,
-  amount_paid INTEGER NOT NULL,
-  currency TEXT DEFAULT 'usd',
-  status TEXT NOT NULL,
-  invoice_pdf TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Usage events table
 CREATE TABLE IF NOT EXISTS public.usage_events (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  event_type TEXT NOT NULL,
-  metadata JSONB DEFAULT '{}'::JSONB,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  event       TEXT NOT NULL,
+  meta        JSONB,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Audit logs table
-CREATE TABLE IF NOT EXISTS public.audit_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
-  action TEXT NOT NULL,
-  resource_type TEXT,
-  resource_id TEXT,
-  metadata JSONB DEFAULT '{}'::JSONB,
-  ip_address INET,
-  user_agent TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.api_keys (
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id       UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  hashed_key    TEXT UNIQUE NOT NULL, -- sha256 of full key; never store plaintext
+  prefix        TEXT NOT NULL,         -- first 8 chars for display
+  name          TEXT,
+  revoked       BOOLEAN NOT NULL DEFAULT FALSE,
+  last_used_at  TIMESTAMPTZ,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Create indexes for performance
-CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
-CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON public.subscriptions(user_id);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON public.subscriptions(status);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_id ON public.subscriptions(stripe_subscription_id);
-CREATE INDEX IF NOT EXISTS idx_invoices_user_id ON public.invoices(user_id);
-CREATE INDEX IF NOT EXISTS idx_invoices_stripe_id ON public.invoices(stripe_invoice_id);
-CREATE INDEX IF NOT EXISTS idx_usage_events_user_id ON public.usage_events(user_id);
-CREATE INDEX IF NOT EXISTS idx_usage_events_type ON public.usage_events(event_type);
-CREATE INDEX IF NOT EXISTS idx_usage_events_created_at ON public.usage_events(created_at);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON public.audit_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON public.audit_logs(created_at);
+CREATE TABLE IF NOT EXISTS public.audit_events (
+  id          BIGSERIAL PRIMARY KEY,
+  event       TEXT NOT NULL,
+  user_id     UUID REFERENCES public.users(id) ON DELETE SET NULL,
+  target_id   TEXT,
+  actor_ip    TEXT,
+  user_agent  TEXT,
+  meta        JSONB,
+  outcome     TEXT NOT NULL CHECK (outcome IN ('success', 'failure', 'denied')),
+  reason      TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
--- Enable Row Level Security
-ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.usage_events ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+CREATE TABLE IF NOT EXISTS public.payment_challenges (
+  id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id            UUID REFERENCES public.users(id) ON DELETE SET NULL,
+  session_id         TEXT,
+  nonce              TEXT UNIQUE NOT NULL,
+  amount             TEXT NOT NULL,  -- string for big-num precision
+  resource           TEXT NOT NULL,
+  receiver           TEXT NOT NULL,
+  chain              TEXT NOT NULL,
+  expires_at         TIMESTAMPTZ NOT NULL,
+  consumed           BOOLEAN NOT NULL DEFAULT FALSE,
+  consumed_at        TIMESTAMPTZ,
+  consumed_tx_hash   TEXT,
+  created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
--- RLS Policies for users table
-CREATE POLICY "Users can view own data" ON public.users
-  FOR SELECT USING (auth.uid() = id);
+CREATE TABLE IF NOT EXISTS public.used_tx_hashes (
+  tx_hash        TEXT PRIMARY KEY,
+  chain          TEXT NOT NULL,
+  challenge_id   UUID REFERENCES public.payment_challenges(id) ON DELETE SET NULL,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
-CREATE POLICY "Users can update own data" ON public.users
-  FOR UPDATE USING (auth.uid() = id);
+CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
+  id                                BIGSERIAL PRIMARY KEY,
+  email                             TEXT UNIQUE NOT NULL,
+  email_hash                        TEXT NOT NULL,
+  status                            TEXT NOT NULL, -- 'pending' | 'confirmed' | 'unsubscribed'
+  confirmation_token                TEXT UNIQUE,
+  confirmation_token_expires_at     TIMESTAMPTZ,
+  created_at                        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  confirmed_at                      TIMESTAMPTZ,
+  unsubscribed_at                   TIMESTAMPTZ
+);
 
--- RLS Policies for subscriptions
-CREATE POLICY "Users can view own subscriptions" ON public.subscriptions
-  FOR SELECT USING (auth.uid() = user_id);
+-- ---------------------------------------------------------------------------
+-- Indexes
+-- ---------------------------------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_usage_events_user_created
+  ON public.usage_events (user_id, created_at DESC);
 
--- RLS Policies for invoices
-CREATE POLICY "Users can view own invoices" ON public.invoices
-  FOR SELECT USING (auth.uid() = user_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_user
+  ON public.api_keys (user_id);
 
--- RLS Policies for usage events
-CREATE POLICY "Users can view own usage" ON public.usage_events
-  FOR SELECT USING (auth.uid() = user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_events_user_event_created
+  ON public.audit_events (user_id, event, created_at DESC);
 
-CREATE POLICY "System can insert usage events" ON public.usage_events
-  FOR INSERT WITH CHECK (true);
+CREATE INDEX IF NOT EXISTS idx_payment_challenges_nonce
+  ON public.payment_challenges (nonce);
+CREATE INDEX IF NOT EXISTS idx_payment_challenges_user_created
+  ON public.payment_challenges (user_id, created_at DESC);
 
--- Admin policies (view all data)
-CREATE POLICY "Admins can view all users" ON public.users
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM public.users
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_email_hash
+  ON public.newsletter_subscribers (email_hash);
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_status
+  ON public.newsletter_subscribers (status);
 
-CREATE POLICY "Admins can view all subscriptions" ON public.subscriptions
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM public.users
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+-- ---------------------------------------------------------------------------
+-- Row-Level Security
+-- ---------------------------------------------------------------------------
+-- All policies key off `current_setting('app.current_user_id', true)::uuid`.
+-- The application must SET LOCAL app.current_user_id = '<uuid>' inside the
+-- transaction for owner-scoped queries to return rows. lib/rls.ts wraps this.
 
-CREATE POLICY "Admins can view all invoices" ON public.invoices
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM public.users
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+ALTER TABLE public.users                  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.usage_events           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.api_keys               ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_events           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.payment_challenges     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.used_tx_hashes         ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Admins can view all usage" ON public.usage_events
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM public.users
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+-- users: row owner can read / update own row
+CREATE POLICY users_select_own ON public.users
+  FOR SELECT
+  USING (id = current_setting('app.current_user_id', true)::uuid);
 
-CREATE POLICY "Admins can view all audit logs" ON public.audit_logs
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM public.users
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+CREATE POLICY users_update_own ON public.users
+  FOR UPDATE
+  USING (id = current_setting('app.current_user_id', true)::uuid);
 
--- Database functions
-CREATE OR REPLACE FUNCTION get_user_subscription_status(user_id_param UUID)
-RETURNS TEXT AS $$
-DECLARE
-  subscription_status TEXT;
+-- usage_events: owner read + insert
+CREATE POLICY usage_events_select_own ON public.usage_events
+  FOR SELECT
+  USING (user_id = current_setting('app.current_user_id', true)::uuid);
+
+CREATE POLICY usage_events_insert_own ON public.usage_events
+  FOR INSERT
+  WITH CHECK (user_id = current_setting('app.current_user_id', true)::uuid);
+
+-- api_keys: owner read / insert / update
+CREATE POLICY api_keys_select_own ON public.api_keys
+  FOR SELECT
+  USING (user_id = current_setting('app.current_user_id', true)::uuid);
+
+CREATE POLICY api_keys_insert_own ON public.api_keys
+  FOR INSERT
+  WITH CHECK (user_id = current_setting('app.current_user_id', true)::uuid);
+
+CREATE POLICY api_keys_update_own ON public.api_keys
+  FOR UPDATE
+  USING (user_id = current_setting('app.current_user_id', true)::uuid);
+
+-- audit_events: owner SELECT; INSERT only via BYPASSRLS service-role
+CREATE POLICY audit_events_select_own ON public.audit_events
+  FOR SELECT
+  USING (user_id = current_setting('app.current_user_id', true)::uuid);
+
+-- payment_challenges + used_tx_hashes + newsletter_subscribers:
+--   RLS enabled, no public policies = deny-by-default; only the BYPASSRLS
+--   service role can read or write.
+
+-- ---------------------------------------------------------------------------
+-- Service-role bypass role
+-- ---------------------------------------------------------------------------
+-- NOLOGIN role that BYPASSes RLS. Grant to the Neon admin connection user that
+-- handles service-role flows (audit writes, challenge creation, replay-ledger
+-- inserts, newsletter pipeline). Never grant to a role bound to anon traffic.
+DO $$
 BEGIN
-  SELECT status INTO subscription_status
-  FROM public.subscriptions
-  WHERE user_id = user_id_param
-    AND status IN ('active', 'trialing')
-  ORDER BY created_at DESC
-  LIMIT 1;
-  
-  RETURN COALESCE(subscription_status, 'none');
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_service') THEN
+    CREATE ROLE app_service NOLOGIN;
+  END IF;
+END
+$$;
 
-CREATE OR REPLACE FUNCTION log_usage_event(
-  user_id_param UUID,
-  event_type_param TEXT,
-  metadata_param JSONB DEFAULT '{}'::JSONB
-)
-RETURNS UUID AS $$
-DECLARE
-  event_id UUID;
-BEGIN
-  INSERT INTO public.usage_events (user_id, event_type, metadata)
-  VALUES (user_id_param, event_type_param, metadata_param)
-  RETURNING id INTO event_id;
-  
-  RETURN event_id;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Triggers for updated_at
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON public.users
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_subscriptions_updated_at BEFORE UPDATE ON public.subscriptions
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
+ALTER ROLE app_service BYPASSRLS;
+-- GRANT app_service TO <neon_admin_connection_user>;

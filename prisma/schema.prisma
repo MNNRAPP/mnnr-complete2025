@@ -1,0 +1,128 @@
+// MNNR.APP — Prisma schema (Neon Postgres)
+//
+// Generated 2026-06-19 by the Neon migration keystone agent.
+// Replaces the prior Supabase-managed schema (deploy-database.sql).
+//
+// Connection model:
+//   - NEON_DATABASE_URL  — pooled (PgBouncer) connection string used by the app at runtime
+//   - NEON_DIRECT_URL    — unpooled connection string used by `prisma migrate*` only
+//
+// RLS posture:
+//   Prisma does NOT manage RLS policies. The companion migration
+//   `prisma/migrations/20260619000000_init_rls/migration.sql` enables RLS on every
+//   table that needs it and sets up `current_setting('app.current_user_id', true)::uuid`
+//   filters. The auth layer (Clerk) must bind that session variable on every request
+//   via `lib/rls.ts#withUserContext`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("NEON_DATABASE_URL")
+  directUrl = env("NEON_DIRECT_URL")
+}
+
+model User {
+  id                String             @id @default(uuid()) @db.Uuid
+  email             String             @unique
+  clerkId           String?            @unique @map("clerk_id")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  usageEvents       UsageEvent[]
+  apiKeys           ApiKey[]
+  auditEvents       AuditEvent[]
+  paymentChallenges PaymentChallenge[]
+
+  @@map("users")
+}
+
+model UsageEvent {
+  id        BigInt   @id @default(autoincrement())
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  event     String
+  meta      Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("usage_events")
+}
+
+model ApiKey {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  user       User      @relation(fields: [userId], references: [id])
+  hashedKey  String    @unique @map("hashed_key") // sha256 of full key; never store plaintext
+  prefix     String // first 8 chars for display
+  name       String?
+  revoked    Boolean   @default(false)
+  lastUsedAt DateTime? @map("last_used_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("api_keys")
+}
+
+model AuditEvent {
+  id        BigInt   @id @default(autoincrement())
+  event     String
+  userId    String?  @map("user_id") @db.Uuid
+  user      User?    @relation(fields: [userId], references: [id])
+  targetId  String?  @map("target_id")
+  actorIp   String?  @map("actor_ip")
+  userAgent String?  @map("user_agent")
+  meta      Json?
+  outcome   String // 'success' | 'failure' | 'denied'
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, event, createdAt(sort: Desc)])
+  @@map("audit_events")
+}
+
+model PaymentChallenge {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String?   @map("user_id") @db.Uuid
+  user           User?     @relation(fields: [userId], references: [id])
+  sessionId      String?   @map("session_id")
+  nonce          String    @unique
+  amount         String // store as string for big-num precision
+  resource       String
+  receiver       String
+  chain          String
+  expiresAt      DateTime  @map("expires_at")
+  consumed       Boolean   @default(false)
+  consumedAt     DateTime? @map("consumed_at")
+  consumedTxHash String?   @map("consumed_tx_hash")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([nonce])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("payment_challenges")
+}
+
+model UsedTxHash {
+  txHash      String   @id @map("tx_hash")
+  chain       String
+  challengeId String?  @map("challenge_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("used_tx_hashes")
+}
+
+model NewsletterSubscriber {
+  id                         BigInt    @id @default(autoincrement())
+  email                      String    @unique
+  emailHash                  String    @map("email_hash")
+  status                     String // 'pending' | 'confirmed' | 'unsubscribed'
+  confirmationToken          String?   @unique @map("confirmation_token")
+  confirmationTokenExpiresAt DateTime? @map("confirmation_token_expires_at")
+  createdAt                  DateTime  @default(now()) @map("created_at")
+  confirmedAt                DateTime? @map("confirmed_at")
+  unsubscribedAt             DateTime? @map("unsubscribed_at")
+
+  @@index([emailHash])
+  @@index([status])
+  @@map("newsletter_subscribers")
+}

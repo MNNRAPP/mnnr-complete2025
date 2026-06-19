@@ -1,183 +1,40 @@
-/**
- * Neon PostgreSQL Database Connection
- * Direct connection to Neon - no Supabase dependency
- *
- * IMPORTANT: Database URL must be set via DATABASE_URL environment variable.
- * Never hardcode credentials in source code.
- */
+// lib/db.ts — Server-only Prisma client bound to Neon Postgres.
+//
+// IMPORTANT
+//   - This module MUST NOT be imported from client / browser code. The Neon
+//     connection string never belongs in a bundle that ships to the user.
+//   - In development we cache the client on `globalThis` to survive HMR.
+//   - In production we throw on missing `NEON_DATABASE_URL` so we fail fast
+//     instead of silently constructing a Prisma client with no datasource.
 
-import postgres from 'postgres';
+import { PrismaClient } from '@prisma/client';
 
-// Connection string from environment variable only - never hardcode credentials
-const connectionString = process.env.DATABASE_URL;
+const NEON_URL = process.env.NEON_DATABASE_URL;
 
-if (!connectionString) {
-  console.warn(
-    '[Database] DATABASE_URL environment variable is not set. ' +
-    'Database operations will fail. Set it in your Vercel environment variables.'
-  );
-}
-
-// Create SQL client (lazy - will fail on first query if no URL)
-export const sql = postgres(connectionString || 'postgresql://localhost:5432/placeholder', {
-  ssl: connectionString ? 'require' : false,
-  max: 10,
-  idle_timeout: 20,
-  connect_timeout: 10,
-});
-
-// Types
-export interface User {
-  id: string;
-  email: string;
-  name: string | null;
-  avatar_url: string | null;
-  created_at: Date;
-  updated_at: Date | null;
-  last_sign_in_at: Date | null;
-  metadata: Record<string, unknown> | null;
-}
-
-export interface ApiKey {
-  id: string;
-  user_id: string;
-  key_hash: string;
-  key_prefix: string;
-  name: string;
-  scopes: string[] | null;
-  rate_limit: number | null;
-  expires_at: Date | null;
-  last_used_at: Date | null;
-  created_at: Date;
-  revoked_at: Date | null;
-  metadata: Record<string, unknown> | null;
-}
-
-export interface UsageEvent {
-  id: string;
-  user_id: string;
-  api_key_id: string;
-  event_type: string;
-  quantity: number;
-  unit: string;
-  metadata: Record<string, unknown> | null;
-  created_at: Date;
-  billed_at: Date | null;
-}
-
-// Database functions
-export const db = {
-  // Users
-  async getUserById(id: string): Promise<User | null> {
-    const result = await sql<User[]>`
-      SELECT * FROM users WHERE id = ${id}
-    `;
-    return result[0] || null;
-  },
-
-  async getUserByEmail(email: string): Promise<User | null> {
-    const result = await sql<User[]>`
-      SELECT * FROM users WHERE email = ${email}
-    `;
-    return result[0] || null;
-  },
-
-  async createUser(email: string, name?: string): Promise<User> {
-    const result = await sql<User[]>`
-      INSERT INTO users (id, email, name, created_at, updated_at)
-      VALUES (gen_random_uuid(), ${email}, ${name || null}, NOW(), NOW())
-      RETURNING *
-    `;
-    return result[0];
-  },
-
-  // API Keys
-  async getApiKeysByUserId(userId: string): Promise<ApiKey[]> {
-    return sql<ApiKey[]>`
-      SELECT * FROM api_keys 
-      WHERE user_id = ${userId} AND revoked_at IS NULL
-      ORDER BY created_at DESC
-    `;
-  },
-
-  async createApiKey(userId: string, name: string, keyHash: string, keyPrefix: string): Promise<ApiKey> {
-    const result = await sql<ApiKey[]>`
-      INSERT INTO api_keys (id, user_id, name, key_hash, key_prefix, created_at)
-      VALUES (gen_random_uuid(), ${userId}, ${name}, ${keyHash}, ${keyPrefix}, NOW())
-      RETURNING *
-    `;
-    return result[0];
-  },
-
-  async getApiKeyByHash(keyHash: string): Promise<ApiKey | null> {
-    const result = await sql<ApiKey[]>`
-      SELECT * FROM api_keys 
-      WHERE key_hash = ${keyHash} AND revoked_at IS NULL
-    `;
-    return result[0] || null;
-  },
-
-  async updateApiKeyLastUsed(keyId: string): Promise<void> {
-    await sql`
-      UPDATE api_keys SET last_used_at = NOW() WHERE id = ${keyId}
-    `;
-  },
-
-  async revokeApiKey(keyId: string, userId: string): Promise<boolean> {
-    const result = await sql`
-      UPDATE api_keys 
-      SET revoked_at = NOW() 
-      WHERE id = ${keyId} AND user_id = ${userId}
-      RETURNING id
-    `;
-    return result.length > 0;
-  },
-
-  // Usage
-  async trackUsage(apiKeyId: string, eventType: string, quantity: number, unit: string = 'tokens', metadata?: Record<string, unknown>): Promise<void> {
-    // Get user_id from api_key
-    const key = await sql`SELECT user_id FROM api_keys WHERE id = ${apiKeyId}`;
-    const userId = key[0]?.user_id;
-    
-    await sql`
-      INSERT INTO usage_events (id, user_id, api_key_id, event_type, quantity, unit, metadata, created_at)
-      VALUES (gen_random_uuid(), ${userId}, ${apiKeyId}, ${eventType}, ${quantity}, ${unit}, ${JSON.stringify(metadata || {})}, NOW())
-    `;
-  },
-
-  async getUsageByApiKey(apiKeyId: string, days: number = 30): Promise<UsageEvent[]> {
-    return sql<UsageEvent[]>`
-      SELECT * FROM usage_events 
-      WHERE api_key_id = ${apiKeyId} 
-        AND created_at > NOW() - INTERVAL '1 day' * ${days}
-      ORDER BY created_at DESC
-    `;
-  },
-
-  async getUsageSummary(userId: string, days: number = 30) {
-    const result = await sql`
-      SELECT 
-        COUNT(*) as total_requests,
-        COALESCE(SUM(ue.quantity), 0) as total_tokens,
-        COUNT(DISTINCT ue.unit) as models_used,
-        COUNT(DISTINCT ak.id) as keys_used
-      FROM api_keys ak
-      LEFT JOIN usage_events ue ON ak.id = ue.api_key_id 
-        AND ue.created_at > NOW() - INTERVAL '1 day' * ${days}
-      WHERE ak.user_id = ${userId} AND ak.revoked_at IS NULL
-    `;
-    return result[0];
-  },
-
-  // Health check
-  async healthCheck(): Promise<boolean> {
-    try {
-      await sql`SELECT 1`;
-      return true;
-    } catch {
-      return false;
-    }
+if (!NEON_URL) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('NEON_DATABASE_URL required in production');
   }
-};
+}
 
-export default db;
+if (typeof window !== 'undefined') {
+  throw new Error('lib/db must never be imported from browser code');
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __prisma: PrismaClient | undefined;
+}
+
+export const db =
+  global.__prisma ??
+  new PrismaClient({
+    log:
+      process.env.NODE_ENV === 'development'
+        ? ['warn', 'error']
+        : ['error'],
+  });
+
+if (process.env.NODE_ENV !== 'production') {
+  global.__prisma = db;
+}
