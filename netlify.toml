@@ -1,27 +1,19 @@
-## ---------------------------------------------------------------------------
-## netlify.toml — Production build configuration for mnnr.app on Netlify
-##
-## Why this file exists:
-## - Repo carries BOTH package-lock.json AND pnpm-lock.yaml. Netlify's
-##   auto-detect picks npm first, which fails on packages whose engines.node
-##   requires >=20.19 (e.g. @exodus/bytes@1.9.0) and on the pnpm-style
-##   scripts in package.json.
-## - We pin the package manager to pnpm and Node to 22 to satisfy all
-##   transitive engines.node constraints.
-## - Build command runs Prisma codegen before next build so @prisma/client
-##   resolves correctly at runtime.
-## ---------------------------------------------------------------------------
+## netlify.toml for mnnr.app on Netlify
+## - Force pnpm via corepack non-strict + pnpm install
+## - Pin Node 22.12.0 to satisfy @exodus/bytes engines.node
+## - Run prisma codegen before next build
 
 [build]
-  command = "pnpm install --no-frozen-lockfile && pnpm db:generate && pnpm build"
-  publish = ".next"
+command = "corepack pnpm install --no-frozen-lockfile && corepack pnpm db:generate && corepack pnpm build"
+publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "22.12.0"
-  NETLIFY_USE_PNPM = "true"
-  PNPM_FLAGS = "--no-frozen-lockfile"
-  NEXT_USE_NETLIFY_EDGE = "true"
-  NEXT_TELEMETRY_DISABLED = "1"
+NODE_VERSION = "22.12.0"
+COREPACK_ENABLE_STRICT = "0"
+NPM_FLAGS = "--legacy-peer-deps"
+PNPM_FLAGS = "--no-frozen-lockfile"
+NEXT_USE_NETLIFY_EDGE = "true"
+NEXT_TELEMETRY_DISABLED = "1"
 
 [[plugins]]
-  package = "@netlify/plugin-nextjs"
+package = "@netlify/plugin-nextjs"
