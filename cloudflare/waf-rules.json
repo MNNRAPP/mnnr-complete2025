@@ -1,0 +1,152 @@
+{
+  "$schema": "https://developers.cloudflare.com/api/operations/zone-rulesets-create-zone-ruleset",
+  "_description": "MNNR.APP WAF custom rules + rate-limit rules + interactive challenges. Deploy via wrangler or Cloudflare API. See README_WAF_DEPLOYMENT.md.",
+  "_generated": "2026-06-19",
+  "_zone": "mnnr.app",
+
+  "custom_rules": [
+    {
+      "description": "Block known security scanners (nmap, sqlmap, nikto, metasploit, burpsuite, acunetix, nessus, zaproxy)",
+      "expression": "(lower(http.user_agent) contains \"nmap\") or (lower(http.user_agent) contains \"sqlmap\") or (lower(http.user_agent) contains \"nikto\") or (lower(http.user_agent) contains \"metasploit\") or (lower(http.user_agent) contains \"burpsuite\") or (lower(http.user_agent) contains \"acunetix\") or (lower(http.user_agent) contains \"nessus\") or (lower(http.user_agent) contains \"zaproxy\") or (lower(http.user_agent) contains \"zgrab\") or (lower(http.user_agent) contains \"masscan\") or (lower(http.user_agent) contains \"wpscan\")",
+      "action": "block",
+      "enabled": true,
+      "ref": "block_scanners"
+    },
+    {
+      "description": "Block requests probing for hidden config / admin paths",
+      "expression": "(lower(http.request.uri.path) contains \"/.env\") or (lower(http.request.uri.path) contains \"/.git\") or (lower(http.request.uri.path) contains \"/wp-admin\") or (lower(http.request.uri.path) contains \"/wp-login\") or (lower(http.request.uri.path) contains \"/phpmyadmin\") or (lower(http.request.uri.path) contains \"/xmlrpc.php\") or (lower(http.request.uri.path) contains \"/.htaccess\") or (lower(http.request.uri.path) contains \"/.aws\") or (lower(http.request.uri.path) contains \"/.ssh\") or (lower(http.request.uri.path) contains \"/server-status\") or (lower(http.request.uri.path) contains \"/.svn\") or (lower(http.request.uri.path) contains \"/.DS_Store\")",
+      "action": "block",
+      "enabled": true,
+      "ref": "block_suspicious_paths"
+    },
+    {
+      "description": "Block SQL injection patterns in query string",
+      "expression": "(lower(http.request.uri.query) matches \"union[[:space:]]+select\") or (lower(http.request.uri.query) matches \"sleep\\\\([0-9]+\\\\)\") or (lower(http.request.uri.query) matches \"benchmark\\\\([0-9]+,\") or (lower(http.request.uri.query) contains \"/**/\") or (lower(http.request.uri.query) contains \"information_schema\") or (lower(http.request.uri.query) contains \"' or '1'='1\") or (lower(http.request.uri.query) contains \"' or 1=1\") or (lower(http.request.uri.query) contains \"--+\") or (lower(http.request.uri.query) contains \"@@version\")",
+      "action": "block",
+      "enabled": true,
+      "ref": "block_sqli_query"
+    },
+    {
+      "description": "Block XSS payloads in URL or query string",
+      "expression": "(lower(http.request.uri) contains \"<script\") or (lower(http.request.uri) contains \"onerror=\") or (lower(http.request.uri) contains \"onload=\") or (lower(http.request.uri) contains \"javascript:\") or (lower(http.request.uri) contains \"vbscript:\") or (lower(http.request.uri) contains \"<iframe\") or (lower(http.request.uri) contains \"<svg/onload\") or (lower(http.request.uri) contains \"document.cookie\")",
+      "action": "block",
+      "enabled": true,
+      "ref": "block_xss"
+    },
+    {
+      "description": "Block path-traversal and LFI payloads",
+      "expression": "(http.request.uri contains \"../\") or (http.request.uri contains \"..\\\\\") or (lower(http.request.uri) contains \"/etc/passwd\") or (lower(http.request.uri) contains \"/proc/self/environ\") or (lower(http.request.uri) contains \"php://input\") or (lower(http.request.uri) contains \"php://filter\")",
+      "action": "block",
+      "enabled": true,
+      "ref": "block_path_traversal"
+    },
+    {
+      "description": "Challenge data-center ASNs hitting signup / newsletter (Hetzner, OVH, DigitalOcean, Linode, Vultr, AWS, GCP, Azure)",
+      "expression": "(ip.geoip.asnum in {24940 16276 14061 63949 20473 16509 14618 396982 8075 8068 13335 209242}) and (http.request.uri.path eq \"/sign-up\" or http.request.uri.path eq \"/api/newsletter\" or starts_with(http.request.uri.path, \"/api/auth/\"))",
+      "action": "managed_challenge",
+      "enabled": true,
+      "ref": "challenge_datacenter_signup"
+    },
+    {
+      "description": "Challenge POST requests with no Referer to sensitive endpoints",
+      "expression": "(http.request.method eq \"POST\") and (len(http.referer) eq 0) and (starts_with(http.request.uri.path, \"/api/\") or http.request.uri.path eq \"/sign-up\" or http.request.uri.path eq \"/sign-in\")",
+      "action": "managed_challenge",
+      "enabled": true,
+      "ref": "challenge_no_referer_post"
+    }
+  ],
+
+  "rate_limit_rules": [
+    {
+      "description": "API: 100 req/min per IP",
+      "expression": "starts_with(http.request.uri.path, \"/api/\") and not starts_with(http.request.uri.path, \"/api/webhooks/\")",
+      "action": "block",
+      "ratelimit": {
+        "characteristics": ["ip.src", "cf.colo.id"],
+        "period": 60,
+        "requests_per_period": 100,
+        "mitigation_timeout": 60
+      },
+      "enabled": true,
+      "ref": "rl_api_general"
+    },
+    {
+      "description": "API keys endpoint: 30 req/min per IP (sensitive)",
+      "expression": "starts_with(http.request.uri.path, \"/api/v1/keys\")",
+      "action": "block",
+      "ratelimit": {
+        "characteristics": ["ip.src", "cf.colo.id"],
+        "period": 60,
+        "requests_per_period": 30,
+        "mitigation_timeout": 300
+      },
+      "enabled": true,
+      "ref": "rl_api_keys"
+    },
+    {
+      "description": "Usage endpoint: 60 req/min per IP",
+      "expression": "starts_with(http.request.uri.path, \"/api/v1/usage\")",
+      "action": "block",
+      "ratelimit": {
+        "characteristics": ["ip.src", "cf.colo.id"],
+        "period": 60,
+        "requests_per_period": 60,
+        "mitigation_timeout": 60
+      },
+      "enabled": true,
+      "ref": "rl_api_usage"
+    },
+    {
+      "description": "x402 micropayment endpoint: 10 req/min per IP (replay-attack throttle)",
+      "expression": "starts_with(http.request.uri.path, \"/api/x402\")",
+      "action": "block",
+      "ratelimit": {
+        "characteristics": ["ip.src", "cf.colo.id"],
+        "period": 60,
+        "requests_per_period": 10,
+        "mitigation_timeout": 300
+      },
+      "enabled": true,
+      "ref": "rl_api_x402"
+    },
+    {
+      "description": "Newsletter: 3 req per 10 min per IP (spam guard)",
+      "expression": "http.request.uri.path eq \"/api/newsletter\" or http.request.uri.path eq \"/api/contact\"",
+      "action": "managed_challenge",
+      "ratelimit": {
+        "characteristics": ["ip.src"],
+        "period": 600,
+        "requests_per_period": 3,
+        "mitigation_timeout": 600
+      },
+      "enabled": true,
+      "ref": "rl_newsletter"
+    },
+    {
+      "description": "Auth endpoints + /sign-in + /sign-up: 10 req/min per IP (credential stuffing guard)",
+      "expression": "starts_with(http.request.uri.path, \"/api/auth/\") or http.request.uri.path eq \"/sign-in\" or http.request.uri.path eq \"/sign-up\" or http.request.uri.path eq \"/api/login\" or http.request.uri.path eq \"/api/signup\"",
+      "action": "managed_challenge",
+      "ratelimit": {
+        "characteristics": ["ip.src"],
+        "period": 60,
+        "requests_per_period": 10,
+        "mitigation_timeout": 300
+      },
+      "enabled": true,
+      "ref": "rl_auth"
+    },
+    {
+      "description": "Webhooks: 1000 req/min per IP (bursty; rely on signature verification for auth)",
+      "expression": "starts_with(http.request.uri.path, \"/api/webhooks/\")",
+      "action": "block",
+      "ratelimit": {
+        "characteristics": ["ip.src"],
+        "period": 60,
+        "requests_per_period": 1000,
+        "mitigation_timeout": 60
+      },
+      "enabled": true,
+      "ref": "rl_webhooks"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+# Cloudflare Pages headers — CDN-edge defense-in-depth duplicate of the
+# static security headers enforced by next.config.js `async headers()`.
+#
+# CSP is NOT included here because it must be nonce-bound per-request and is
+# set in middleware.ts via generateCsp() in lib/security.ts.
+#
+# Owned by: Agent #6 (Finding #6 — ChatGPT 2026-06-19 audit).
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  X-DNS-Prefetch-Control: on
+  X-Download-Options: noopen
+  X-Permitted-Cross-Domain-Policies: none
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet

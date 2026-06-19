@@ -1,84 +1,36 @@
 /** @type {import('next').NextConfig} */
 
-// 10/10 Enterprise Security Headers Configuration
+// ============================================================================
+// Globally-enforced security headers (Finding #6 — ChatGPT 2026-06-19 audit)
+// ============================================================================
+//
+// CSP is INTENTIONALLY NOT set here. The hardened nonce-based CSP is set
+// per-request in `middleware.ts` via `generateCsp(nonce)` from `lib/security.ts`,
+// because the nonce must be fresh on every response. Setting a static
+// `'unsafe-inline' 'unsafe-eval'` CSP at this layer would clobber the nonce
+// CSP from middleware (last-set-wins) and re-introduce the XSS weakness.
+//
+// Keep this list in sync with `SECURITY_HEADERS_STATIC` in `lib/security.ts`.
+// It is duplicated here (instead of `require()`ing the TS module) because
+// next.config.js loads before TS compilation in some bootstrap paths.
 const securityHeaders = [
-  // DNS prefetch control
-  {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on'
-  },
-  // HSTS - Force HTTPS
-  {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
-  },
-  // Prevent clickjacking
-  {
-    key: 'X-Frame-Options',
-    value: 'SAMEORIGIN'
-  },
-  // Prevent MIME type sniffing
-  {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff'
-  },
-  // Legacy XSS protection
-  {
-    key: 'X-XSS-Protection',
-    value: '1; mode=block'
-  },
-  // Control referrer information
-  {
-    key: 'Referrer-Policy',
-    value: 'strict-origin-when-cross-origin'
-  },
-  // Disable dangerous browser features
+  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-XSS-Protection', value: '1; mode=block' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()'
+    value: 'camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   },
-  // Cross-Origin policies
-  {
-    key: 'Cross-Origin-Embedder-Policy',
-    value: 'credentialless'
-  },
-  {
-    key: 'Cross-Origin-Opener-Policy',
-    value: 'same-origin'
-  },
-  {
-    key: 'Cross-Origin-Resource-Policy',
-    value: 'cross-origin'
-  },
-  // Comprehensive Content Security Policy
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://static.cloudflareinsights.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: https: blob:",
-      "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://api.stripe.com https://*.sentry.io https://*.upstash.io",
-      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
-      "media-src 'self' blob:",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "frame-ancestors 'self'",
-      "upgrade-insecure-requests"
-    ].join('; ')
-  },
-  // Prevent information disclosure
-  {
-    key: 'Server',
-    value: 'MNNR'
-  },
-  // Security headers for API endpoints
-  {
-    key: 'X-Robots-Tag',
-    value: 'noindex, nofollow, noarchive, nosnippet'
-  }
+  { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
+  { key: 'X-Download-Options', value: 'noopen' },
+  { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+  { key: 'Server', value: 'MNNR' },
+  { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, nosnippet' }
 ];
 
 const nextConfig = {

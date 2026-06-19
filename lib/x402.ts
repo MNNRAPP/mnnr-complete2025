@@ -40,12 +40,38 @@ export const TOKEN_ADDRESSES: Record<Network, Record<Token, string>> = {
   },
 };
 
-// MNNR's payment receiver addresses by network
-export const MNNR_RECEIVERS: Record<Network, string> = {
-  base: process.env.MNNR_BASE_ADDRESS || '0x0000000000000000000000000000000000000000',
-  ethereum: process.env.MNNR_ETH_ADDRESS || '0x0000000000000000000000000000000000000000',
-  polygon: process.env.MNNR_POLYGON_ADDRESS || '0x0000000000000000000000000000000000000000',
+// MNNR's payment receiver addresses by network.
+//
+// SECURITY: We no longer silently default to the zero address. A missing or
+// zero receiver is a configuration error that MUST fail closed at the moment
+// of use (see getReceiver below) rather than at startup of unrelated routes
+// — startup-level validation is enforced in lib/x402-verify.ts. The map is
+// kept for backwards compatibility but every read goes through getReceiver().
+export const MNNR_RECEIVERS: Record<Network, string | undefined> = {
+  base: process.env.X402_RECEIVER_ADDRESS_BASE || process.env.X402_RECEIVER_ADDRESS || process.env.MNNR_BASE_ADDRESS,
+  ethereum: process.env.X402_RECEIVER_ADDRESS_ETHEREUM || process.env.X402_RECEIVER_ADDRESS || process.env.MNNR_ETH_ADDRESS,
+  polygon: process.env.X402_RECEIVER_ADDRESS_POLYGON || process.env.X402_RECEIVER_ADDRESS || process.env.MNNR_POLYGON_ADDRESS,
 };
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+/**
+ * Fail-closed receiver lookup. Throws if missing or set to the zero address.
+ * Called from createPaymentRequest so a misconfigured environment cannot
+ * issue a challenge that points payments at the burn address.
+ */
+export function getReceiver(network: Network): string {
+  const addr = MNNR_RECEIVERS[network];
+  if (!addr || addr.toLowerCase() === ZERO_ADDRESS) {
+    throw new Error(
+      `[x402] receiver address for ${network} is missing or zero — set X402_RECEIVER_ADDRESS (or X402_RECEIVER_ADDRESS_${network.toUpperCase()})`
+    );
+  }
+  if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) {
+    throw new Error(`[x402] receiver address for ${network} is not a valid 0x-hex address: ${addr}`);
+  }
+  return addr;
+}
 
 /**
  * x402 Payment Request - sent in HTTP 402 response
@@ -111,7 +137,8 @@ export function createPaymentRequest(options: {
     version: X402_VERSION,
     network,
     token,
-    receiver: MNNR_RECEIVERS[network],
+    // Fail-closed: throws if receiver missing or zero (see getReceiver).
+    receiver: getReceiver(network),
     amount,
     maxAmountRequired: amount,
     resource,
@@ -154,7 +181,19 @@ export function parsePaymentProof(headers: Headers): X402PaymentProof | null {
 }
 
 /**
- * Verify a payment proof (basic validation - full verification requires blockchain query)
+ * LEGACY basic-shape validation of a payment proof.
+ *
+ * ⚠️ THIS IS NOT SUFFICIENT FOR PAYMENT ENFORCEMENT. ⚠️
+ *
+ * A passing result here only proves the proof envelope matches the issued
+ * challenge envelope — it does NOT prove an on-chain transfer occurred.
+ * Routes that gate paid behaviour MUST additionally call
+ * `verifyPaymentOnChain` from `@/lib/x402-verify`, which performs the full
+ * RPC-backed verification + replay protection.
+ *
+ * Kept exported for backwards compatibility with callers that only need
+ * envelope validation (e.g. early-rejection of malformed proofs before
+ * spending an RPC round-trip).
  */
 export async function verifyPaymentProof(
   proof: X402PaymentProof,
@@ -185,9 +224,10 @@ export async function verifyPaymentProof(
     return { valid: false, error: 'Nonce mismatch' };
   }
 
-  // TODO: Verify transaction on-chain using RPC
-  // This would query the blockchain to confirm the transaction exists and is confirmed
-  // For now, we trust the proof (in production, this MUST be verified)
+  // NOTE: On-chain verification is performed by lib/x402-verify.ts
+  // (`verifyPaymentOnChain`). This function only validates the proof
+  // envelope shape against the expected request. Callers that gate paid
+  // behaviour MUST chain through `verifyPaymentOnChain` before executing.
 
   return { valid: true };
 }
