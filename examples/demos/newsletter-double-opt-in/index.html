@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>MNNR — Newsletter Double Opt-In Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 540px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    h1 { font-size: 1.5rem; }
+    fieldset { border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
+    label { display: block; margin-top: 0.5rem; font-weight: 600; font-size: 0.85rem; }
+    input { width: 100%; padding: 0.4rem; box-sizing: border-box; }
+    button { margin-top: 0.75rem; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: rgba(127,127,127,0.1); padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; }
+    .ok { color: #0a6e0a; }
+    .err { color: #b00; }
+    code { font-family: ui-monospace, monospace; }
+    .ts-wrap { margin-top: 0.5rem; }
+  </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+  <h1>MNNR — Newsletter Double Opt-In Demo</h1>
+  <p>
+    Drives <code>POST https://mnnr-app.netlify.app/api/newsletter</code>.
+    Submission is double opt-in — you'll get a confirmation email; clicking
+    its link hits
+    <code>GET /newsletter/confirm?token=…</code> and flips status to
+    <code>confirmed</code>.
+  </p>
+
+  <fieldset>
+    <form id="form">
+      <label for="email">Email</label>
+      <input id="email" type="email" required placeholder="you@example.com" />
+
+      <div class="ts-wrap">
+        <!-- Cloudflare-issued test site key — always passes. Swap with your real site key. -->
+        <div class="cf-turnstile"
+             data-sitekey="1x00000000000000000000AA"
+             data-action="newsletter"
+             data-callback="onTurnstile"></div>
+        <input id="ts" type="hidden" name="cf-turnstile-response" />
+      </div>
+
+      <button type="submit">Subscribe</button>
+    </form>
+    <pre id="out"></pre>
+  </fieldset>
+
+  <h2>After clicking the email link</h2>
+  <p>
+    The confirmation URL hits <code>GET /newsletter/confirm?token=…</code>
+    and returns HTML — flips the subscriber to <code>confirmed</code> and
+    fires the welcome email. You don't need this demo to test it; just click
+    the link in your inbox.
+  </p>
+
+  <script>
+    const BASE = 'https://mnnr-app.netlify.app';
+    window.onTurnstile = function(token) { document.getElementById('ts').value = token; };
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const out = document.getElementById('out');
+      out.className = '';
+      out.textContent = 'Working…';
+      const email = document.getElementById('email').value.trim();
+      const turnstileToken = document.getElementById('ts').value;
+      if (!email || !turnstileToken) {
+        out.className = 'err';
+        out.textContent = 'Email + Turnstile token required.';
+        return;
+      }
+      try {
+        const res = await fetch(BASE + '/api/newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, turnstileToken }),
+        });
+        const body = await res.json().catch(() => ({}));
+        out.className = res.ok ? 'ok' : 'err';
+        out.textContent = `HTTP ${res.status}\n` + JSON.stringify(body, null, 2);
+      } catch (err) {
+        out.className = 'err';
+        out.textContent = String(err);
+      }
+    });
+  </script>
+</body>
+</html>

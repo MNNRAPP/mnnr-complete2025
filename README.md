@@ -338,6 +338,41 @@ Proprietary - All rights reserved © 2025 MNNR LLC
 
 ---
 
+## 🛠 Build, Deploy, and Develop
+
+The public API surface is documented and demoable. New artifacts added
+2026-06-19 (PR `feat/demos-and-apis-20260619`):
+
+| Artifact | Path | Use it for |
+|----------|------|------------|
+| **Swagger UI** | [`/docs/api-reference`](https://mnnr-app.netlify.app/docs/api-reference) | Interactive, in-browser API explorer |
+| **OpenAPI 3.1 spec (JSON)** | [`/openapi.json`](./public/openapi.json) | Machine-readable spec — codegen, contract tests |
+| **OpenAPI 3.1 spec (YAML)** | [`openapi.yaml`](./openapi.yaml) | Human-readable spec |
+| **curl recipes** | [`examples/curl/README.md`](./examples/curl/README.md) | One working `curl` per route |
+| **Postman collection** | [`examples/postman/`](./examples/postman/) | Import into Postman/Insomnia — auth + every route pre-wired |
+| **TypeScript SDK (skeleton)** | [`packages/sdk/`](./packages/sdk/) | `@mnnr/sdk` — fetch-only, no deps, Node 18+/browser/edge |
+| **Demos** | [`examples/demos/`](./examples/demos/) | x402 payment flow • API key issuance • newsletter double opt-in |
+
+Quickstart:
+
+```bash
+# 1. Explore the API
+open https://mnnr-app.netlify.app/docs/api-reference
+
+# 2. Drive it with curl
+export BASE_URL=https://mnnr-app.netlify.app
+curl "$BASE_URL/api/x402?demo=true"
+
+# 3. Drive it with the SDK
+npm install github:MNNRAPP/mnnr-complete2025#feat/demos-and-apis-20260619&path=packages/sdk
+# import { MnnrClient } from '@mnnr/sdk'
+
+# 4. Run a demo
+cd examples/demos/x402-payment-flow && node demo.mjs
+```
+
+---
+
 ## 🎯 Changelog
 
 ### v1.0.0 (December 2025)

@@ -1,0 +1,10 @@
+{
+  "name": "mnnr-demo-x402-payment-flow",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node demo.mjs"
+  },
+  "engines": { "node": ">=18.0.0" }
+}
