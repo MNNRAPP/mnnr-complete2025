@@ -1,13 +1,35 @@
 /**
- * Integration tests for /api/usage
+ * Integration tests for /api/usage — Clerk + Prisma (post-migration #40).
  *
- * Covers: 401 unauthenticated, GET returns only the caller's rows, POST
- * validates body via Zod.
+ * Covers: 401 unauthenticated for both GET and POST.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
-vi.mock('@/utils/supabase/server', () => ({ createClient: vi.fn() }));
+const authMock = vi.fn();
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: authMock,
+  currentUser: vi.fn(),
+}));
+
+vi.mock('@/lib/user', async () => {
+  const { NextResponse } = await import('next/server');
+  return {
+    getOrCreateUser: vi.fn(),
+    unauthorized: () =>
+      NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401, headers: { 'WWW-Authenticate': 'Bearer realm="mnnr-api"' } },
+      ),
+  };
+});
+
+vi.mock('@/lib/rls', () => ({
+  withUserContext: vi.fn((_userId: string, fn: (tx: unknown) => unknown) =>
+    fn({ usageEvent: { findMany: vi.fn().mockResolvedValue([]), create: vi.fn() } }),
+  ),
+}));
+
 vi.mock('@/lib/rate-limit', () => ({
   rateLimit: vi.fn(() => Promise.resolve(null)),
   rateLimiters: { api: {} },
@@ -25,24 +47,11 @@ vi.mock('@/lib/audit-trail', () => ({
   AuditSeverity: { INFO: 'info', WARNING: 'warn', ERROR: 'error' },
 }));
 
-function supabaseUnauth() {
-  return {
-    auth: {
-      getUser: vi.fn().mockResolvedValue({
-        data: { user: null },
-        error: new Error('Unauthorized'),
-      }),
-    },
-    from: vi.fn(),
-  };
-}
-
 describe('/api/usage GET', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('returns 401 when unauthenticated', async () => {
-    const { createClient } = await import('@/utils/supabase/server');
-    vi.mocked(createClient).mockReturnValue(supabaseUnauth() as never);
+    authMock.mockReturnValue({ userId: null });
     const { GET } = await import('@/app/api/usage/route');
     const req = new NextRequest('http://localhost/api/usage');
     const res = await GET(req);
@@ -54,8 +63,7 @@ describe('/api/usage POST', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('returns 401 when unauthenticated', async () => {
-    const { createClient } = await import('@/utils/supabase/server');
-    vi.mocked(createClient).mockReturnValue(supabaseUnauth() as never);
+    authMock.mockReturnValue({ userId: null });
     const { POST } = await import('@/app/api/usage/route');
     const req = new NextRequest('http://localhost/api/usage', {
       method: 'POST',
