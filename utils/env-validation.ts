@@ -172,7 +172,9 @@ export const env = {
     token: () => process.env.UPSTASH_REDIS_REST_TOKEN
   },
   sentry: {
-    dsn: () => process.env.SENTRY_DSN,
+    // Read NEXT_PUBLIC_SENTRY_DSN first so the browser SDK can init —
+    // process.env.SENTRY_DSN is server-only and undefined in client bundles.
+    dsn: () => process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN,
     org: () => process.env.SENTRY_ORG,
     project: () => process.env.SENTRY_PROJECT
   },

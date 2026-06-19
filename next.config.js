@@ -123,4 +123,42 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+// ============================================================================
+// Sentry — wrap the Next.js config to enable:
+//   - Automatic source-map upload during build (needs SENTRY_AUTH_TOKEN)
+//   - Tunnel route to bypass ad-blockers blocking /sentry/*
+//   - Tree-shaking of Sentry debug-only code
+// Org/project must exist in the Sentry dashboard before the auth token works.
+// If SENTRY_AUTH_TOKEN is unset the build still succeeds; just no source maps
+// will be uploaded.
+// ============================================================================
+let exportedConfig = nextConfig;
+try {
+  // Lazy-require so a missing dep never crashes the build chain.
+  // @sentry/nextjs is already in package.json dependencies.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { withSentryConfig } = require('@sentry/nextjs');
+  exportedConfig = withSentryConfig(nextConfig, {
+    org: 'mnnrapp',
+    project: 'mnnr-api',
+    // Suppress all logs unless we're on CI
+    silent: !process.env.CI,
+    // Upload a larger set of source maps for prettier stack traces
+    widenClientFileUpload: true,
+    // Automatically annotate React components to show their full name in
+    // breadcrumbs and session replay
+    reactComponentAnnotation: { enabled: true },
+    // Hide source maps from generated client bundles
+    hideSourceMaps: true,
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    disableLogger: true,
+    // Vercel Cron Monitors are intentionally OFF (not on Vercel; not using cron)
+    automaticVercelMonitors: false,
+  });
+} catch (err) {
+  // Sentry not available — fall back to plain config (CI/sandbox builds OK)
+  // eslint-disable-next-line no-console
+  console.warn('[next.config] @sentry/nextjs not loaded:', err && err.message);
+}
+
+module.exports = exportedConfig;
