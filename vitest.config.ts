@@ -1,11 +1,31 @@
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
+import { defineConfig, type PluginOption } from 'vitest/config';
 import path from 'path';
 
+// Load @vitejs/plugin-react lazily so the config still loads in environments
+// where the React plugin isn't installed (e.g. CI workspaces that only run the
+// node-only lib + api tests). React component tests will still need the plugin.
+let reactPlugin: PluginOption | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+  const react = require('@vitejs/plugin-react');
+  reactPlugin = (react.default ?? react)();
+} catch {
+  // No-op — node-only test suites don't need it.
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: reactPlugin ? [reactPlugin] : [],
   test: {
-    environment: 'jsdom',
+    // Default to `node` since lib/* + app/api/* are server code. Component
+    // tests in __tests__/components/* opt into jsdom via their own /* @vitest-environment jsdom */
+    // header.
+    environment: 'node',
+    // Files matching these globs run in jsdom — they touch window / document.
+    environmentMatchGlobs: [
+      ['__tests__/components/**', 'jsdom'],
+      ['__tests__/hooks/**', 'jsdom'],
+      ['__tests__/utils/api-client.test.ts', 'jsdom'],
+    ],
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
     exclude: [
@@ -15,7 +35,10 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      // text + html for local triage, lcov for CI codecov-style upload.
+      reporter: ['text', 'html', 'lcov', 'json'],
+      // Only measure the source surfaces we own and want to gate on.
+      include: ['lib/**', 'app/api/**'],
       exclude: [
         'node_modules/',
         '.next/',
@@ -27,7 +50,15 @@ export default defineConfig({
         '**/*.module.css',
         '**/index.ts',
         '**/toasts.ts',
+        '**/*.d.ts',
       ],
+      thresholds: {
+        // Coverage gate. Set per the task spec.
+        lines: 70,
+        functions: 70,
+        statements: 70,
+        branches: 60,
+      },
     },
   },
   resolve: {
