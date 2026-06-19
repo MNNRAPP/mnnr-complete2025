@@ -1,0 +1,51 @@
+{
+  "algorithms": {
+    "hash": "SHA3-256 / SHA-256 for fingerprints",
+    "kem": "ML-KEM-768 (NIST FIPS 203)",
+    "signature": "ML-DSA-65 (NIST FIPS 204)"
+  },
+  "attestation_version": "1.1",
+  "canonicalization_rule": "JSON canonicalization: sorted keys, no whitespace, UTF-8; sign the canonical bytes directly",
+  "custody": "Genesis private keys held by TOHID NAEEM personally as founder of MNNR LLC; stored on a non-synced local path (C:\\ProgramData\\mnnr_oursly_pq_keys\\) with NTFS ACL restricting read/write to TOHID NAEEM + SYSTEM only. HSM custody migration remains on the roadmap.",
+  "issued_at_utc": "2026-06-10T06:37:25+00:00",
+  "issuer": {
+    "ein": "33-3678186",
+    "formation_date": "2025-02-26",
+    "founder": "TOHID NAEEM",
+    "jurisdiction": "Wyoming, USA (domestic)",
+    "legal_entity": "MNNR LLC",
+    "principal_place_of_business": "Silicon Hills, California, USA",
+    "veteran_status": "Decorated disabled veteran-owned"
+  },
+  "key_id": "mnnr-genesis-2026-06-09",
+  "library": "pqcrypto 0.4.0 (Python)",
+  "product": "mnnr.app",
+  "public_keys": {
+    "ml_dsa_65_b64": "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",
+    "ml_dsa_65_sha256": "2992fe6051b860627bf33be529e4303bf8256136953fa948cea7b10f292b81f2",
+    "ml_kem_768_b64": "LbZrtdNsEQFpkTDORGxv6gEaA7YTOknDvxRz6TJ3A0MKiKyp5+Y6/+wxGfdZMUdWRkfK3MZKP2h04TEYqRl2cTE74ZOdKLRT4HMsYVBQFZg1TgRKXatgqzFOGKK1OWEVqcuGpGF2PBxM9SOTyNya9ha75scnEECfEoEk2PYrKLuzXfA3yNmrvUo80PSXzTxlSYBOWBa1bBaBtTMxeDVOqjh877mHk9khrqMdMCku5Jtde4V2HFFt9ldnJny/OpnNA0eHvAwt4vGRsiISeEUHDFShWOYMOesTsNOUM/wP1CwF1tquohJ2+jRlQ1dnsppyxOySbVPPDNVu/OF1LeG3g1xFyKWQOKmm0BJc9ZG7XEeUkwy1PxQBc+qdAQNDkeNQSkbAI2PBOsswM4S2DcO7gmdvTQo0pMldoqJIlnkNNoxtm7WtzBiIiffDhSVxwNN38/iH/xoLteCJHWeyLSmKabMDrtCUB6Z8NQy0lXWkkaRxhqmta7xW3nQPqnQ9AZq3IWSleLE/pFEAbWCoRuCtK8efI8ZdYKNQWfWQXFuaIoCuToB1i8ZlU6UP/VuTYoJ8uuODYhMPTYJLz6h0OScLpChlEfPMRdIu2OKE9SJjqPWLB/vFCwkonYZAV8HPY+xlfXqGoCNwsFNaYeEjxjRAR+Ct5vnBlOcObeCDx8hG/uqSpxfGLBFiLaA22zujJyeImWteC1Ay7At/jvOU4AYPw4RHnVNJIbMn7IWLCjDPeUzI9oSjvOqXF9lw9VnADlTAoYZJnuxdq+txF8w4XDpeazHMhcYcnEBpyglkbzxqBqInhvghvjWaH3Q5p0W1JwQtltVybwkoQElg7TidqyBZ7dqwxmQvYKWMnvqofKJEfeUidrNOO7SkEPROciJWJMgYH2BrrxqteJcNJuhxziYKebKPQsEE+0rLHju0jsWquzSc0hQs6SeHPUWIb/rG2AeVYzOYtDe03ip5+0wnMKSktZKhH9NJi4gJe7KMjIQQGDAR8oKKFLjIeXois6HOVFUA2gSn4hFExaBY7WN4gbYIRfst2rsZwFZplUO3GmqePLrPPVljxPSKLgMkATspUgyyXawcgYJCRBq3yaqDLLyDT4CC5SRBWTSOKShHRrWjyZogI8oKu0YsTEdM7vx7rKN8i2SXJxA2KhaH75MOPWjFWJxjaYSE2bpcDguVzlIA20LIDAdxcBOpG0lFj/mMLcgBE/lbqeAsQdUDgxCvINcDysG9Quonf+NEt7Rt+VUQSWpuA3mNMOIvI2jDGRiCrypTETSwxOeiKMm/q1YiEJZ4ofU7vezJHoVL0ohw92h6g2dXYYSHB+ismNqA04In0Lyw6SPK8jOwdWFtZfY5AVs2lPCu+TJqotR+l+mjOJvEeBQYR4S8/SGAMuOh5tScU4qZMZRB8NNCAdqewECTUbwH5jCqBOphbLTMpmAavWCqlykQsnAwvBknzNW1A7k8edMJrqqBPUIe9hY9wXsJoFOb9AGwsYGzXmxPYuiUsORYCqYDCVjEmARGIYg6B/xV5gBzvh4D8G7C5hq4h9HqzzSoEzL9Bu9LiAyBlMx7O92FdQg=",
+    "ml_kem_768_sha256": "18aa839f406940090c41e2a02441fc410cc89cbfca680cc34e9f64d83b5ed71a"
+  },
+  "purpose": "Governance-layer policy verdicts, key exchange for governance API, audit-log streaming.",
+  "rotation": {
+    "deprecated_artifacts_preserved_at": "/crypto/mnnr_mldsa65_public.key_DEPRECATED_20260608.* and /crypto/mnnr_mlkem768_public.key_DEPRECATED_20260608.* (audit-trail preservation; verifiers may still reproduce the prior fingerprints from these files to confirm the rotation).",
+    "deprecated_fingerprints": {
+      "ml_dsa_65_sha256": "4ecb7ee3894447d96e11b732c559851e1073c926a248ed1df13f1fdc8722cde9",
+      "ml_kem_768_sha256": "e5fbccc68b4f7464187f98fea47571808e1edf9c3979ba3004f2dc75380e60fa"
+    },
+    "rotated_on_utc": "2026-06-10T06:37:25+00:00",
+    "rotation_reason": "The initial 2026-06-08 genesis keys were generated into a cloud-synced OneDrive folder, creating a custody mismatch: the root-of-trust private keys were exposed to Microsoft OneDrive cloud storage rather than held exclusively on a local non-synced path. Treating the 2026-06-08 keys as compromised and rotating to fresh keypairs.",
+    "supersedes_key_id": "mnnr-genesis-2026-06-08"
+  },
+  "scope_live_tonight": [
+    "Public ML-KEM-768 key published with SHA-256 fingerprint",
+    "Public ML-DSA-65 key published with SHA-256 fingerprint",
+    "This genesis attestation, signed with the ML-DSA-65 private key",
+    "TLS edge: Cloudflare X25519MLKEM768 hybrid (per Cloudflare default for Pages)"
+  ],
+  "scope_roadmap_not_live_tonight": [
+    "ML-DSA-signed policy verdict bus (Q3 2026)",
+    "ML-KEM-768 key-wrapped policy delivery (Q3 2026)",
+    "PQ-attested audit log streaming for BaFin / federal procurement (Q3 2026)"
+  ]
+}

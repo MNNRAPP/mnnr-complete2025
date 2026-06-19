@@ -1,0 +1,41 @@
+{
+  "algorithms": {
+    "hash": "SHA3-256 / SHA-256 for fingerprints",
+    "kem": "ML-KEM-768 (NIST FIPS 203)",
+    "signature": "ML-DSA-65 (NIST FIPS 204)"
+  },
+  "attestation_version": "1.0",
+  "canonicalization_rule": "JSON canonicalization: sorted keys, no whitespace, UTF-8; sign the canonical bytes directly",
+  "custody": "Genesis private keys held by TOHID NAEEM personally as founder of MNNR LLC; HSM custody migration is on the roadmap.",
+  "issued_at_utc": "2026-06-09T03:20:57+00:00",
+  "issuer": {
+    "ein": "33-3678186",
+    "formation_date": "2025-02-26",
+    "founder": "TOHID NAEEM",
+    "jurisdiction": "Wyoming, USA (domestic)",
+    "legal_entity": "MNNR LLC",
+    "principal_place_of_business": "Silicon Hills, California, USA",
+    "veteran_status": "Decorated disabled veteran-owned"
+  },
+  "key_id": "mnnr-genesis-2026-06-08",
+  "library": "pqcrypto 0.4.0 (Python)",
+  "product": "mnnr.app",
+  "public_keys": {
+    "ml_dsa_65_b64": "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",
+    "ml_dsa_65_sha256": "4ecb7ee3894447d96e11b732c559851e1073c926a248ed1df13f1fdc8722cde9",
+    "ml_kem_768_b64": "8BspGNka9yQAkhidkJxmIRkPSbQkp4W8mwQkXnvJNleUq0uu9bZIq2fCyyhM10QvxGkKiESN2GsqlrhazeVY0iIgTlWCHoZy1kFPmRN/DYaGfyM8H9gqoURjpem0f8yCDESsiTt79PRc2Pc0UoxHBWpRrNdUGlyEVxl2SuYWr4V/gNIqk1u7VhrEgJq6lVuplhSXYoVlQoqZtkgSrLABI/lHcqJ6GBcAvqnHNEF8n2Z3M1w3dpiYt6Kp1VCrqDN7vMhDkoWP8pvJUpldwAe7jCoOV8BJ4ltFfwC6DUt3xeRWldaZbDp1e7gA2DnIFnKZvZtzG3pQUuaJ3XGZ98wiB+cIKhIQklvMx4Yx8MMJQMVlZXZe4PULUKoPBWWI+WsWmvNLAryMR5mpofib9MZQRuEdk3fHK0uM7Byn07y56KuHFqW9cQUW+jxMT/eYAkJ+4QheUPVcxMaua6i6wxR+p5cjOKuoFPO7n+VOpDihg7UHMcFnqXEbUyE4lPGm93CyLDk2GVsPAQWaxmg43qAsqqUuuCAfrNl8w+xgXosPqmleytE5+iioD4mKYdNX9DtUwLE68QTAcNsQgBEwjZOECORaXXQT/EZ5xtCorBU5XveJOLemWkMVxGYzp/MEsnSHVZYRH4FUmUCdjtdfTBtfwAK8I+NkqywLXqcdEChY+rR9BDkiu9rDPaC3XoV9n0m85dDPHEOLzQu09jMgoSdcSBQcqbFKolSofXZRBGAYVJdZZarCM/bIyPMrpDDJQKR4N2OgPZpSzixsIvcBEBY6OjiOq9AzOfUZgXxeY8NwEdVrkxq6hQW1Q4kY6NhtUBQiJdJ7o+Q196eJ17UDekRmPTuc7Xoza4Ow2Sg0FjmghjZi67SsapKYYxKZruU5N3aMeKJ6ZdnP60ecLeAiG+yUOUYMUNyZJaqUoDUBSIsDVMstCIE7UYxVENOPW7RQ/2kh0NF6LFpqmieczXVzEUsB3BVf/XvOX2oNG3CILHKNB8nMVEG+XHccjzI74mSOOLeeOJwwznsaAutac8pdVHx1n+pcb8JEi4BQVCQeDzU7KhkVZ8HIIEEeJZxdDosTUTAR6leqYXayOKPFJ9kMDFuaTArAg8Wg+HE0hyWL3HrH4cqII+EAI6d2umw1+eaxAeezE6Bkcoad2AuYmsa1xvGaL6eP9vcV9ipT/pYXjWBENMJFvlY7LiZ0pqiL1wJpY8WJ6DQ084cJ+6ev/nE2yeuIAZZRqcwNBRBGRWRDQls5QJEZxmNvogiiBLhUFZaxS0MunhtWdCE9kbycFTSzuTyJaovNuChVVhEZJcJCkuOqUeDP3LSCjRG0btoGTgp2Ddhi1NF648etMBVcvDJ7QtM55JBH5gOr+8GEuGemvDgUpgKRhIKcd0IDUbqtbtSv7eE+9rOuRzMMt6tOwXodhcAHh7xwZAhs7KwzEXkLgoWiSGcs8WsJIlxmFFe+Z2xY+UO8SHexfPMgO0dZ6QwcL3Y3suR+jsmSwRGN2vYf2TmLl3y8S2kDk9S8mrKovWI3SDI3LZDHFfC+VbQY7kss4Imtr4ST9gLLxsEAZlBHIMrn1kE=",
+    "ml_kem_768_sha256": "e5fbccc68b4f7464187f98fea47571808e1edf9c3979ba3004f2dc75380e60fa"
+  },
+  "purpose": "Governance-layer policy verdicts, key exchange for governance API, audit-log streaming.",
+  "scope_live_tonight": [
+    "Public ML-KEM-768 key published with SHA-256 fingerprint",
+    "Public ML-DSA-65 key published with SHA-256 fingerprint",
+    "This genesis attestation, signed with the ML-DSA-65 private key",
+    "TLS edge: Cloudflare X25519MLKEM768 hybrid (per Cloudflare default for Pages)"
+  ],
+  "scope_roadmap_not_live_tonight": [
+    "ML-DSA-signed policy verdict bus (Q3 2026)",
+    "ML-KEM-768 key-wrapped policy delivery (Q3 2026)",
+    "PQ-attested audit log streaming for BaFin / federal procurement (Q3 2026)"
+  ]
+}
