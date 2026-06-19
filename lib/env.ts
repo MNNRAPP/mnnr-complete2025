@@ -156,8 +156,13 @@ if (!parsed.success) {
 }
 
 // Even on safeParse failure in dev we still want a typed object — fall back
-// to process.env coerced to any so the app can boot. In production we threw.
-const RawEnv = (parsed.success ? parsed.data : (process.env as any)) as z.infer<typeof EnvSchema>;
+// to a SHALLOW COPY of process.env so the app can boot. We copy rather than
+// freezing process.env directly because process.env is exposed as a Proxy in
+// some Node versions (and as a Proxy-like object under test runners), which
+// rejects Object.freeze with `TypeError: Cannot freeze`.
+const RawEnv = (parsed.success
+  ? parsed.data
+  : ({ ...(process.env as Record<string, string | undefined>) } as unknown)) as z.infer<typeof EnvSchema>;
 
 // Cross-field production gates -- only enforced in production.
 if (RawEnv.NODE_ENV === 'production') {

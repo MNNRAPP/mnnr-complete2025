@@ -28,8 +28,12 @@ export default defineConfig({
   
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+    /* Base URL to use in actions like `await page.goto('/')`.
+     * Priority: PLAYWRIGHT_BASE_URL → E2E_BASE_URL → live netlify deploy → local dev. */
+    baseURL:
+      process.env.PLAYWRIGHT_BASE_URL ||
+      process.env.E2E_BASE_URL ||
+      (process.env.CI ? 'https://mnnr-app.netlify.app' : 'http://localhost:3000'),
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
