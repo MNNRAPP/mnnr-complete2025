@@ -36,70 +36,62 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci --legacy-peer-deps
       - name: Generate Prisma client
-        run: pnpm db:generate
+        run: npm run db:generate
       - name: TypeScript check
-        run: pnpm typecheck
+        run: npm run typecheck
 
   lint:
     name: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci --legacy-peer-deps
       - name: Lint
-        run: pnpm lint
+        run: npm run lint
 
   test:
     name: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci --legacy-peer-deps
       - name: Generate Prisma client
-        run: pnpm db:generate
+        run: npm run db:generate
       - name: Run tests
-        run: pnpm test --run
+        run: npx vitest --run
 
   build:
     name: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci --legacy-peer-deps
       - name: Generate Prisma client
-        run: pnpm db:generate
+        run: npm run db:generate
       - name: Build
-        run: pnpm build
+        run: npm run build
         env:
           NODE_ENV: production
 
@@ -108,13 +100,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-      - name: pnpm audit (high+critical fails the job)
-        run: pnpm audit --audit-level=high --prod
+      - name: npm audit (high+critical fails the job)
+        run: npm audit --audit-level=high --omit=dev
