@@ -1,0 +1,44 @@
+{
+  "name": "@mnnr/sdk",
+  "version": "0.1.0",
+  "description": "Official TypeScript SDK for the mnnr.app API. Fetch-only, zero deps, works in Node 18+, browser, and edge runtimes.",
+  "type": "module",
+  "main": "./src/client.ts",
+  "module": "./src/client.ts",
+  "types": "./src/client.ts",
+  "exports": {
+    ".": {
+      "types": "./src/client.ts",
+      "import": "./src/client.ts"
+    }
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mnnr",
+    "x402",
+    "payments",
+    "api",
+    "sdk"
+  ],
+  "author": "MNNR",
+  "license": "Proprietary",
+  "homepage": "https://mnnr.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MNNRAPP/mnnr-complete2025.git",
+    "directory": "packages/sdk"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

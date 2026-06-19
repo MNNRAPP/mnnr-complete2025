@@ -1,0 +1,913 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MNNR API",
+    "version": "0.1.0",
+    "description": "Public API for [mnnr.app](https://mnnr.app) — API metering, billing,\nsubscriptions, and the x402 micropayment protocol.\n\n**Live base URL:** `https://mnnr-app.netlify.app`\n\n## Authentication\n\nTwo schemes:\n\n1. **Supabase session cookie** — set by the dashboard sign-in flow\n   (`/sign-in`). Used by interactive routes (`/api/keys`, `/api/usage`).\n   Forwarded automatically by the browser.\n2. **API key (Bearer)** — minted from the dashboard at `/dashboard/keys`.\n   Used for programmatic, server-to-server access. Send as\n   `Authorization: Bearer <api_key>`.\n\nState-changing routes additionally require a CSRF double-submit token\nsent in the `x-csrf-token` header (cookie-issued on dashboard load).\n\n## Rate limits\n\nAll routes are rate-limited per authenticated principal (Upstash Redis\nsliding window). Limits vary by route class; see response header\n`Retry-After` on 429.\n",
+    "contact": {
+      "name": "MNNR",
+      "url": "https://mnnr.app",
+      "email": "hello@mnnr.app"
+    },
+    "license": {
+      "name": "Proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://mnnr-app.netlify.app",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local dev"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Payments",
+      "description": "x402 micropayment protocol"
+    },
+    {
+      "name": "API Keys",
+      "description": "Manage user API keys"
+    },
+    {
+      "name": "Usage",
+      "description": "Record and retrieve usage events"
+    },
+    {
+      "name": "Newsletter",
+      "description": "Double opt-in newsletter"
+    },
+    {
+      "name": "Security",
+      "description": "CSP violation reports"
+    }
+  ],
+  "security": [
+    {
+      "SupabaseSession": []
+    },
+    {
+      "ApiKey": []
+    }
+  ],
+  "paths": {
+    "/api/x402": {
+      "get": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "x402 protocol info or demo challenge",
+        "description": "Returns protocol metadata. With `?demo=true`, returns a demo\nHTTP-402 challenge (no real payment required).\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "demo",
+            "schema": {
+              "type": "boolean"
+            },
+            "required": false
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Protocol metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "example": "1.0"
+                    },
+                    "supportedNetworks": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "supportedTokens": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Demo 402 challenge",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentChallenge"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Issue x402 challenge or verify on-chain payment",
+        "description": "Multi-action route. `action` discriminates:\n\n- `challenge` — issue a server-bound payment challenge.\n- `verify` — submit a transaction hash for on-chain verification.\n  On success the paid action is executed.\n\n**Production gate:** when `NODE_ENV=production` and\n`PAYMENT_VERIFICATION_ENABLED` is not `\"true\"`, paid actions return\n`503 payment_disabled`.\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentChallengeRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PaymentVerifyRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-csrf-token",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Verify success / challenge issued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PaymentChallenge"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PaymentVerifyResult"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required / verification failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited"
+          },
+          "503": {
+            "description": "Payment verification disabled in this environment"
+          }
+        }
+      }
+    },
+    "/api/keys": {
+      "get": {
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "List the authenticated user's API keys",
+        "security": [
+          {
+            "SupabaseSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API keys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ApiKey"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "Create a new API key",
+        "description": "Returns the **full plaintext key exactly once** under `key`. Only\nthe prefix + hash are stored server-side. Store the plaintext key\nimmediately — it is never recoverable.\n",
+        "security": [
+          {
+            "SupabaseSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-csrf-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "live",
+                      "test"
+                    ],
+                    "default": "live"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Key created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiKey"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Full plaintext key. Shown exactly once."
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "Revoke an API key",
+        "security": [
+          {
+            "SupabaseSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-csrf-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Revoked"
+          },
+          "400": {
+            "description": "Invalid id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/api/usage": {
+      "get": {
+        "tags": [
+          "Usage"
+        ],
+        "summary": "Get usage events for the authenticated user",
+        "security": [
+          {
+            "SupabaseSession": []
+          },
+          {
+            "ApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ],
+              "default": "month"
+            }
+          },
+          {
+            "in": "query",
+            "name": "metric",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aggregated usage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "string"
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UsageEvent"
+                      }
+                    },
+                    "aggregated": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "count": {
+                            "type": "integer"
+                          },
+                          "total": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Usage"
+        ],
+        "summary": "Record a usage event",
+        "security": [
+          {
+            "SupabaseSession": []
+          },
+          {
+            "ApiKey": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-csrf-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "metric"
+                ],
+                "properties": {
+                  "metric": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 1
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Event recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageEvent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/api/newsletter": {
+      "post": {
+        "tags": [
+          "Newsletter"
+        ],
+        "summary": "Subscribe to the newsletter (double opt-in)",
+        "description": "Sends a confirmation email if all checks pass. Response is\n**enumeration-resistant** — every code path returns the same\ngeneric success payload regardless of whether the address was\nalready subscribed, newly enrolled, or rate-limited.\n",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "turnstileToken"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "turnstileToken": {
+                    "type": "string",
+                    "description": "Cloudflare Turnstile token (siteverify, action=\"newsletter\")"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generic success (whether new, dupe, or pending)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body / missing Turnstile"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/newsletter/confirm": {
+      "get": {
+        "tags": [
+          "Newsletter"
+        ],
+        "summary": "Confirm a newsletter subscription",
+        "description": "Click target for the confirmation email. Validates the token,\nmarks the subscriber `status=confirmed`, fires the welcome email.\nBrowser-facing — returns HTML.\n",
+        "security": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 32
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Confirmed (HTML)"
+          },
+          "400": {
+            "description": "Invalid / expired token (HTML)"
+          }
+        }
+      }
+    },
+    "/api/csp-report": {
+      "post": {
+        "tags": [
+          "Security"
+        ],
+        "summary": "Content-Security-Policy violation report sink",
+        "description": "Accepts either the legacy `application/csp-report` envelope or the\nmodern `application/reports+json` (Reporting API) array. Logs to\nstderr; does not echo or persist.\n",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/csp-report": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "application/reports+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Acknowledged"
+          },
+          "413": {
+            "description": "Payload too large (>8KiB)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "SupabaseSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sb-access-token",
+        "description": "Supabase session cookie set by the dashboard sign-in flow. The\nserver reads it via `supabase.auth.getUser()`.\n"
+      },
+      "ApiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "mnnr_<live|test>_<random>",
+        "description": "API key minted at `/dashboard/keys`. Send as\n`Authorization: Bearer mnnr_live_…`.\n"
+      }
+    },
+    "schemas": {
+      "ApiKey": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "prefix",
+          "mode",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string",
+            "description": "First 8 chars of the key, for UI display",
+            "example": "mnnr_liv"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "live",
+              "test"
+            ]
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revoked_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "UsageEvent": {
+        "type": "object",
+        "required": [
+          "id",
+          "metric",
+          "value",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "metric": {
+            "type": "string",
+            "example": "api.calls"
+          },
+          "value": {
+            "type": "number",
+            "example": 1
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PaymentChallengeRequest": {
+        "type": "object",
+        "required": [
+          "action",
+          "resource",
+          "amountUSD"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "challenge"
+            ]
+          },
+          "resource": {
+            "type": "string",
+            "example": "analyze"
+          },
+          "amountUSD": {
+            "type": "string",
+            "example": "0.01"
+          },
+          "token": {
+            "type": "string",
+            "example": "USDC"
+          },
+          "chain": {
+            "type": "string",
+            "enum": [
+              "base",
+              "base-sepolia",
+              "polygon"
+            ],
+            "example": "base"
+          }
+        }
+      },
+      "PaymentChallenge": {
+        "type": "object",
+        "properties": {
+          "nonce": {
+            "type": "string"
+          },
+          "receiver": {
+            "type": "string",
+            "description": "Receiver wallet address (non-zero)"
+          },
+          "amountUSD": {
+            "type": "string"
+          },
+          "amountAtomic": {
+            "type": "string",
+            "description": "Amount in token base units"
+          },
+          "token": {
+            "type": "string"
+          },
+          "chain": {
+            "type": "string"
+          },
+          "paymentRequest": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "paymentUri": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PaymentVerifyRequest": {
+        "type": "object",
+        "required": [
+          "action",
+          "nonce",
+          "txHash",
+          "chain"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "verify"
+            ]
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "txHash": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{64}$"
+          },
+          "chain": {
+            "type": "string"
+          },
+          "executeAction": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "PaymentVerifyResult": {
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean"
+          },
+          "txHash": {
+            "type": "string"
+          },
+          "receipt": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "actionResult": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "NewsletterSubscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email_hash": {
+            "type": "string",
+            "description": "SHA-256 of the email"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "unsubscribed"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confirmed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "validation_error"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}

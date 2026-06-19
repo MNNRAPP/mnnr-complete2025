@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>MNNR — API Key Issuance Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    h1 { font-size: 1.5rem; }
+    h2 { margin-top: 2rem; font-size: 1.1rem; }
+    fieldset { border: 1px solid #ccc; padding: 1rem; border-radius: 6px; }
+    label { display: block; margin-top: 0.5rem; font-weight: 600; font-size: 0.85rem; }
+    input, textarea { width: 100%; padding: 0.4rem; font-family: ui-monospace, monospace; font-size: 0.85rem; box-sizing: border-box; }
+    button { margin-top: 0.75rem; padding: 0.5rem 1rem; cursor: pointer; }
+    pre { background: rgba(127,127,127,0.1); padding: 0.75rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; }
+    .ok { color: #0a6e0a; }
+    .err { color: #b00; }
+    code { font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+  <h1>MNNR — API Key Issuance Demo</h1>
+  <p>
+    Drives the live API at
+    <code id="base">https://mnnr-app.netlify.app</code>.
+  </p>
+
+  <ol>
+    <li>Sign in at
+      <a href="https://mnnr-app.netlify.app/sign-in" target="_blank" rel="noreferrer">
+        /sign-in
+      </a>.
+    </li>
+    <li>DevTools → Application → Cookies — copy
+      <code>sb-access-token</code> and <code>csrf-token</code>.</li>
+    <li>Paste below and create a key.</li>
+  </ol>
+
+  <h2>1. Create API key</h2>
+  <fieldset>
+    <label for="sb">sb-access-token (Supabase session cookie)</label>
+    <input id="sb" type="password" placeholder="paste from DevTools" />
+
+    <label for="csrf">csrf-token (cookie value)</label>
+    <input id="csrf" type="password" placeholder="paste from DevTools" />
+
+    <label for="name">Key name</label>
+    <input id="name" type="text" value="demo-key" />
+
+    <button id="createBtn">Create key</button>
+    <pre id="createOut"></pre>
+  </fieldset>
+
+  <h2>2. Use the key to record a usage event</h2>
+  <fieldset>
+    <label for="apikey">Plaintext key (shown once above)</label>
+    <input id="apikey" type="password" placeholder="mnnr_live_…" />
+
+    <label for="metric">Metric</label>
+    <input id="metric" type="text" value="api.calls" />
+
+    <label for="value">Value</label>
+    <input id="value" type="number" value="1" />
+
+    <button id="recordBtn">Record usage event</button>
+    <pre id="recordOut"></pre>
+  </fieldset>
+
+  <script>
+    const BASE = 'https://mnnr-app.netlify.app';
+
+    document.getElementById('createBtn').addEventListener('click', async () => {
+      const out = document.getElementById('createOut');
+      out.className = '';
+      out.textContent = 'Working…';
+      const sb = document.getElementById('sb').value.trim();
+      const csrf = document.getElementById('csrf').value.trim();
+      const name = document.getElementById('name').value.trim() || 'demo-key';
+      if (!sb || !csrf) { out.className = 'err'; out.textContent = 'sb-access-token and csrf-token required.'; return; }
+      try {
+        const res = await fetch(BASE + '/api/keys', {
+          method: 'POST',
+          // Note: browser cannot set the Cookie header directly across origins.
+          // This demo therefore expects to be deployed on the same origin OR
+          // the user has installed a dev extension that allows arbitrary
+          // Cookie headers. As a fallback we send the same value via a
+          // custom header the server-side handler can also read.
+          headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrf,
+            // Server reads this when present (per docs/auth notes).
+            'x-sb-access-token-demo': sb,
+          },
+          credentials: 'include',
+          body: JSON.stringify({ name, mode: 'test' }),
+        });
+        const body = await res.json().catch(() => ({}));
+        out.className = res.ok ? 'ok' : 'err';
+        out.textContent = `HTTP ${res.status}\n` + JSON.stringify(body, null, 2);
+        if (res.ok && body.key) {
+          document.getElementById('apikey').value = body.key;
+        }
+      } catch (e) {
+        out.className = 'err';
+        out.textContent = String(e);
+      }
+    });
+
+    document.getElementById('recordBtn').addEventListener('click', async () => {
+      const out = document.getElementById('recordOut');
+      out.className = '';
+      out.textContent = 'Working…';
+      const apikey = document.getElementById('apikey').value.trim();
+      const metric = document.getElementById('metric').value.trim();
+      const value = Number(document.getElementById('value').value);
+      if (!apikey) { out.className = 'err'; out.textContent = 'API key required.'; return; }
+      try {
+        const res = await fetch(BASE + '/api/usage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + apikey,
+          },
+          body: JSON.stringify({ metric, value, metadata: { source: 'api-key-issuance-demo' } }),
+        });
+        const body = await res.json().catch(() => ({}));
+        out.className = res.ok ? 'ok' : 'err';
+        out.textContent = `HTTP ${res.status}\n` + JSON.stringify(body, null, 2);
+      } catch (e) {
+        out.className = 'err';
+        out.textContent = String(e);
+      }
+    });
+  </script>
+</body>
+</html>

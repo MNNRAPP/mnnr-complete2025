@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "mnnr-app-collection-2026-06-19",
+    "name": "MNNR API",
+    "description": "Public API for mnnr.app — generated 2026-06-19. Companion to openapi.yaml + examples/curl/README.md. Set the environment variables in `mnnr-app.postman_environment.json` before running.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "https://mnnr-app.netlify.app" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "These requests don't hit the API directly — they're notes on how to seed the {{clerk_session}} (legacy var name; actually Supabase session) and {{api_key}} variables.",
+      "item": [
+        {
+          "name": "How to get a session token",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/sign-in", "host": ["{{base_url}}"], "path": ["sign-in"] },
+            "description": "Sign in via the browser. Copy the `sb-access-token` cookie value into the environment as {{clerk_session}}, and the `csrf-token` cookie value into {{csrf_token}}."
+          }
+        },
+        {
+          "name": "How to mint an API key",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/dashboard/keys", "host": ["{{base_url}}"], "path": ["dashboard", "keys"] },
+            "description": "Click 'Create key' in the UI. The plaintext key is shown ONCE — copy it into the environment as {{api_key}}."
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Keys",
+      "item": [
+        {
+          "name": "List API keys",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Cookie", "value": "sb-access-token={{clerk_session}}; csrf-token={{csrf_token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/api/keys", "host": ["{{base_url}}"], "path": ["api", "keys"] }
+          }
+        },
+        {
+          "name": "Create API key",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Cookie", "value": "sb-access-token={{clerk_session}}; csrf-token={{csrf_token}}" },
+              { "key": "x-csrf-token", "value": "{{csrf_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"my-laptop\",\n  \"mode\": \"live\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/keys", "host": ["{{base_url}}"], "path": ["api", "keys"] }
+          }
+        },
+        {
+          "name": "Revoke API key",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Cookie", "value": "sb-access-token={{clerk_session}}; csrf-token={{csrf_token}}" },
+              { "key": "x-csrf-token", "value": "{{csrf_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/keys?id={{key_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "keys"],
+              "query": [{ "key": "id", "value": "{{key_id}}" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usage",
+      "item": [
+        {
+          "name": "Query usage",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/usage?period=month",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usage"],
+              "query": [{ "key": "period", "value": "month" }]
+            }
+          }
+        },
+        {
+          "name": "Record usage event",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{api_key}}" },
+              { "key": "x-csrf-token", "value": "{{csrf_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metric\": \"api.calls\",\n  \"value\": 1,\n  \"metadata\": { \"route\": \"/analyze\" }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/usage", "host": ["{{base_url}}"], "path": ["api", "usage"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments (x402)",
+      "item": [
+        {
+          "name": "Protocol info",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/api/x402", "host": ["{{base_url}}"], "path": ["api", "x402"] }
+          }
+        },
+        {
+          "name": "Demo 402 challenge",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/x402?demo=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "x402"],
+              "query": [{ "key": "demo", "value": "true" }]
+            }
+          }
+        },
+        {
+          "name": "Issue challenge",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-csrf-token", "value": "{{csrf_token}}" },
+              { "key": "Cookie", "value": "csrf-token={{csrf_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"challenge\",\n  \"resource\": \"analyze\",\n  \"amountUSD\": \"0.01\",\n  \"token\": \"USDC\",\n  \"chain\": \"base-sepolia\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/x402", "host": ["{{base_url}}"], "path": ["api", "x402"] }
+          }
+        },
+        {
+          "name": "Verify on-chain payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-csrf-token", "value": "{{csrf_token}}" },
+              { "key": "Cookie", "value": "csrf-token={{csrf_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"verify\",\n  \"nonce\": \"{{payment_nonce}}\",\n  \"txHash\": \"{{tx_hash}}\",\n  \"chain\": \"base-sepolia\",\n  \"executeAction\": { \"resource\": \"analyze\", \"params\": {} }\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/x402", "host": ["{{base_url}}"], "path": ["api", "x402"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Newsletter",
+      "item": [
+        {
+          "name": "Subscribe",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{newsletter_email}}\",\n  \"turnstileToken\": \"{{turnstile_token}}\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/api/newsletter", "host": ["{{base_url}}"], "path": ["api", "newsletter"] }
+          }
+        },
+        {
+          "name": "Confirm",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/newsletter/confirm?token={{confirmation_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["newsletter", "confirm"],
+              "query": [{ "key": "token", "value": "{{confirmation_token}}" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
