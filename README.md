@@ -92,17 +92,17 @@ MNNR handles **API metering, billing, and subscriptions** so you can focus on bu
 ```bash
 git clone https://github.com/MNNRAPP/mnnr-complete2025.git
 cd mnnr-complete2025
-pnpm install
+npm install --legacy-peer-deps
 cp .env.local.example .env.local  # then fill in dev values
-pnpm db:generate
-pnpm dev
+npm run db:generate
+npm run dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000).
 
 ### Environment Variables
 
-See [`.env.local.example`](./.env.local.example) for the full list. Required for `pnpm dev`:
+See [`.env.local.example`](./.env.local.example) for the full list. Required for `npm run dev`:
 
 - `NEON_DATABASE_URL` — Neon dev branch Postgres connection string (get from [neon.tech](https://neon.tech))
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` — from [clerk.com](https://clerk.com)
