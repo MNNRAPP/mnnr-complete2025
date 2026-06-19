@@ -386,17 +386,102 @@ This application implements security measures for:
 - **SOC 2** ✅ Ready (logging, access control, monitoring)
 - **GDPR** ⚠️ Partial (requires data export/deletion endpoints)
 
-## Security Contact
+## Responsible Disclosure Policy
 
-For security issues, please email: security@yourdomain.com
+We take security seriously and welcome reports of vulnerabilities from
+researchers, customers, and the public. This section governs how to report
+issues and what you can expect from us in return.
 
-**Do not** open public GitHub issues for security vulnerabilities.
+### How to report
+
+- **Email:** `security@mnnr.app`
+  - Fallback: `siliconhillspr@gmail.com` (subject prefixed with
+    `[SECURITY] mnnr-complete2025`).
+- **GitHub:** private vulnerability reporting is enabled on
+  `MNNRAPP/mnnr-complete2025` — see "Report a vulnerability" under the
+  repository's Security tab.
+
+Please include:
+- A clear description of the issue and its impact.
+- Reproduction steps or a proof-of-concept (minimal is fine).
+- Affected URLs, commit SHAs, or version numbers where known.
+- Your name and a contact channel so we can credit you (optional — anonymous
+  reports are accepted).
+
+**Do not** open public GitHub issues, post to social media, or otherwise
+publicly disclose the vulnerability before we have had a reasonable chance
+to respond.
+
+### What you can expect from us
+
+- **Acknowledgement:** within 3 business days of report receipt.
+- **Initial assessment:** within 10 business days, with a severity rating
+  and an indicative remediation timeline.
+- **Remediation:** prioritized by severity. Critical/High issues are
+  triaged immediately; Medium within 30 days; Low within 90 days.
+- **Coordinated disclosure window:** 90 days from acknowledgement. If we
+  have not shipped a fix by day 90, we will provide a status update and a
+  revised timeline. We will not pursue legal action against good-faith
+  researchers who adhere to this window.
+- **Credit:** with your permission, we will publicly credit you in the
+  changelog or a dedicated `SECURITY_ACKNOWLEDGEMENTS.md`.
+
+### Safe-harbor scope
+
+Good-faith security research on the following is in scope:
+- `mnnr.app` and its production subdomains.
+- The `MNNRAPP/mnnr-complete2025` repository (code, configuration).
+- Public APIs (`/api/*`).
+- Dependent SaaS surfaces (Stripe webhooks, Resend, etc.) only as they
+  intersect with this codebase — please respect those vendors' own policies.
+
+Out of scope:
+- Social engineering of staff or contractors.
+- Physical attacks against any premises or person.
+- Denial-of-service attacks on production infrastructure (please use a
+  staging environment if available, or describe theoretical DoS without
+  executing it).
+- Findings purely against third-party services that route through us
+  (report those upstream).
+
+Adhering to this policy means: do not exfiltrate data beyond the minimum
+needed to demonstrate the vulnerability, do not pivot to other accounts or
+systems, and delete any data you incidentally obtained as soon as the
+report is filed.
+
+### Bug bounty
+
+We do **not** currently operate a paid bug bounty program. We may offer
+swag, public credit, or discretionary thanks for high-impact reports. This
+may change as the project matures.
+
+### PGP
+
+A PGP public key for `security@mnnr.app` will be published at
+`/.well-known/security-pgp-key.asc` and its fingerprint listed in
+`security.txt`. Until then, email is acceptable for initial contact;
+sensitive details can be exchanged over a Signal channel arranged in
+follow-up.
+
+PGP fingerprint placeholder: `0000 0000 0000 0000 0000  0000 0000 0000 0000 0000`
+(replace when the production key is generated per
+[`KEY_MANAGEMENT_POLICY.md`](./KEY_MANAGEMENT_POLICY.md)).
+
+### Related policies
+
+- [`KEY_MANAGEMENT_POLICY.md`](./KEY_MANAGEMENT_POLICY.md) — formal policy
+  governing cryptographic key generation, custody, rotation, revocation,
+  and audit.
+- [`SECURITY_SETUP_COMPLETE.md`](./SECURITY_SETUP_COMPLETE.md) — GitHub-side
+  security configuration (branch protection, Dependabot, CodeQL, Secret
+  Protection).
+- [`lib/env.ts`](./lib/env.ts) — production env-var validation schema.
 
 ---
 
-Last Updated: 2025-10-05
+Last Updated: 2026-06-19
 Security Review Status: ✅ 10/10 ENTERPRISE SECURITY ACHIEVED
 Security Score: 10/10 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
-Next Review Due: 2025-11-05
+Next Review Due: 2026-09-19
 
 🎉 **PRODUCTION READY**: Redis rate limiting, Sentry monitoring, enterprise logging, and comprehensive security headers implemented!
