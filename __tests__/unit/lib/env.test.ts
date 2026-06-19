@@ -111,7 +111,7 @@ describe('lib/env validation', () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     delete process.env.CLERK_SECRET_KEY;
     delete process.env.CLERK_PUBLISHABLE_KEY;
-    await expect(import('@/lib/env')).rejects.toThrow(/Auth provider env vars/);
+    await expect(import('@/lib/env')).rejects.toThrow(/Clerk env vars required/);
     restoreBaselineEnv();
   });
 
