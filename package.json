@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "node server.js",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "prettier-fix": "prettier --write .",
     "deploy": "vercel --prod",
     "deploy:docs": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-docs.ps1",

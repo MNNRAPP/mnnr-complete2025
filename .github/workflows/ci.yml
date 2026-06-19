@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Dummy env block — none of these are real secrets. They satisfy lib/env.ts
+# zod validation at build/test time. Real values live in Netlify/Vercel.
+env:
+  NODE_ENV: test
+  CSRF_SECRET: ci-csrf-secret-32-chars-minimum-for-validation-only
+  NEON_DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+  DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+  UPSTASH_REDIS_REST_URL: http://localhost:6379
+  UPSTASH_REDIS_REST_TOKEN: ci-upstash-token-dummy
+  TURNSTILE_SECRET_KEY: ci-turnstile-secret
+  TURNSTILE_SITE_KEY: ci-turnstile-site
+  NEXT_PUBLIC_SUPABASE_URL: https://ci.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-supabase-anon-key-dummy-value
+  SUPABASE_SERVICE_ROLE_KEY: ci-supabase-service-role-key-dummy-20chars
+  CLERK_SECRET_KEY: sk_test_ci_dummy_clerk_secret
+  CLERK_PUBLISHABLE_KEY: pk_test_ci_dummy_clerk_publishable
+  STRIPE_SECRET_KEY: sk_test_ci_dummy_stripe_secret
+  STRIPE_WEBHOOK_SECRET: whsec_ci_dummy_webhook_secret_20chars
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci_dummy_stripe_publishable
+  AUDIT_TRAIL_SECRET: ci-audit-trail-secret-32-chars-minimum-len
+  DB_ENCRYPTION_KEY: ci-db-encryption-key-32-chars-minimum-len
+  NEXT_PUBLIC_SITE_URL: https://ci.mnnr.app
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm db:generate
+      - name: TypeScript check
+        run: pnpm typecheck
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm db:generate
+      - name: Run tests
+        run: pnpm test --run
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm db:generate
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+
+  audit:
+    name: audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: pnpm audit (high+critical fails the job)
+        run: pnpm audit --audit-level=high --prod
