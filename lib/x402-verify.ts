@@ -251,7 +251,7 @@ export async function verifyPaymentOnChain(args: {
   const expectedReceiver = challenge.receiver.toLowerCase();
   const requiredAmount = BigInt(challenge.amount);
 
-  let amountPaid: bigint = 0n;
+  let amountPaid: bigint = BigInt(0);
   let receiverMatchedAny = false;
   let foundTransfer = false;
 

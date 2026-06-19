@@ -16,11 +16,12 @@ import Stripe from 'stripe';
 export default async function PricingPage() {
   const { userId: clerkId } = auth();
   const cu = clerkId ? await currentUser() : null;
+  const primaryId = cu?.primaryEmailAddressId;
   const user = cu
     ? {
         id: cu.id,
         email:
-          cu.primaryEmailAddress?.emailAddress ??
+          cu.emailAddresses?.find((e) => e.id === primaryId)?.emailAddress ??
           cu.emailAddresses?.[0]?.emailAddress ??
           '',
       }

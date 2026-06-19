@@ -31,8 +31,9 @@ export async function getOrCreateUser() {
   if (existing) return existing;
 
   const cu = await currentUser();
+  const primaryId = cu?.primaryEmailAddressId;
   const email =
-    cu?.primaryEmailAddress?.emailAddress ??
+    cu?.emailAddresses?.find((e) => e.id === primaryId)?.emailAddress ??
     cu?.emailAddresses?.[0]?.emailAddress ??
     `${clerkId}@clerk.placeholder`;
 
