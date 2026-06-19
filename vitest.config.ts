@@ -20,6 +20,12 @@ export default defineConfig({
     // tests in __tests__/components/* opt into jsdom via their own /* @vitest-environment jsdom */
     // header.
     environment: 'node',
+    // Files matching these globs run in jsdom — they touch window / document.
+    environmentMatchGlobs: [
+      ['__tests__/components/**', 'jsdom'],
+      ['__tests__/hooks/**', 'jsdom'],
+      ['__tests__/utils/api-client.test.ts', 'jsdom'],
+    ],
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
     exclude: [
