@@ -12,7 +12,7 @@ info:
 
     Two schemes:
 
-    1. **Supabase session cookie** — set by the dashboard sign-in flow
+    1. **Clerk session cookie** (`__session`) - set by the dashboard sign-in flow
        (`/sign-in`). Used by interactive routes (`/api/keys`, `/api/usage`).
        Forwarded automatically by the browser.
     2. **API key (Bearer)** — minted from the dashboard at `/dashboard/keys`.
@@ -50,7 +50,7 @@ tags:
   - name: Security
     description: CSP violation reports
 security:
-  - SupabaseSession: []
+  - ClerkSession: []
   - ApiKey: []
 paths:
   /api/x402:
@@ -132,7 +132,7 @@ paths:
       tags: [API Keys]
       summary: List the authenticated user's API keys
       security:
-        - SupabaseSession: []
+        - ClerkSession: []
       responses:
         '200':
           description: API keys
@@ -154,7 +154,7 @@ paths:
         the prefix + hash are stored server-side. Store the plaintext key
         immediately — it is never recoverable.
       security:
-        - SupabaseSession: []
+        - ClerkSession: []
       parameters:
         - in: header
           name: x-csrf-token
@@ -190,7 +190,7 @@ paths:
       tags: [API Keys]
       summary: Revoke an API key
       security:
-        - SupabaseSession: []
+        - ClerkSession: []
       parameters:
         - in: header
           name: x-csrf-token
@@ -212,7 +212,7 @@ paths:
       tags: [Usage]
       summary: Get usage events for the authenticated user
       security:
-        - SupabaseSession: []
+        - ClerkSession: []
         - ApiKey: []
       parameters:
         - in: query
@@ -246,7 +246,7 @@ paths:
       tags: [Usage]
       summary: Record a usage event
       security:
-        - SupabaseSession: []
+        - ClerkSession: []
         - ApiKey: []
       parameters:
         - in: header
@@ -351,13 +351,12 @@ paths:
 
 components:
   securitySchemes:
-    SupabaseSession:
+    ClerkSession:
       type: apiKey
       in: cookie
-      name: sb-access-token
+      name: __session
       description: |
-        Supabase session cookie set by the dashboard sign-in flow. The
-        server reads it via `supabase.auth.getUser()`.
+        Clerk session cookie set by the dashboard sign-in flow. The server reads it via Clerk middleware (`auth()` from `@clerk/nextjs/server`).
     ApiKey:
       type: http
       scheme: bearer
