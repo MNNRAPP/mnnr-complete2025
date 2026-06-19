@@ -11,14 +11,14 @@
   "item": [
     {
       "name": "Authentication",
-      "description": "These requests don't hit the API directly — they're notes on how to seed the {{clerk_session}} (legacy var name; actually Supabase session) and {{api_key}} variables.",
+      "description": "These requests don't hit the API directly — they're notes on how to seed the {{clerk_session}} (Clerk __session cookie) and {{api_key}} variables.",
       "item": [
         {
           "name": "How to get a session token",
           "request": {
             "method": "GET",
             "url": { "raw": "{{base_url}}/sign-in", "host": ["{{base_url}}"], "path": ["sign-in"] },
-            "description": "Sign in via the browser. Copy the `sb-access-token` cookie value into the environment as {{clerk_session}}, and the `csrf-token` cookie value into {{csrf_token}}."
+            "description": "Sign in via the browser. Copy the `__session` cookie value (Clerk) into the environment as {{clerk_session}}, and the `csrf-token` cookie value into {{csrf_token}}."
           }
         },
         {
@@ -39,7 +39,7 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Cookie", "value": "sb-access-token={{clerk_session}}; csrf-token={{csrf_token}}" }
+              { "key": "Cookie", "value": "__session={{clerk_session}}; csrf-token={{csrf_token}}" }
             ],
             "url": { "raw": "{{base_url}}/api/keys", "host": ["{{base_url}}"], "path": ["api", "keys"] }
           }
@@ -50,7 +50,7 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Cookie", "value": "sb-access-token={{clerk_session}}; csrf-token={{csrf_token}}" },
+              { "key": "Cookie", "value": "__session={{clerk_session}}; csrf-token={{csrf_token}}" },
               { "key": "x-csrf-token", "value": "{{csrf_token}}" }
             ],
             "body": {
@@ -65,7 +65,7 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Cookie", "value": "sb-access-token={{clerk_session}}; csrf-token={{csrf_token}}" },
+              { "key": "Cookie", "value": "__session={{clerk_session}}; csrf-token={{csrf_token}}" },
               { "key": "x-csrf-token", "value": "{{csrf_token}}" }
             ],
             "url": {

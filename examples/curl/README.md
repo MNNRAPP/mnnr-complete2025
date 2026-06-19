@@ -34,14 +34,14 @@ export BASE_URL="https://mnnr-app.netlify.app"
 
 MNNR supports two auth schemes — choose per your use case.
 
-### A. Supabase session cookie (dashboard / interactive)
+### A. Clerk session cookie (dashboard / interactive)
 
 1. Sign in at <https://mnnr-app.netlify.app/sign-in>.
-2. In DevTools → Application → Cookies, copy the `sb-access-token` value.
+2. In DevTools → Application → Cookies, copy the `__session` value (Clerk).
 3. Export it:
 
    ```bash
-   export SB_TOKEN="<paste cookie value>"
+   export CLERK_TOKEN="<paste cookie value>"
    ```
 
 4. Also grab the CSRF cookie for state-changing routes:
@@ -54,7 +54,7 @@ Send both on protected routes:
 
 ```bash
 curl "$BASE_URL/api/keys" \
-  -H "Cookie: sb-access-token=$SB_TOKEN; csrf-token=$CSRF_TOKEN" \
+  -H "Cookie: __session=$CLERK_TOKEN; csrf-token=$CSRF_TOKEN" \
   -H "x-csrf-token: $CSRF_TOKEN"
 ```
 
@@ -187,7 +187,7 @@ Possible responses:
 
 ```bash
 curl "$BASE_URL/api/keys" \
-  -H "Cookie: sb-access-token=$SB_TOKEN"
+  -H "Cookie: __session=$CLERK_TOKEN"
 ```
 
 ```json
@@ -217,7 +217,7 @@ immediately.
 curl "$BASE_URL/api/keys" \
   -X POST \
   -H "Content-Type: application/json" \
-  -H "Cookie: sb-access-token=$SB_TOKEN; csrf-token=$CSRF_TOKEN" \
+  -H "Cookie: __session=$CLERK_TOKEN; csrf-token=$CSRF_TOKEN" \
   -H "x-csrf-token: $CSRF_TOKEN" \
   -d '{ "name": "my-laptop", "mode": "live" }'
 ```
@@ -240,7 +240,7 @@ curl "$BASE_URL/api/keys" \
 ```bash
 curl "$BASE_URL/api/keys?id=$KEY_ID" \
   -X DELETE \
-  -H "Cookie: sb-access-token=$SB_TOKEN; csrf-token=$CSRF_TOKEN" \
+  -H "Cookie: __session=$CLERK_TOKEN; csrf-token=$CSRF_TOKEN" \
   -H "x-csrf-token: $CSRF_TOKEN"
 ```
 
