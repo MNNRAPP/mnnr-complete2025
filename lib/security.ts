@@ -73,10 +73,15 @@ const defaultConfig: SecurityConfig = {
 
 /**
  * Generate Content Security Policy header
+ *
+ * Legacy form retained for backwards-compatibility with `applySecurityHeaders`
+ * callers that still pass `trustedDomains`. New code MUST use `generateCsp(nonce)`
+ * below — the hardened, nonce-based production policy that removes
+ * `'unsafe-inline'` and `'unsafe-eval'` per Finding #6 (ChatGPT 2026-06-19 audit).
  */
 function generateCSP(trustedDomains: string[]): string {
   const domains = trustedDomains.join(' ');
-  
+
   return [
     `default-src 'self'`,
     `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domains}`,
@@ -91,6 +96,131 @@ function generateCSP(trustedDomains: string[]): string {
     `object-src 'none'`,
     `upgrade-insecure-requests`,
   ].join('; ');
+}
+
+// ============================================================================
+// HARDENED CSP — nonce-based, no unsafe-inline / unsafe-eval (Finding #6)
+// ============================================================================
+//
+// Whitelisted third-party origins (verified against current product wiring):
+//   - https://challenges.cloudflare.com  -> Turnstile bot challenge widget
+//   - https://js.stripe.com              -> Stripe.js (Payment Element, checkout)
+//   - https://api.stripe.com             -> Stripe REST API (server-side + webhooks)
+//   - https://*.neon.tech                -> Neon Postgres (Hyperdrive / direct)
+//   - https://eth-mainnet.g.alchemy.com  -> Alchemy ETH RPC (x402 / wallet flows)
+//   - https://base-mainnet.g.alchemy.com -> Alchemy Base RPC (x402 / wallet flows)
+//
+// Inline <script> and <style> blocks MUST carry the per-request nonce exposed
+// via the `x-nonce` response header (set by middleware.ts). App Router pages
+// can read it server-side from next/headers `headers().get('x-nonce')`.
+//
+// Violations are reported to /api/csp-report.
+
+/**
+ * Origins permitted as Content-Security-Policy sources, broken out by
+ * directive so the policy can be extended without touching the templater.
+ */
+export const CSP_ALLOWED_ORIGINS = {
+  script: [
+    'https://challenges.cloudflare.com',
+    'https://js.stripe.com',
+  ],
+  style: [] as string[],
+  connect: [
+    'https://*.neon.tech',
+    'https://challenges.cloudflare.com',
+    'https://api.stripe.com',
+    'https://eth-mainnet.g.alchemy.com',
+    'https://base-mainnet.g.alchemy.com',
+  ],
+  frame: [
+    'https://challenges.cloudflare.com',
+    'https://js.stripe.com',
+  ],
+} as const;
+
+/**
+ * Build the production Content-Security-Policy header value.
+ *
+ * The returned policy:
+ *   - has NO `'unsafe-inline'` and NO `'unsafe-eval'`
+ *   - binds inline <script> + <style> to a per-request nonce
+ *   - forbids framing (frame-ancestors 'none')
+ *   - reports violations to /api/csp-report
+ *
+ * @param nonce Base64 nonce minted per-request in middleware
+ */
+export function generateCsp(nonce: string): string {
+  const scriptSrc = ["'self'", `'nonce-${nonce}'`, ...CSP_ALLOWED_ORIGINS.script].join(' ');
+  const styleSrc = ["'self'", `'nonce-${nonce}'`, ...CSP_ALLOWED_ORIGINS.style].join(' ');
+  const connectSrc = ["'self'", ...CSP_ALLOWED_ORIGINS.connect].join(' ');
+  const frameSrc = ["'self'", ...CSP_ALLOWED_ORIGINS.frame].join(' ');
+
+  return [
+    `default-src 'self'`,
+    `script-src ${scriptSrc}`,
+    `style-src ${styleSrc}`,
+    `img-src 'self' data: blob: https:`,
+    `font-src 'self' data:`,
+    `connect-src ${connectSrc}`,
+    `frame-src ${frameSrc}`,
+    `object-src 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+    `frame-ancestors 'none'`,
+    `upgrade-insecure-requests`,
+    `report-uri /api/csp-report`,
+  ].join('; ');
+}
+
+/**
+ * Mint a Base64 nonce suitable for use in `generateCsp`.
+ * Exposed here so middleware + tests use the exact same construction.
+ */
+export function generateCspNonce(): string {
+  return Buffer.from(crypto.randomUUID()).toString('base64');
+}
+
+/**
+ * Static (non-CSP) security headers applied at the Next.js framework layer
+ * via `next.config.js` `async headers()`. CSP is intentionally NOT included
+ * here — it MUST be set per-request in middleware so the nonce is fresh.
+ *
+ * Defense-in-depth: the same static headers are also duplicated at the CDN
+ * edge in the repo-root `_headers` file for Cloudflare Pages.
+ */
+export const SECURITY_HEADERS_STATIC: ReadonlyArray<{ key: string; value: string }> = [
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  {
+    key: 'Permissions-Policy',
+    value:
+      'camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
+  },
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
+  { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
+  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+  { key: 'X-Download-Options', value: 'noopen' },
+  { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+];
+
+/**
+ * App Router helper — read the per-request CSP nonce that middleware exposed
+ * via the `x-nonce` response header (forwarded into RSC `headers()`).
+ *
+ * Usage in a Server Component:
+ *   import { headers } from 'next/headers';
+ *   import { getCspNonceFromHeaders } from '@/lib/security';
+ *   const nonce = getCspNonceFromHeaders(headers());
+ *   <Script nonce={nonce} ... />
+ */
+export function getCspNonceFromHeaders(
+  h: { get(name: string): string | null }
+): string | null {
+  return h.get('x-nonce');
 }
 
 /**
@@ -536,4 +666,10 @@ export const Security = {
   generateHMAC,
   verifyHMAC,
   generateSecureToken,
+  // Hardened CSP (Finding #6)
+  generateCsp,
+  generateCspNonce,
+  getCspNonceFromHeaders,
+  SECURITY_HEADERS_STATIC,
+  CSP_ALLOWED_ORIGINS,
 };
