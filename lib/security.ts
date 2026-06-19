@@ -12,7 +12,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+// YOLO 2026-06-19: lazy-load Node crypto so middleware (Edge runtime) doesn't
+// drag it into the edge bundle. Functions that need Node-only APIs require()
+// it on first call; functions reachable from middleware (generateCspNonce) use
+// Web Crypto via globalThis.crypto.
+type NodeCrypto = typeof import('crypto');
+let _nodeCrypto: NodeCrypto | null = null;
+function getNodeCrypto(): NodeCrypto {
+  if (!_nodeCrypto) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    _nodeCrypto = require('crypto');
+  }
+  return _nodeCrypto!;
+}
 
 // ============================================================================
 // TYPES
@@ -178,7 +190,12 @@ export function generateCsp(nonce: string): string {
  * Exposed here so middleware + tests use the exact same construction.
  */
 export function generateCspNonce(): string {
-  return Buffer.from(crypto.randomUUID()).toString('base64');
+  // Use Web Crypto (available in Edge runtime + Node 19+). btoa is also runtime-agnostic.
+  const uuid = (globalThis as any).crypto?.randomUUID?.() ?? '00000000-0000-0000-0000-000000000000';
+  // btoa is available in both Edge and Node; on Node use Buffer fallback if missing.
+  if (typeof btoa === 'function') return btoa(uuid);
+  // eslint-disable-next-line no-undef
+  return (globalThis as any).Buffer?.from(uuid).toString('base64') ?? uuid;
 }
 
 /**
@@ -462,7 +479,7 @@ const MAX_AUDIT_ENTRIES = 10000;
 export function logAuditEntry(entry: Omit<AuditLogEntry, 'id' | 'timestamp'>): void {
   const auditEntry: AuditLogEntry = {
     ...entry,
-    id: crypto.randomUUID(),
+    id: (globalThis as any).crypto?.randomUUID?.() ?? getNodeCrypto().randomUUID(),
     timestamp: new Date().toISOString(),
   };
 
@@ -617,14 +634,14 @@ export function createSecurityMiddleware(config: Partial<SecurityConfig> = {}) {
  */
 export function secureHash(data: string, salt?: string): string {
   const toHash = salt ? `${data}:${salt}` : data;
-  return crypto.createHash('sha256').update(toHash).digest('hex');
+  return getNodeCrypto().createHash('sha256').update(toHash).digest('hex');
 }
 
 /**
  * Generate HMAC
  */
 export function generateHMAC(data: string, secret: string): string {
-  return crypto.createHmac('sha256', secret).update(data).digest('hex');
+  return getNodeCrypto().createHmac('sha256', secret).update(data).digest('hex');
 }
 
 /**
@@ -632,14 +649,14 @@ export function generateHMAC(data: string, secret: string): string {
  */
 export function verifyHMAC(data: string, secret: string, signature: string): boolean {
   const expected = generateHMAC(data, secret);
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  return getNodeCrypto().timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
 }
 
 /**
  * Generate secure random token
  */
 export function generateSecureToken(length: number = 32): string {
-  return crypto.randomBytes(length).toString('hex');
+  return getNodeCrypto().randomBytes(length).toString('hex');
 }
 
 // ============================================================================
