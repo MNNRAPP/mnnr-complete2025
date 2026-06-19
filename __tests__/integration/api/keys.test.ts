@@ -1,12 +1,51 @@
 /**
- * Integration tests for /api/keys — complements the existing __tests__/api/keys.test.ts
+ * Integration tests for /api/keys — Clerk + Prisma (post-migration #40).
  *
- * Focus on cross-user isolation + rate-limit propagation paths.
+ * Focus on cross-user isolation + rate-limit propagation + unauthenticated
+ * paths now that the route uses Clerk's auth() and Prisma's withUserContext.
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
-vi.mock('@/utils/supabase/server', () => ({ createClient: vi.fn() }));
+// Clerk auth — auth() is the sync server helper used by app/api/keys/route.ts
+const authMock = vi.fn();
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: authMock,
+  currentUser: vi.fn(),
+}));
+
+// Local user bridge — getOrCreateUser maps Clerk session to a local User row;
+// unauthorized() returns the canonical 401 NextResponse with WWW-Authenticate.
+const getOrCreateUserMock = vi.fn();
+vi.mock('@/lib/user', async () => {
+  const { NextResponse } = await import('next/server');
+  return {
+    getOrCreateUser: getOrCreateUserMock,
+    unauthorized: () =>
+      NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401, headers: { 'WWW-Authenticate': 'Bearer realm="mnnr-api"' } },
+      ),
+  };
+});
+
+// RLS context wrapper — withUserContext(userId, fn) opens a Prisma tx with
+// SET LOCAL app.current_user_id. For tests we just invoke fn with a stub tx.
+const findManyMock = vi.fn();
+const createMock = vi.fn();
+const updateManyMock = vi.fn();
+vi.mock('@/lib/rls', () => ({
+  withUserContext: vi.fn((_userId: string, fn: (tx: unknown) => unknown) =>
+    fn({
+      apiKey: {
+        findMany: findManyMock,
+        create: createMock,
+        updateMany: updateManyMock,
+      },
+    }),
+  ),
+}));
+
 vi.mock('@/lib/rate-limit', () => ({
   rateLimit: vi.fn(() => Promise.resolve(null)),
   rateLimiters: { apiKeys: {} },
@@ -32,42 +71,33 @@ vi.mock('@/utils/api-keys', () => ({
   })),
 }));
 
-function makeSupabase(user: { id: string } | null, fromImpl?: () => unknown) {
-  return {
-    auth: {
-      getUser: vi
-        .fn()
-        .mockResolvedValue(user ? { data: { user }, error: null } : { data: { user: null }, error: new Error('no user') }),
-    },
-    from: vi.fn().mockImplementation(fromImpl ?? (() => ({}))),
-  };
-}
+const UUID_A = '11111111-1111-4111-8111-111111111111';
 
 describe('/api/keys cross-user isolation', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    findManyMock.mockReset();
+    createMock.mockReset();
+    updateManyMock.mockReset();
+  });
 
-  it('GET filters by authenticated user ID via .eq("user_id", user.id)', async () => {
-    const eqSpy = vi.fn().mockReturnValue({
-      order: vi.fn().mockResolvedValue({ data: [], error: null }),
-    });
-    const sb = makeSupabase({ id: 'user-A' }, () => ({
-      select: vi.fn().mockReturnValue({ eq: eqSpy }),
-    }));
-    const { createClient } = await import('@/utils/supabase/server');
-    vi.mocked(createClient).mockReturnValue(sb as never);
+  it('GET scopes findMany to authenticated user.id (RLS predicate)', async () => {
+    authMock.mockReturnValue({ userId: 'clerk_A' });
+    getOrCreateUserMock.mockResolvedValue({ id: UUID_A, clerkId: 'clerk_A' });
+    findManyMock.mockResolvedValue([]);
 
     const { GET } = await import('@/app/api/keys/route');
     const req = new NextRequest('http://localhost/api/keys');
     const res = await GET(req);
     expect(res.status).toBe(200);
-    // Critical assertion: ownership predicate is applied.
-    expect(eqSpy).toHaveBeenCalledWith('user_id', 'user-A');
+    // Critical assertion: ownership predicate is applied in the Prisma where clause.
+    expect(findManyMock).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ userId: UUID_A }) }),
+    );
   });
 
-  it('audit + 401 when unauthenticated', async () => {
-    const sb = makeSupabase(null);
-    const { createClient } = await import('@/utils/supabase/server');
-    vi.mocked(createClient).mockReturnValue(sb as never);
+  it('audit + 401 when unauthenticated (no Clerk session)', async () => {
+    authMock.mockReturnValue({ userId: null });
     const audit = await import('@/lib/audit-trail');
     const { GET } = await import('@/app/api/keys/route');
     const req = new NextRequest('http://localhost/api/keys');
@@ -78,17 +108,20 @@ describe('/api/keys cross-user isolation', () => {
 });
 
 describe('/api/keys rate-limit propagation', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    findManyMock.mockReset();
+  });
 
   it('GET returns rate-limit response when limiter denies', async () => {
-    const sb = makeSupabase({ id: 'user-rl' });
-    const { createClient } = await import('@/utils/supabase/server');
-    vi.mocked(createClient).mockReturnValue(sb as never);
+    authMock.mockReturnValue({ userId: 'clerk_rl' });
+    getOrCreateUserMock.mockResolvedValue({ id: UUID_A, clerkId: 'clerk_rl' });
+
     const rl = await import('@/lib/rate-limit');
-    // Build a NextResponse-like object whose .status is exposed.
     const { NextResponse } = await import('next/server');
     const denied = NextResponse.json({ error: 'rate_limited' }, { status: 429 });
     vi.mocked(rl.rateLimit).mockResolvedValueOnce(denied);
+
     const { GET } = await import('@/app/api/keys/route');
     const req = new NextRequest('http://localhost/api/keys');
     const res = await GET(req);
