@@ -14,15 +14,14 @@
 
 [build]
   command = "pnpm install --no-frozen-lockfile && pnpm db:generate && pnpm build"
-    publish = ".next"
+  publish = ".next"
 
-    [build.environment]
-      NODE_VERSION = "22.12.0"
-        NETLIFY_USE_PNPM = "true"
-          PNPM_FLAGS = "--no-frozen-lockfile"
-            NEXT_USE_NETLIFY_EDGE = "true"
-              NEXT_TELEMETRY_DISABLED = "1"
+[build.environment]
+  NODE_VERSION = "22.12.0"
+  NETLIFY_USE_PNPM = "true"
+  PNPM_FLAGS = "--no-frozen-lockfile"
+  NEXT_USE_NETLIFY_EDGE = "true"
+  NEXT_TELEMETRY_DISABLED = "1"
 
-              [[plugins]]
-                package = "@netlify/plugin-nextjs"
-                
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
