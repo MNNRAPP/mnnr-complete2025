@@ -71,6 +71,10 @@ export default authMiddleware({
     '/terms',
     '/cookies',
     '/design-partner',
+    // SEC-FIX 2026-06-19 (C+ audit response):
+    // /security is the public-facing proof page. No auth so external
+    // auditors / monitors can probe without credentials.
+    '/security',
   ],
 
   // Routes that can always be accessed (even while logged in)
