@@ -46,7 +46,7 @@ if (!HAS_REDIS && IS_PROD) {
 
 if (!HAS_REDIS && !IS_PROD) {
   // Dev-only: prominent warning so nobody mistakes the fallback for real protection.
-  // eslint-disable-next-line no-console
+   
   console.warn(
     "\x1b[33m[rate-limit] WARNING: UPSTASH_REDIS_REST_* not set. Falling back to PROCESS-LOCAL " +
       "in-memory rate limiting. This is DEV-ONLY. It does not share state across instances or " +
@@ -242,7 +242,7 @@ export async function enforceRateLimit(
       return result;
     } catch (err) {
       // Redis blew up. Decide based on failure mode.
-      // eslint-disable-next-line no-console
+       
       console.error("[rate-limit] Upstash backend error", {
         route: opts.route,
         dimension: opts.dimension,
@@ -259,7 +259,7 @@ export async function enforceRateLimit(
         };
       }
       // failureMode === 'degraded' → fall through to in-memory.
-      // eslint-disable-next-line no-console
+       
       console.warn(
         "[rate-limit] DEGRADED fallback to in-memory for route=%s key=%s (failureMode=degraded)",
         opts.route,
@@ -317,7 +317,7 @@ async function safeAuditDenial(opts: RateLimitOptions, reason: string): Promise<
       },
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
+     
     console.error("[rate-limit] audit log failed", err);
   }
 }
@@ -457,7 +457,7 @@ export async function rateLimit(
 
     return null; // No rate limit hit
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error("[rate-limit] backend error (legacy path)", {
       bucket: bucketName,
       err: error instanceof Error ? error.message : String(error),
@@ -490,7 +490,7 @@ export async function rateLimit(
 
     // failureMode === 'degraded' — allow + warn. This matches the OLD behavior
     // only for explicitly-low-stakes buckets (currently: legacy 'api').
-    // eslint-disable-next-line no-console
+     
     console.warn(
       "[rate-limit] DEGRADED — allowing request despite backend error (bucket=%s)",
       bucketName

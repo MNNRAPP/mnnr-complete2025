@@ -21,7 +21,7 @@ interface RateLimitRecord {
 
 // Redis instance for distributed rate limiting
 let redis: Redis | null = null;
-let ratelimiters: Map<string, Ratelimit> = new Map();
+const ratelimiters: Map<string, Ratelimit> = new Map();
 
 // Initialize Redis if available
 try {

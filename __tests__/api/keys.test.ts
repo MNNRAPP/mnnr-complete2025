@@ -257,7 +257,25 @@ describe('/api/keys', () => {
         error: null,
       });
 
+      // The DELETE handler does TWO supabase.from('api_keys') calls:
+      //   1) select(...).eq('id', ...).single()  -> ownership pre-check
+      //   2) update(...).eq('id', ...).eq('user_id', ...) -> soft-delete
+      // SEC-FIX 2026-06-19 added the pre-check. Mock both chains.
+      const validUuid = '550e8400-e29b-41d4-a716-446655440000';
       mockSupabase.from.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: {
+                id: validUuid,
+                user_id: 'user-123',
+                key_prefix: 'sk_live_',
+                is_active: true,
+              },
+              error: null,
+            }),
+          }),
+        }),
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             eq: vi.fn().mockResolvedValue({
@@ -268,7 +286,6 @@ describe('/api/keys', () => {
       });
 
       const { DELETE } = await import('@/app/api/keys/route');
-      const validUuid = '550e8400-e29b-41d4-a716-446655440000';
       const request = new NextRequest(`http://localhost/api/keys?id=${validUuid}`, {
         method: 'DELETE',
       });
@@ -285,7 +302,23 @@ describe('/api/keys', () => {
         error: null,
       });
 
+      const validUuid = '550e8400-e29b-41d4-a716-446655440000';
+      // Pre-check returns the row owned by user-123 so the handler proceeds
+      // past the ownership gate; the update step then returns a DB error.
       mockSupabase.from.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: {
+                id: validUuid,
+                user_id: 'user-123',
+                key_prefix: 'sk_live_',
+                is_active: true,
+              },
+              error: null,
+            }),
+          }),
+        }),
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             eq: vi.fn().mockResolvedValue({
@@ -296,7 +329,6 @@ describe('/api/keys', () => {
       });
 
       const { DELETE } = await import('@/app/api/keys/route');
-      const validUuid = '550e8400-e29b-41d4-a716-446655440000';
       const request = new NextRequest(`http://localhost/api/keys?id=${validUuid}`, {
         method: 'DELETE',
       });

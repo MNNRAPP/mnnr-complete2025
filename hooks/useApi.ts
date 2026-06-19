@@ -48,10 +48,12 @@ export function useApi<T>(
 
     const response = await fetcher();
 
-    if (response.success && response.data) {
+    // Defensive: in tests, mocks sometimes resolve to undefined; in prod the
+    // apiClient always returns a shaped { success, data, error } payload.
+    if (response?.success && response?.data) {
       setData(response.data);
       onSuccess?.(response.data);
-    } else if (response.error) {
+    } else if (response?.error) {
       setError(response.error);
       onError?.(response.error);
     }
@@ -96,10 +98,10 @@ export function useMutation<T, TVariables = any>(
 
       const response = await mutator(variables);
 
-      if (response.success && response.data) {
+      if (response?.success && response?.data) {
         setData(response.data);
         onSuccess?.(response.data);
-      } else if (response.error) {
+      } else if (response?.error) {
         setError(response.error);
         onError?.(response.error);
       }

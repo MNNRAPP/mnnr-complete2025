@@ -8,8 +8,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "node server.js",
-    "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=999",
     "prettier-fix": "prettier --write .",
     "deploy": "vercel --prod",
     "deploy:docs": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-docs.ps1",
@@ -29,7 +29,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

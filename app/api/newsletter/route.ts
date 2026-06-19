@@ -90,7 +90,7 @@ async function verifyTurnstile(
     if (process.env.NODE_ENV === 'production') {
       return { ok: false, reason: 'turnstile_not_configured' };
     }
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[newsletter] TURNSTILE_SECRET_KEY not set — bypassing Turnstile (dev only)'
     );
@@ -218,7 +218,7 @@ async function sendConfirmationEmail(
   if (!apiKey) {
     // Audit + swallow — we never want a missing email infra to leak via the
     // generic success response. Operator should see the warning and fix env.
-    // eslint-disable-next-line no-console
+     
     console.error('[newsletter] RESEND_API_KEY not set — confirmation email not sent');
     await auditLog({
       event: 'newsletter.subscribed',
@@ -239,7 +239,7 @@ async function sendConfirmationEmail(
       html: getConfirmationEmailHtml(confirmUrl),
     });
     if (error) {
-      // eslint-disable-next-line no-console
+       
       console.error('[newsletter] Resend error:', error);
       await auditLog({
         event: 'newsletter.subscribed',
@@ -249,7 +249,7 @@ async function sendConfirmationEmail(
       });
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
+     
     console.error('[newsletter] Resend threw:', err);
     await auditLog({
       event: 'newsletter.subscribed',
@@ -439,7 +439,7 @@ export async function POST(request: NextRequest) {
     // Database / Prisma error. Audit, but STILL return the generic success
     // shape — leaking infra failures via the public endpoint is its own
     // signaling channel.
-    // eslint-disable-next-line no-console
+     
     console.error('[newsletter] persistence error', err);
     await auditLog({
       event: 'newsletter.subscribed',

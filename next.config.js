@@ -136,7 +136,6 @@ let exportedConfig = nextConfig;
 try {
   // Lazy-require so a missing dep never crashes the build chain.
   // @sentry/nextjs is already in package.json dependencies.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { withSentryConfig } = require('@sentry/nextjs');
   exportedConfig = withSentryConfig(nextConfig, {
     org: 'mnnrapp',
@@ -157,7 +156,7 @@ try {
   });
 } catch (err) {
   // Sentry not available — fall back to plain config (CI/sandbox builds OK)
-  // eslint-disable-next-line no-console
+   
   console.warn('[next.config] @sentry/nextjs not loaded:', err && err.message);
 }
 

@@ -276,7 +276,7 @@ export async function POST(request: Request) {
     // Legacy single-shot path — supported but logs a deprecation warning.
     return await handleLegacy(body, auditCtx);
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error('x402 API error:', error);
     await auditLog({
       ...auditCtx,

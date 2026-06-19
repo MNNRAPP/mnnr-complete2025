@@ -253,14 +253,14 @@ export async function auditLog(payload: AuditPayload): Promise<void> {
       .from('audit_events')
       .insert([row]);
     if (error) {
-      // eslint-disable-next-line no-console
+       
       console.warn('[AUDIT] Supabase insert failed (event still logged to console):', error.message);
     }
   } catch (err) {
     // Catches every failure mode: missing env, network error, table-not-found,
     // RLS rejection, anything. The event has already been written to the
     // console sink above, so we silently degrade.
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[AUDIT] Supabase write threw (event still logged to console):',
       err instanceof Error ? err.message : String(err)

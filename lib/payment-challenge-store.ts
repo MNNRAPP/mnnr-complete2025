@@ -313,7 +313,7 @@ export async function consumeChallenge(
       if (e.code === 'P2002') return { ok: false, reason: 'replay_detected' };
       if (e.code === 'P2025') return { ok: false, reason: 'challenge_already_consumed' };
     }
-    // eslint-disable-next-line no-console
+     
     console.error('[payment-challenge-store] consume transaction failed', e);
     return { ok: false, reason: 'consume_failed' };
   }

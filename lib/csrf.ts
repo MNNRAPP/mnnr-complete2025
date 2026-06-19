@@ -54,7 +54,7 @@ function warnIfDevFallback(callsite: string): void {
   if (USING_DEV_FALLBACK) {
     // Loud, structured, and unmistakable. Repeats on every call by design so
     // the dev cannot tune it out without setting CSRF_SECRET.
-    // eslint-disable-next-line no-console
+     
     console.warn(
       `[CSRF] WARNING: using insecure DEV fallback secret in ${callsite}. Set CSRF_SECRET in your environment.`
     );

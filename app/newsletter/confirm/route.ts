@@ -206,7 +206,7 @@ export async function GET(request: NextRequest) {
     });
     return genericOk();
   } catch (err) {
-    // eslint-disable-next-line no-console
+     
     console.error('[newsletter/confirm] persistence error', err);
     await auditLog({
       event: 'newsletter.subscribed',

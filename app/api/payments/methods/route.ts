@@ -100,7 +100,7 @@ export async function POST(request: Request) {
     }
 
     // Get or create Stripe customer
-    let { data: customerData } = await supabase
+    const { data: customerData } = await supabase
       .from('customers')
       .select('stripe_customer_id')
       .eq('id', user.id)

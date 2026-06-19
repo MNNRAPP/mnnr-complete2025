@@ -20,7 +20,7 @@ type NodeCrypto = typeof import('crypto');
 let _nodeCrypto: NodeCrypto | null = null;
 function getNodeCrypto(): NodeCrypto {
   if (!_nodeCrypto) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     _nodeCrypto = require('crypto');
   }
   return _nodeCrypto!;
@@ -194,7 +194,7 @@ export function generateCspNonce(): string {
   const uuid = (globalThis as any).crypto?.randomUUID?.() ?? '00000000-0000-0000-0000-000000000000';
   // btoa is available in both Edge and Node; on Node use Buffer fallback if missing.
   if (typeof btoa === 'function') return btoa(uuid);
-  // eslint-disable-next-line no-undef
+   
   return (globalThis as any).Buffer?.from(uuid).toString('base64') ?? uuid;
 }
 
