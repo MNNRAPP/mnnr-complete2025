@@ -54,7 +54,7 @@ MNNR handles **API metering, billing, and subscriptions** so you can focus on bu
 - ✅ **CSRF Protection** - Double-submit cookie pattern
 - ✅ **Input Validation** - Comprehensive Zod schemas
 - ✅ **API Key Security** - SHA-256 hashing, one-time display
-- ✅ **Row Level Security** - Supabase RLS policies
+- ✅ **Row Level Security** - Postgres RLS policies (via Prisma + Neon)
 - ✅ **Security Headers** - CSP, HSTS, X-Frame-Options
 
 ### Technology Stack
@@ -66,8 +66,9 @@ MNNR handles **API metering, billing, and subscriptions** so you can focus on bu
 
 **Backend:**
 - Next.js API Routes + Edge Functions
-- Supabase (PostgreSQL + Auth + Realtime)
-- Upstash Redis (Rate limiting + Caching)
+- Neon Postgres + Prisma (data layer)
+- Clerk (authentication)
+- Upstash Redis (rate limiting + caching)
 
 **Payments:**
 - Stripe Checkout + Billing Portal
@@ -86,57 +87,38 @@ MNNR handles **API metering, billing, and subscriptions** so you can focus on bu
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 18+
-- npm or pnpm
-- Supabase account
-- Stripe account
-
-### Installation
+## 🚀 Quickstart
 
 ```bash
-# Clone repository
 git clone https://github.com/MNNRAPP/mnnr-complete2025.git
 cd mnnr-complete2025
-
-# Install dependencies
-npm install --legacy-peer-deps
-
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your credentials
-
-# Run database migrations
-npx supabase db push
-
-# Start development server
-npm run dev
+pnpm install
+cp .env.local.example .env.local  # then fill in dev values
+pnpm db:generate
+pnpm dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000)
+Visit [http://localhost:3000](http://localhost:3000).
 
 ### Environment Variables
 
-```env
-# Required
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-STRIPE_SECRET_KEY=sk_live_xxx
-STRIPE_WEBHOOK_SECRET=whsec_xxx
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxx
+See [`.env.local.example`](./.env.local.example) for the full list. Required for `pnpm dev`:
 
-# Rate Limiting (Upstash)
-UPSTASH_REDIS_REST_URL=your_upstash_url
-UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+- `NEON_DATABASE_URL` — Neon dev branch Postgres connection string (get from [neon.tech](https://neon.tech))
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` — from [clerk.com](https://clerk.com)
+- `NEXT_PUBLIC_SITE_URL` — defaults to `http://localhost:3000`
 
-# Monitoring (Optional)
-SENTRY_DSN=your_sentry_dsn
-NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
-```
+Optional (dev fallbacks in code):
+
+- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — in-memory rate-limit fallback if unset
+- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile; dev bypass available
+- `NEXT_PUBLIC_SENTRY_DSN` + `SENTRY_DSN` — errors logged to console if unset
+- `RESEND_API_KEY` — outbound email; logged to console if unset
+- `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — billing flows
+
+> **Note on auth:** as of June 2026 the app uses **Clerk** for authentication
+> (`__session` cookie). Older Supabase auth code paths in `utils/supabase/*` are
+> being phased out; see [`MIGRATION_SUPABASE_TO_NEON.md`](./MIGRATION_SUPABASE_TO_NEON.md).
 
 ---
 
@@ -224,7 +206,9 @@ mnnr-complete2025/
 │   ├── api/              # API tests
 │   └── integration/      # Integration tests
 ├── e2e/                  # E2E tests (Playwright)
-├── supabase/             # Database migrations
+├── prisma/               # Prisma schema + migrations (Neon Postgres)
+├── packages/sdk/         # @mnnr/sdk — fetch-only TypeScript SDK
+├── examples/             # curl recipes, Postman collection, working demos
 └── docs/                 # Documentation
 ```
 
@@ -382,7 +366,7 @@ cd examples/demos/x402-payment-flow && node demo.mjs
 - ✅ CSRF protection
 - ✅ Comprehensive input validation
 - ✅ E2E testing with Playwright
-- ✅ Integration tests for Supabase & Stripe
+- ✅ Integration tests for Stripe
 - ✅ Performance monitoring
 - ✅ 100/100 production readiness grade
 

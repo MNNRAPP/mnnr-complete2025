@@ -3,7 +3,7 @@
   "info": {
     "title": "MNNR API",
     "version": "0.1.0",
-    "description": "Public API for [mnnr.app](https://mnnr.app) — API metering, billing,\nsubscriptions, and the x402 micropayment protocol.\n\n**Live base URL:** `https://mnnr-app.netlify.app`\n\n## Authentication\n\nTwo schemes:\n\n1. **Supabase session cookie** — set by the dashboard sign-in flow\n   (`/sign-in`). Used by interactive routes (`/api/keys`, `/api/usage`).\n   Forwarded automatically by the browser.\n2. **API key (Bearer)** — minted from the dashboard at `/dashboard/keys`.\n   Used for programmatic, server-to-server access. Send as\n   `Authorization: Bearer <api_key>`.\n\nState-changing routes additionally require a CSRF double-submit token\nsent in the `x-csrf-token` header (cookie-issued on dashboard load).\n\n## Rate limits\n\nAll routes are rate-limited per authenticated principal (Upstash Redis\nsliding window). Limits vary by route class; see response header\n`Retry-After` on 429.\n",
+    "description": "Public API for [mnnr.app](https://mnnr.app) — API metering, billing,\nsubscriptions, and the x402 micropayment protocol.\n\n**Live base URL:** `https://mnnr-app.netlify.app`\n\n## Authentication\n\nTwo schemes:\n\n1. **Clerk session cookie** (`__session`) - set by the dashboard sign-in flow\n   (`/sign-in`). Used by interactive routes (`/api/keys`, `/api/usage`).\n   Forwarded automatically by the browser.\n2. **API key (Bearer)** — minted from the dashboard at `/dashboard/keys`.\n   Used for programmatic, server-to-server access. Send as\n   `Authorization: Bearer <api_key>`.\n\nState-changing routes additionally require a CSRF double-submit token\nsent in the `x-csrf-token` header (cookie-issued on dashboard load).\n\n## Rate limits\n\nAll routes are rate-limited per authenticated principal (Upstash Redis\nsliding window). Limits vary by route class; see response header\n`Retry-After` on 429.\n",
     "contact": {
       "name": "MNNR",
       "url": "https://mnnr.app",
@@ -47,7 +47,7 @@
   ],
   "security": [
     {
-      "SupabaseSession": []
+      "ClerkSession": []
     },
     {
       "ApiKey": []
@@ -191,7 +191,7 @@
         "summary": "List the authenticated user's API keys",
         "security": [
           {
-            "SupabaseSession": []
+            "ClerkSession": []
           }
         ],
         "responses": {
@@ -229,7 +229,7 @@
         "description": "Returns the **full plaintext key exactly once** under `key`. Only\nthe prefix + hash are stored server-side. Store the plaintext key\nimmediately — it is never recoverable.\n",
         "security": [
           {
-            "SupabaseSession": []
+            "ClerkSession": []
           }
         ],
         "parameters": [
@@ -312,7 +312,7 @@
         "summary": "Revoke an API key",
         "security": [
           {
-            "SupabaseSession": []
+            "ClerkSession": []
           }
         ],
         "parameters": [
@@ -358,7 +358,7 @@
         "summary": "Get usage events for the authenticated user",
         "security": [
           {
-            "SupabaseSession": []
+            "ClerkSession": []
           },
           {
             "ApiKey": []
@@ -440,7 +440,7 @@
         "summary": "Record a usage event",
         "security": [
           {
-            "SupabaseSession": []
+            "ClerkSession": []
           },
           {
             "ApiKey": []
@@ -639,11 +639,11 @@
   },
   "components": {
     "securitySchemes": {
-      "SupabaseSession": {
+      "ClerkSession": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "sb-access-token",
-        "description": "Supabase session cookie set by the dashboard sign-in flow. The\nserver reads it via `supabase.auth.getUser()`.\n"
+        "name": "__session",
+        "description": "Clerk session cookie set by the dashboard sign-in flow. The\nserver reads it via Clerk middleware (`auth()` from `@clerk/nextjs/server`).\n"
       },
       "ApiKey": {
         "type": "http",
