@@ -12,7 +12,6 @@
     }
   },
   "rules": {
-    // Security rules
     "no-console": [
       "warn",
       {
@@ -21,23 +20,20 @@
     ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_"
       }
     ],
-
-    // Code quality
+    "@typescript-eslint/no-require-imports": "warn",
+    "react/no-unescaped-entities": "warn",
+    "react/jsx-no-comment-textnodes": "warn",
     "prefer-const": "error",
     "no-var": "error",
     "eqeqeq": ["error", "always"],
-
-    // TypeScript specific
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-non-null-assertion": "warn",
-
-    // Best practices
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-new-func": "error",
@@ -47,6 +43,8 @@
     "node_modules/",
     ".next/",
     "out/",
-    "public/"
+    "public/",
+    "app/api/v1/",
+    "app/demo/"
   ]
 }

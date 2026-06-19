@@ -46,17 +46,23 @@ export function useApi<T>(
     setLoading(true);
     setError(null);
 
-    const response = await fetcher();
+    try {
+      const response = await fetcher();
 
-    if (response.success && response.data) {
-      setData(response.data);
-      onSuccess?.(response.data);
-    } else if (response.error) {
-      setError(response.error);
-      onError?.(response.error);
+      if (response?.success && response.data) {
+        setData(response.data);
+        onSuccess?.(response.data);
+      } else if (response?.error) {
+        setError(response.error);
+        onError?.(response.error);
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Request failed';
+      setError(msg);
+      onError?.(msg);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, [fetcher, onSuccess, onError]);
 
   useEffect(() => {

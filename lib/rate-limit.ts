@@ -435,7 +435,7 @@ export async function rateLimit(
             ? "user"
             : identifier.startsWith("ip:")
               ? "ip"
-              : "key",
+              : "api_key",
         },
         "rate_limited"
       );

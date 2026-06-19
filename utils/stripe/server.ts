@@ -29,7 +29,7 @@ import {
 
 export type Price = {
   id: string;
-  type: 'recurring' | 'one_time';
+  type: 'recurring' | 'one_time' | null;
   trial_period_days?: number | null;
 };
 
