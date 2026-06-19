@@ -11,7 +11,6 @@
  * - Compliance-ready (SOC 2, GDPR, PCI DSS)
  */
 
-import { createClient } from '@/utils/supabase/server';
 import { createHmac, randomBytes } from 'crypto';
 
 // Audit event types

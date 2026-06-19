@@ -1,108 +1,36 @@
-import { createClient } from '@/utils/supabase/server';
+// app/api/user/profile/route.ts — Clerk + Prisma (post-Supabase migration).
+//
+// Returns the local user row stitched to the Clerk identity. The Clerk
+// session is the source-of-truth for email; we mirror it into the Neon
+// `users` row via getOrCreateUser() so downstream JOINs work.
+
 import { NextResponse } from 'next/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { getOrCreateUser, unauthorized } from '@/lib/user';
 
 export const dynamic = 'force-dynamic';
 
-/**
- * GET /api/user/profile
- * Get current user's profile
- */
 export async function GET() {
   try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { userId: clerkId } = auth();
+    if (!clerkId) return unauthorized();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const user = await getOrCreateUser();
+    if (!user) return unauthorized();
 
-    // Get user profile
-    const { data: profile, error: profileError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    if (profileError) {
-      return NextResponse.json(
-        { error: 'Failed to fetch profile' },
-        { status: 500 }
-      );
-    }
+    const cu = await currentUser();
 
     return NextResponse.json({
-      ...profile,
       id: user.id,
+      clerkId: user.clerkId,
       email: user.email,
+      createdAt: user.createdAt,
+      firstName: cu?.firstName ?? null,
+      lastName: cu?.lastName ?? null,
+      imageUrl: cu?.imageUrl ?? null,
     });
   } catch (error) {
     console.error('Profile fetch error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-/**
- * PATCH /api/user/profile
- * Update current user's profile
- */
-export async function PATCH(request: Request) {
-  try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Parse request body
-    const body = await request.json();
-    const { full_name, avatar_url, billing_address } = body;
-
-    // Update profile
-    const { data, error } = await supabase
-      .from('users')
-      .update({
-        full_name,
-        avatar_url,
-        billing_address,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id)
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json(
-        { error: 'Failed to update profile' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Profile update error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

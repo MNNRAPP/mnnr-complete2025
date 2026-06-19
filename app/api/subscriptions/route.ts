@@ -1,6 +1,22 @@
-import { createClient } from '@/utils/supabase/server';
+/**
+ * Subscriptions API — Clerk + Prisma (post-Supabase migration 2026-06-19).
+ *
+ * Maps the Clerk identity to a Stripe customer via the user's email. The
+ * legacy Supabase handler looked up customers by `customers.stripe_customer_id`
+ * keyed on `users.id`; the Neon schema has no `customers` table yet, so we
+ * fall back to `stripe.customers.list({ email })` which returns at most one
+ * row in normal operation (Stripe enforces unique emails per account).
+ *
+ * TODO(clerk-migrate): Add a `stripeCustomerId` column to the User model in
+ * a follow-up migration so we can stop round-tripping the Stripe customer
+ * search on every request. Also persist subscription state locally so we
+ * can show plan info without hitting Stripe.
+ */
+
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import Stripe from 'stripe';
+import { getOrCreateUser, unauthorized } from '@/lib/user';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
@@ -8,171 +24,45 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export const dynamic = 'force-dynamic';
 
-/**
- * GET /api/subscriptions
- * Get current user's subscriptions
- */
 export async function GET() {
   try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { userId: clerkId } = auth();
+    if (!clerkId) return unauthorized();
+    const user = await getOrCreateUser();
+    if (!user) return unauthorized();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    const customer = customers.data[0];
+    if (!customer) return NextResponse.json({ subscriptions: [] });
 
-    // Get user's Stripe customer ID
-    const { data: customer } = await supabase
-      .from('customers')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
-
-    if (!customer?.stripe_customer_id) {
-      return NextResponse.json({ subscriptions: [] });
-    }
-
-    // Get subscriptions from database
-    const { data: subscriptions, error } = await supabase
-      .from('subscriptions')
-      .select(`
-        *,
-        prices (
-          *,
-          products (*)
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('created', { ascending: false });
-
-    if (error) {
-      console.error('Subscription fetch error:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch subscriptions' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ subscriptions: subscriptions || [] });
-  } catch (error) {
-    console.error('Subscriptions API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
-
-/**
- * POST /api/subscriptions
- * Create a new subscription
- */
-export async function POST(request: Request) {
-  try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Parse request body
-    const body = await request.json();
-    const { priceId, paymentMethodId, trialDays } = body;
-
-    if (!priceId) {
-      return NextResponse.json(
-        { error: 'Price ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Get or create Stripe customer
-    let { data: customerData } = await supabase
-      .from('customers')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
-
-    let customerId = customerData?.stripe_customer_id;
-
-    if (!customerId) {
-      // Create Stripe customer
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          supabase_user_id: user.id,
-        },
-      });
-
-      customerId = customer.id;
-
-      // Save customer ID
-      await supabase.from('customers').insert({
-        id: user.id,
-        stripe_customer_id: customerId,
-      });
-    }
-
-    // Attach payment method if provided
-    if (paymentMethodId) {
-      await stripe.paymentMethods.attach(paymentMethodId, {
-        customer: customerId,
-      });
-
-      await stripe.customers.update(customerId, {
-        invoice_settings: {
-          default_payment_method: paymentMethodId,
-        },
-      });
-    }
-
-    // Create subscription
-    const subscriptionParams: Stripe.SubscriptionCreateParams = {
-      customer: customerId,
-      items: [{ price: priceId }],
-      payment_behavior: 'default_incomplete',
-      payment_settings: {
-        save_default_payment_method: 'on_subscription',
-      },
-      expand: ['latest_invoice.payment_intent'],
-    };
-
-    if (trialDays) {
-      subscriptionParams.trial_period_days = trialDays;
-    }
-
-    const subscription = await stripe.subscriptions.create(subscriptionParams);
+    const subs = await stripe.subscriptions.list({
+      customer: customer.id,
+      status: 'all',
+      expand: ['data.items.data.price.product'],
+      limit: 100,
+    });
 
     return NextResponse.json({
-      subscriptionId: subscription.id,
-      clientSecret: (subscription.latest_invoice as Stripe.Invoice)
-        ?.payment_intent
-        ? ((subscription.latest_invoice as Stripe.Invoice).payment_intent as Stripe.PaymentIntent)
-            .client_secret
-        : null,
+      subscriptions: subs.data.map((s) => ({
+        id: s.id,
+        status: s.status,
+        current_period_end: s.current_period_end,
+        cancel_at_period_end: s.cancel_at_period_end,
+        items: s.items.data.map((it) => ({
+          id: it.id,
+          price_id: it.price.id,
+          product:
+            typeof it.price.product === 'object'
+              ? { id: it.price.product.id, name: (it.price.product as Stripe.Product).name }
+              : { id: String(it.price.product) },
+          unit_amount: it.price.unit_amount,
+          currency: it.price.currency,
+          interval: it.price.recurring?.interval ?? null,
+        })),
+      })),
     });
   } catch (error) {
-    console.error('Subscription creation error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create subscription' },
-      { status: 500 }
-    );
+    console.error('Subscriptions fetch error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
