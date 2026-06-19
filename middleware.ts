@@ -1,5 +1,34 @@
 import { authMiddleware, redirectToSignIn } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
+import { checkRateLimit, getClientIp, createRateLimitResponse } from '@/utils/rate-limit';
+import { generateCsp, generateCspNonce } from '@/lib/security';
+
+// EDGE-032: Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://mnnr.app',
+  'https://www.mnnr.app',
+  ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
+];
+
+// SEC-FIX 2026-06-19 (ChatGPT audit response):
+// Rate-limit tiers per route prefix. Auth state drives unauth vs. auth quotas.
+function getRateLimitConfig(pathname: string, isAuthenticated: boolean) {
+  if (pathname.startsWith('/api/webhooks')) {
+    return { interval: 3600 * 1000, maxRequests: 100 };
+  }
+  if (pathname.startsWith('/api/auth')) {
+    return { interval: 60 * 1000, maxRequests: 10 };
+  }
+  if (pathname.startsWith('/api/admin')) {
+    return { interval: 60 * 1000, maxRequests: 20 };
+  }
+  if (pathname.startsWith('/api')) {
+    return isAuthenticated
+      ? { interval: 60 * 1000, maxRequests: 60 }
+      : { interval: 60 * 1000, maxRequests: 5 };
+  }
+  return { interval: 60 * 1000, maxRequests: 30 };
+}
 
 export default authMiddleware({
   // Public routes that don't require authentication
@@ -26,10 +55,13 @@ export default authMiddleware({
     '/signin(.*)',
     '/signup(.*)',
     '/api/health',
-    '/api/v1/usage',
-    '/api/v1/keys',
+    // SEC-FIX 2026-06-19: REMOVED `/api/v1/usage` and `/api/v1/keys` from
+    // publicRoutes (Audit Finding #1 — CRITICAL). These endpoints leaked the
+    // hard-coded `test@mnnr.app` user data when called without auth. They are
+    // now protected by Clerk's default-deny + handler-side ownership checks.
     '/api/webhooks(.*)',
     '/api/newsletter',
+    '/api/csp-report',
     '/docs(.*)',
     '/legal(.*)',
     '/about',
@@ -40,12 +72,13 @@ export default authMiddleware({
     '/cookies',
     '/design-partner',
   ],
-  
+
   // Routes that can always be accessed (even while logged in)
   ignoredRoutes: [
     '/api/health',
     '/api/webhooks(.*)',
     '/api/newsletter',
+    '/api/csp-report',
     '/_next(.*)',
     '/favicon.ico',
     '/manifest.json',
@@ -58,18 +91,69 @@ export default authMiddleware({
     '/favicon(.*)',
   ],
 
-  afterAuth(auth, req) {
-    // Handle users who aren't authenticated
+  async afterAuth(auth, req) {
+    // EDGE-032: CORS check
+    const origin = req.headers.get('origin');
+    if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+      return new NextResponse('CORS policy violation', { status: 403 });
+    }
+
+    // Handle users who aren't authenticated on non-public routes
     if (!auth.userId && !auth.isPublicRoute) {
       return redirectToSignIn({ returnBackUrl: req.url });
     }
-    
+
     // Redirect logged-in users away from auth pages
-    if (auth.userId && (req.nextUrl.pathname.startsWith('/sign-in') || req.nextUrl.pathname.startsWith('/sign-up'))) {
+    if (
+      auth.userId &&
+      (req.nextUrl.pathname.startsWith('/sign-in') ||
+        req.nextUrl.pathname.startsWith('/sign-up'))
+    ) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
-    
-    return NextResponse.next();
+
+    // EDGE-031: Rate limiting (fail-closed for sensitive routes — handled inside checkRateLimit)
+    const clientIp = getClientIp(req);
+    const pathname = req.nextUrl.pathname;
+    const isAuthenticated = Boolean(auth.userId);
+    const rateLimitConfig = getRateLimitConfig(pathname, isAuthenticated);
+    const rateLimitResult = await checkRateLimit(clientIp, rateLimitConfig);
+
+    if (!rateLimitResult.allowed) {
+      return createRateLimitResponse(rateLimitResult.resetTime);
+    }
+
+    const response = NextResponse.next();
+
+    response.headers.set('X-RateLimit-Limit', rateLimitConfig.maxRequests.toString());
+    response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
+    response.headers.set('X-RateLimit-Reset', new Date(rateLimitResult.resetTime).toISOString());
+
+    // ===== SECURITY_HEADERS_INJECTION_POINT (Finding #6) =====
+    // Per-request nonce CSP. Static headers (HSTS, X-Frame-Options,
+    // Permissions-Policy, COOP/CORP/COEP, etc.) are emitted by
+    // `next.config.js` `async headers()` for ALL routes; this block adds the
+    // nonce-bound CSP that cannot be expressed statically.
+    const nonce = generateCspNonce();
+    const csp = generateCsp(nonce);
+
+    if (process.env.NODE_ENV === 'production') {
+      response.headers.set('Content-Security-Policy', csp);
+    } else {
+      response.headers.set('Content-Security-Policy-Report-Only', csp);
+    }
+    response.headers.set('x-nonce', nonce);
+    // ===== /SECURITY_HEADERS_INJECTION_POINT =====
+
+    // EDGE-032: CORS headers for allowed origins
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      response.headers.set('Access-Control-Allow-Credentials', 'true');
+    }
+
+    return response;
   },
 });
 
