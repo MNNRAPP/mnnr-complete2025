@@ -1,0 +1,18 @@
+## netlify.toml for mnnr.app on Netlify
+## Force pnpm via corepack non-strict
+## Pin Node 22 to satisfy engines.node graph
+
+[build]
+command = "corepack pnpm install --no-frozen-lockfile && corepack pnpm db:generate && corepack pnpm build"
+publish = ".next"
+
+[build.environment]
+NODE_VERSION = "22"
+COREPACK_ENABLE_STRICT = "0"
+NPM_FLAGS = "--legacy-peer-deps"
+PNPM_FLAGS = "--no-frozen-lockfile"
+NEXT_USE_NETLIFY_EDGE = "true"
+NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+package = "@netlify/plugin-nextjs"
