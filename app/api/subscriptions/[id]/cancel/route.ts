@@ -1,6 +1,15 @@
-import { createClient } from '@/utils/supabase/server';
+/**
+ * Subscriptions Cancel API — Clerk + Prisma (post-Supabase migration 2026-06-19).
+ *
+ * Cancels a Stripe subscription owned by the authenticated user. Ownership
+ * is enforced by re-looking up the subscription's customer and asserting
+ * that customer's email matches the Clerk session email.
+ */
+
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import Stripe from 'stripe';
+import { getOrCreateUser, unauthorized } from '@/lib/user';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
@@ -8,75 +17,45 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export const dynamic = 'force-dynamic';
 
-/**
- * POST /api/subscriptions/[id]/cancel
- * Cancel a subscription
- */
 export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: Request,
+  { params }: { params: { id: string } },
 ) {
   try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { userId: clerkId } = auth();
+    if (!clerkId) return unauthorized();
+    const user = await getOrCreateUser();
+    if (!user) return unauthorized();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const subId = params.id;
+    const sub = await stripe.subscriptions.retrieve(subId);
+
+    // Ownership check via Stripe customer email
+    const customerId =
+      typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+    const customer = await stripe.customers.retrieve(customerId);
+    if (customer.deleted) {
+      return NextResponse.json({ error: 'Customer deleted' }, { status: 404 });
+    }
+    if ((customer as Stripe.Customer).email !== user.email) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const subscriptionId = params.id;
-
-    // Verify subscription belongs to user
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('id')
-      .eq('id', subscriptionId)
-      .eq('user_id', user.id)
-      .single();
-
-    if (!subscription) {
-      return NextResponse.json(
-        { error: 'Subscription not found' },
-        { status: 404 }
-      );
-    }
-
-    // Parse request body for cancellation options
-    const body = await request.json().catch(() => ({}));
-    const { immediately = false } = body;
-
-    // Cancel subscription in Stripe
-    const canceledSubscription = await stripe.subscriptions.cancel(
-      subscriptionId,
-      {
-        invoice_now: immediately,
-        prorate: immediately,
-      }
-    );
+    const updated = await stripe.subscriptions.update(subId, {
+      cancel_at_period_end: true,
+    });
 
     return NextResponse.json({
       success: true,
       subscription: {
-        id: canceledSubscription.id,
-        status: canceledSubscription.status,
-        cancel_at_period_end: canceledSubscription.cancel_at_period_end,
-        canceled_at: canceledSubscription.canceled_at,
-        current_period_end: canceledSubscription.current_period_end,
+        id: updated.id,
+        status: updated.status,
+        cancel_at_period_end: updated.cancel_at_period_end,
+        cancel_at: updated.cancel_at,
       },
     });
   } catch (error) {
-    console.error('Subscription cancellation error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to cancel subscription' },
-      { status: 500 }
-    );
+    console.error('Subscription cancel error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

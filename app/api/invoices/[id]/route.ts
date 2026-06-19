@@ -1,18 +1,14 @@
 /**
- * Invoice Details API Endpoint
- * 
- * Created: 2025-12-26 22:51:00 EST
- * Action #7 in 19-hour optimization
- * 
- * Purpose: Get detailed information about a specific invoice
- * 
- * Endpoints:
- * - GET /api/invoices/[id] - Get invoice details
+ * Invoice Detail API — Clerk + Prisma (post-Supabase migration 2026-06-19).
+ *
+ * Returns one Stripe invoice if it belongs to the Clerk-session user. We
+ * verify ownership by comparing the invoice's customer email to the user's.
  */
 
-import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
 import Stripe from 'stripe';
+import { getOrCreateUser, unauthorized } from '@/lib/user';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
@@ -20,107 +16,53 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export const dynamic = 'force-dynamic';
 
-/**
- * GET /api/invoices/[id]
- * Get detailed information about a specific invoice
- */
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: Request,
+  { params }: { params: { id: string } },
 ) {
   try {
-    const supabase = await createClient();
-    
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { userId: clerkId } = auth();
+    if (!clerkId) return unauthorized();
+    const user = await getOrCreateUser();
+    if (!user) return unauthorized();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const invoice = await stripe.invoices.retrieve(params.id, {
+      expand: ['customer', 'lines.data.price.product'],
+    });
+
+    // Ownership check
+    const customer = invoice.customer;
+    const ownerEmail =
+      typeof customer === 'object' && customer && !('deleted' in customer)
+        ? (customer as Stripe.Customer).email
+        : null;
+    if (ownerEmail !== user.email) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Get user's Stripe customer ID
-    const { data: customer } = await supabase
-      .from('customers')
-      .select('stripe_customer_id')
-      .eq('id', user.id)
-      .single();
-
-    if (!customer?.stripe_customer_id) {
-      return NextResponse.json(
-        { error: 'Customer not found' },
-        { status: 404 }
-      );
-    }
-
-    const invoiceId = params.id;
-
-    // Fetch invoice from Stripe
-    const invoice = await stripe.invoices.retrieve(invoiceId);
-
-    // Verify invoice belongs to user
-    if (invoice.customer !== customer.stripe_customer_id) {
-      return NextResponse.json(
-        { error: 'Invoice not found' },
-        { status: 404 }
-      );
-    }
-
-    // Format invoice data
-    const formattedInvoice = {
+    return NextResponse.json({
       id: invoice.id,
       number: invoice.number,
       status: invoice.status,
       amount_due: invoice.amount_due,
       amount_paid: invoice.amount_paid,
-      amount_remaining: invoice.amount_remaining,
       currency: invoice.currency,
       created: invoice.created,
-      due_date: invoice.due_date,
-      period_start: invoice.period_start,
-      period_end: invoice.period_end,
       hosted_invoice_url: invoice.hosted_invoice_url,
       invoice_pdf: invoice.invoice_pdf,
-      subtotal: invoice.subtotal,
-      tax: invoice.tax,
-      total: invoice.total,
-      discount: invoice.discount,
-      lines: invoice.lines.data.map((line) => ({
-        id: line.id,
-        description: line.description,
-        amount: line.amount,
-        quantity: line.quantity,
-        price: line.price,
-        period: {
-          start: line.period?.start,
-          end: line.period?.end,
-        },
+      lines: invoice.lines.data.map((l) => ({
+        id: l.id,
+        amount: l.amount,
+        currency: l.currency,
+        description: l.description,
+        quantity: l.quantity,
       })),
-      payment_intent: invoice.payment_intent,
-      subscription: invoice.subscription,
-    };
-
-    return NextResponse.json(formattedInvoice);
+    });
   } catch (error) {
-    console.error('Invoice fetch error:', error);
-    
-    if (error instanceof Stripe.errors.StripeError) {
-      if (error.type === 'StripeInvalidRequestError') {
-        return NextResponse.json(
-          { error: 'Invoice not found' },
-          { status: 404 }
-        );
-      }
+    if (error instanceof Stripe.errors.StripeError && error.statusCode === 404) {
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
     }
-
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch invoice' },
-      { status: 500 }
-    );
+    console.error('Invoice fetch error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
