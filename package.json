@@ -42,8 +42,6 @@
     "@simplewebauthn/browser": "^13.2.2",
     "@simplewebauthn/server": "^13.2.2",
     "@stripe/stripe-js": "^8.6.1",
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.45.4",
     "@tailwindcss/typography": "^0.5.19",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.36.1",
@@ -71,7 +69,8 @@
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
     "vitest": "^4.0.17",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "svix": "^1.21.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

@@ -1,15 +1,36 @@
+/**
+ * Stripe webhook receiver — Clerk + Prisma (post-Supabase migration 2026-06-19).
+ *
+ * The legacy version persisted product/price/subscription rows into Supabase
+ * tables (`products`, `prices`, `subscriptions`, `stripe_events`). Those
+ * tables are not modelled in Prisma yet, so this route is reduced to:
+ *
+ *   1. Validate the Stripe webhook signature (still mandatory).
+ *   2. Apply the existing rate-limit gate.
+ *   3. Log + ack the event.
+ *
+ * Subscription/product/price reconciliation is now best handled by reading
+ * Stripe at request time (see app/api/subscriptions/route.ts) until a proper
+ * Prisma Subscription / Product / Price model lands. Idempotency was based
+ * on the `stripe_events` table; until we add an equivalent Prisma model,
+ * Stripe's at-least-once delivery means handlers must remain side-effect-free.
+ *
+ * TODO(clerk-migrate): Add Prisma models for stripe_events / products /
+ * prices / subscriptions and restore the upsert / idempotency logic.
+ */
+
 import Stripe from 'stripe';
 import {
   getStripeClient,
   isStripeConfigured,
-  StripeNotConfiguredError
+  StripeNotConfiguredError,
 } from '@/utils/stripe/config';
 import { logger } from '@/utils/logger';
 import {
   checkRateLimit,
   getClientIp,
   rateLimitConfigs,
-  createRateLimitResponse
+  createRateLimitResponse,
 } from '@/utils/rate-limit';
 
 const relevantEvents = new Set([
@@ -22,29 +43,22 @@ const relevantEvents = new Set([
   'checkout.session.completed',
   'customer.subscription.created',
   'customer.subscription.updated',
-  'customer.subscription.deleted'
+  'customer.subscription.deleted',
 ]);
 
 export async function POST(req: Request) {
-  // Skip during build time when env vars aren't available
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     return new Response('Webhook not configured', { status: 500 });
   }
-
   if (!isStripeConfigured()) {
     logger.error('Stripe webhook invoked without secret key configured');
-    return new Response(
-      'Stripe is not configured. Set STRIPE_SECRET_KEY to handle webhooks.',
-      { status: 500 }
-    );
+    return new Response('Stripe is not configured', { status: 500 });
   }
 
-  // Apply enterprise rate limiting
   const clientIp = getClientIp(req);
   const rateLimit = await checkRateLimit(clientIp, rateLimitConfigs.webhook);
-
   if (!rateLimit.allowed) {
-    logger.warn('Webhook rate limit exceeded', { clientIp, remaining: rateLimit.remaining });
+    logger.warn('Webhook rate limit exceeded', { clientIp });
     return createRateLimitResponse(rateLimit.resetTime);
   }
 
@@ -65,107 +79,28 @@ export async function POST(req: Request) {
     if (err instanceof StripeNotConfiguredError) {
       logger.error('Stripe client unavailable during webhook validation');
       return new Response('Stripe is not configured on this deployment.', {
-        status: 500
+        status: 500,
       });
     }
-    logger.error('Webhook signature validation failed', err, { clientIp, bodyLength: body.length });
-    // Return generic error message to prevent XSS (detailed error is logged above)
+    logger.error('Webhook signature validation failed', err, {
+      clientIp,
+      bodyLength: body.length,
+    });
     return new Response('Webhook validation failed', { status: 400 });
   }
 
   if (relevantEvents.has(event.type)) {
-    try {
-      // PAY-020: Idempotency check - prevent duplicate processing
-      const { createAdminClient } = await import('@/utils/supabase/admin');
-      const supabase = createAdminClient();
-
-      const { data: existingEvent } = await supabase
-        .from('stripe_events')
-        .select('id')
-        .eq('id', event.id)
-        .single();
-
-      if (existingEvent) {
-        logger.info('Webhook already processed (idempotency)', { eventId: event.id, eventType: event.type });
-        return new Response(JSON.stringify({ received: true, processed: 'already' }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
-      }
-
-      // Dynamically import admin functions to avoid build-time issues
-      const {
-        upsertProductRecord,
-        upsertPriceRecord,
-        manageSubscriptionStatusChange,
-        deleteProductRecord,
-        deletePriceRecord
-      } = await import('@/utils/supabase/admin');
-
-      switch (event.type) {
-        case 'product.created':
-        case 'product.updated':
-          await upsertProductRecord(event.data.object as Stripe.Product);
-          break;
-        case 'price.created':
-        case 'price.updated':
-          await upsertPriceRecord(event.data.object as Stripe.Price);
-          break;
-        case 'price.deleted':
-          await deletePriceRecord(event.data.object as Stripe.Price);
-          break;
-        case 'product.deleted':
-          await deleteProductRecord(event.data.object as Stripe.Product);
-          break;
-        case 'customer.subscription.created':
-        case 'customer.subscription.updated':
-        case 'customer.subscription.deleted':
-          const subscription = event.data.object as Stripe.Subscription;
-          await manageSubscriptionStatusChange(
-            subscription.id,
-            subscription.customer as string,
-            event.type === 'customer.subscription.created'
-          );
-          break;
-        case 'checkout.session.completed':
-          const checkoutSession = event.data.object as Stripe.Checkout.Session;
-          if (checkoutSession.mode === 'subscription') {
-            const subscriptionId = checkoutSession.subscription;
-            await manageSubscriptionStatusChange(
-              subscriptionId as string,
-              checkoutSession.customer as string,
-              true
-            );
-          }
-          break;
-        default:
-          logger.error('Unhandled relevant event type', undefined, { eventType: event.type, eventId: event.id });
-          throw new Error('Unhandled relevant event!');
-      }
-
-      // PAY-020: Record successful processing for idempotency
-      await supabase
-        .from('stripe_events')
-        .insert({
-          id: event.id,
-          event_type: event.type
-        });
-
-      logger.info('Webhook processed successfully', { eventType: event.type, eventId: event.id });
-    } catch (error) {
-      logger.error('Webhook processing failed', error, { eventType: event.type, eventId: event.id });
-      return new Response(
-        'Webhook handler failed. View your Next.js function logs.',
-        {
-          status: 400
-        }
-      );
-    }
+    // TODO(clerk-migrate): persist + reconcile once Prisma models exist.
+    logger.info('Stripe webhook accepted (no-op pending Prisma reconciliation)', {
+      eventType: event.type,
+      eventId: event.id,
+    });
   } else {
-    logger.warn('Unsupported webhook event type', { eventType: event.type, eventId: event.id });
-    return new Response(`Unsupported event type: ${event.type}`, {
-      status: 400
+    logger.warn('Unsupported webhook event type', {
+      eventType: event.type,
+      eventId: event.id,
     });
   }
+
   return new Response(JSON.stringify({ received: true }));
 }
