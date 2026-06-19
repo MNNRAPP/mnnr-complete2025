@@ -1,26 +1,18 @@
 import { afterEach, vi } from 'vitest';
 
-// React Testing Library is optional — only loaded when component tests opt into jsdom.
-// We try-load so node-only suites don't blow up on missing peer deps.
-let cleanup: (() => void) | null = null;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-  const rtl = require('@testing-library/react');
-  cleanup = rtl.cleanup;
-} catch {
-  // No-op — not running React component tests in this worker.
-}
+// React Testing Library + jest-dom matchers — only loaded when component
+// tests opt into jsdom via environmentMatchGlobs in vitest.config.ts.
+// Node-only suites in lib/ + app/api/ don't need RTL.
 
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('@testing-library/jest-dom/vitest');
-} catch {
-  // No-op.
-}
+// jest-dom registers extended matchers (toBeInTheDocument, toHaveClass, etc.)
+// via side effect on import. This MUST use ESM `import` — the package's
+// /vitest entry refuses to load via CommonJS require().
+import '@testing-library/jest-dom/vitest';
 
-// Cleanup after each test
+import { cleanup } from '@testing-library/react';
+
 afterEach(() => {
-  if (cleanup) cleanup();
+  cleanup();
   vi.clearAllMocks();
 });
 
@@ -34,3 +26,6 @@ process.env.CSRF_SECRET = 'test-csrf-secret-with-enough-entropy-32+';
 process.env.TURNSTILE_SECRET_KEY = 'test-turnstile-secret';
 process.env.RESEND_API_KEY = 're_test_key';
 process.env.NEON_DATABASE_URL = 'postgres://user:pass@localhost:5432/test';
+process.env.CLERK_SECRET_KEY = 'sk_test_dummy';
+process.env.CLERK_PUBLISHABLE_KEY = 'pk_test_dummy';
+process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = 'pk_test_dummy';
