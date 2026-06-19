@@ -7,6 +7,7 @@ import { generateCsp, generateCspNonce } from '@/lib/security';
 const ALLOWED_ORIGINS = [
   'https://mnnr.app',
   'https://www.mnnr.app',
+  'https://mnnr-app.netlify.app',
   ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000'] : []),
 ];
 
@@ -62,6 +63,8 @@ export default authMiddleware({
     '/api/webhooks(.*)',
     '/api/newsletter',
     '/api/csp-report',
+    '/api/x402',
+    '/api/x402(.*)',
     '/docs(.*)',
     '/legal(.*)',
     '/about',
@@ -176,3 +179,4 @@ export default authMiddleware({
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 };
+
