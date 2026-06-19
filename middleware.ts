@@ -98,8 +98,20 @@ export default authMiddleware({
       return new NextResponse('CORS policy violation', { status: 403 });
     }
 
-    // Handle users who aren't authenticated on non-public routes
+    // Handle users who aren't authenticated on non-public routes.
+    // API routes (/api/*) get a 401 JSON response with WWW-Authenticate
+    // instead of a 307 redirect — programmatic clients need a status they
+    // can act on, not a browser-shaped sign-in flow.
     if (!auth.userId && !auth.isPublicRoute) {
+      if (req.nextUrl.pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          {
+            status: 401,
+            headers: { 'WWW-Authenticate': 'Bearer realm="mnnr-api"' },
+          },
+        );
+      }
       return redirectToSignIn({ returnBackUrl: req.url });
     }
 
