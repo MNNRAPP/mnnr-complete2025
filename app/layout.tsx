@@ -1,19 +1,12 @@
 import { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { ClerkProvider as _ClerkProviderRaw } from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 
-// YOLO 2026-06-19: when CLERK_PUBLISHABLE_KEY is missing or a placeholder,
-// fall through to a no-op wrapper so the build doesn't fail at static-page
-// generation. Auth-gated routes will still throw at runtime if Clerk is needed,
-// but the marketing pages render fine.
-const _clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || process.env.CLERK_PUBLISHABLE_KEY || '';
-const _clerkValid = /^pk_(test|live)_[A-Za-z0-9+/=]{20,}$/.test(_clerkKey) && !/REPLACE|YOUR_|PLACEHOLDER/i.test(_clerkKey);
-function ClerkProvider({ children, ...rest }: any) {
-  if (_clerkValid) {
-    return <_ClerkProviderRaw {...rest}>{children}</_ClerkProviderRaw>;
-  }
-  return <>{children}</>;
-}
+// Pre-2026-06-19 we had a stub fallback when CLERK_PUBLISHABLE_KEY was
+// missing/placeholder, but that left auth-context-using children (SignedIn,
+// UserButton, Navbar) throwing 'AuthContext not found' at build-time
+// prerender. ClerkProvider itself is build-safe — it only initializes
+// context; no network fetch at SSG. So we always wrap.
 import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
