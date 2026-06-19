@@ -1,21 +1,15 @@
 /**
- * Dashboard Page
- * 
- * Created: 2025-12-26 23:07:00 EST
- * Action #15 in 19-hour optimization
- * 
- * Purpose: Main dashboard with user analytics, subscription status, and quick actions
- * 
- * Features:
- * - Subscription status card
- * - Usage metrics
- * - Recent invoices
- * - Quick actions
- * - Analytics charts
+ * Dashboard Page — Clerk + Prisma (post-Supabase migration 2026-06-19).
+ *
+ * Fetches the local Prisma User row + the user's active Stripe subscription
+ * (looked up by Clerk-session email; legacy `customers` join table is gone).
  */
 
 import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
+import Stripe from 'stripe';
+import { auth, currentUser } from '@clerk/nextjs/server';
+
+import { getOrCreateUser } from '@/lib/user';
 import DashboardContent from './DashboardContent';
 
 export const metadata = {
@@ -24,58 +18,73 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
+  const { userId: clerkId } = auth();
+  if (!clerkId) redirect('/sign-in');
 
-  // Check authentication
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getOrCreateUser();
+  if (!user) redirect('/sign-in');
 
-  if (!user) {
-    redirect('/signin');
+  const cu = await currentUser();
+  const displayName =
+    [cu?.firstName, cu?.lastName].filter(Boolean).join(' ') ||
+    cu?.username ||
+    user.email;
+
+  // Resolve active Stripe subscription via the user's email (no local
+  // customers table in the Neon schema yet).
+  let activeSubscription: Stripe.Subscription | null = null;
+  if (process.env.STRIPE_SECRET_KEY) {
+    try {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2023-10-16',
+      });
+      const customers = await stripe.customers.list({
+        email: user.email,
+        limit: 1,
+      });
+      const customer = customers.data[0];
+      if (customer) {
+        const subs = await stripe.subscriptions.list({
+          customer: customer.id,
+          status: 'all',
+          limit: 10,
+          expand: ['data.items.data.price.product'],
+        });
+        activeSubscription =
+          subs.data.find((s) => s.status === 'active' || s.status === 'trialing') ??
+          null;
+      }
+    } catch (err) {
+      console.error('Dashboard Stripe lookup failed', err);
+    }
   }
-
-  // Fetch user profile
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  // Fetch subscription data
-  const { data: subscriptions } = await supabase
-    .from('subscriptions')
-    .select(`
-      *,
-      prices (
-        *,
-        products (*)
-      )
-    `)
-    .eq('user_id', user.id)
-    .order('created', { ascending: false });
-
-  const activeSubscription = subscriptions?.find(
-    (sub) => sub.status === 'active' || sub.status === 'trialing'
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Dashboard
           </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Welcome back, {profile?.full_name || user.email}
+            Welcome back, {displayName}
           </p>
         </div>
 
-        {/* Dashboard Content */}
         <DashboardContent
-          user={user}
-          profile={profile}
+          user={{
+            id: user.id,
+            clerkId: user.clerkId,
+            email: user.email,
+            firstName: cu?.firstName ?? null,
+            lastName: cu?.lastName ?? null,
+            imageUrl: cu?.imageUrl ?? null,
+          }}
+          profile={{
+            id: user.id,
+            email: user.email,
+            full_name: displayName,
+          }}
           subscription={activeSubscription}
         />
       </div>

@@ -1,26 +1,21 @@
 'use client';
 
+/**
+ * Navlinks — Clerk (post-Supabase migration 2026-06-19).
+ *
+ * Sign-in / sign-up are routed to Clerk's hosted /sign-in and /sign-up.
+ * Signed-in state renders the UserButton (avatar dropdown + sign-out) and
+ * an Account link.
+ */
+
 import Link from 'next/link';
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+
 import Logo from '@/components/icons/Logo';
-import { usePathname, useRouter } from 'next/navigation';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { LanguageSelector } from '@/components/ui/LanguageSelector';
 import s from './Navbar.module.css';
 
-import { User } from '@supabase/supabase-js';
-
-interface NavlinksProps {
-  user?: User | null;
-}
-
-export default function Navlinks({ user }: NavlinksProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const shouldUseClientRouting = getRedirectMethod() === 'client';
-  const activeRouter = shouldUseClientRouting ? router : null;
-
+export default function Navlinks() {
   return (
     <div className="relative flex flex-row justify-between py-4 align-center md:py-6">
       <div className="flex items-center flex-1">
@@ -40,39 +35,32 @@ export default function Navlinks({ user }: NavlinksProps) {
           <Link href="/docs/quick-start" className={s.link}>
             Docs
           </Link>
-          {user && (
+          <SignedIn>
             <Link href="/account" className={s.link}>
               Account
             </Link>
-          )}
+          </SignedIn>
         </nav>
       </div>
       <div className="flex justify-end items-center space-x-3">
-        {/* Language Selector - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-2">
           <LanguageSelector />
         </div>
 
-        {user ? (
-          <form onSubmit={(e) => handleRequest(e, SignOut, activeRouter)}>
-            <input type="hidden" name="pathName" value={pathname} />
-            <button type="submit" className={s.link}>
-              Sign out
-            </button>
-          </form>
-        ) : (
-          <>
-            <Link href="/signin" className={s.link}>
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]"
-            >
-              Become a Partner
-            </Link>
-          </>
-        )}
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+        <SignedOut>
+          <Link href="/sign-in" className={s.link}>
+            Sign In
+          </Link>
+          <Link
+            href="/sign-up"
+            className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+          >
+            Become a Partner
+          </Link>
+        </SignedOut>
       </div>
     </div>
   );

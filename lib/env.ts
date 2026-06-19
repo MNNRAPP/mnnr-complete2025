@@ -71,15 +71,14 @@ const EnvSchema = z.object({
   TURNSTILE_SECRET_KEY: z.string().min(1),
   TURNSTILE_SITE_KEY: z.string().min(1).optional(),
 
-  // Clerk (auth) — present in spec; codebase currently uses Supabase.
-  // Left optional so this schema works for both flavors.
+  // Clerk (auth) — sole auth provider after the 2026-06-19 Supabase removal.
   CLERK_SECRET_KEY: z.string().min(1).optional(),
   CLERK_PUBLISHABLE_KEY: z.string().min(1).optional(),
-
-  // Supabase (current auth/DB layer) — required in production unless Clerk is wired
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
-  SUPABASE_SERVICE_ROLE_KEY: secret(20, 'SUPABASE_SERVICE_ROLE_KEY').optional(),
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1).optional(),
+  // Required only when the Clerk -> Neon user-provisioning webhook is wired
+  // (app/api/webhooks/clerk/route.ts). Optional so local dev without the
+  // webhook still boots.
+  CLERK_WEBHOOK_SECRET: z.string().min(1).optional(),
 
   // Stripe
   STRIPE_SECRET_KEY: z.string().startsWith('sk_').optional(),
@@ -173,14 +172,11 @@ if (RawEnv.NODE_ENV === 'production') {
     );
   }
 
-  // Auth: either Clerk OR Supabase must be configured
-  const hasClerk = Boolean(RawEnv.CLERK_SECRET_KEY && RawEnv.CLERK_PUBLISHABLE_KEY);
-  const hasSupabase = Boolean(
-    RawEnv.NEXT_PUBLIC_SUPABASE_URL && RawEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
-  if (!hasClerk && !hasSupabase) {
+  // Auth: Clerk is the sole provider after the 2026-06-19 Supabase removal.
+  const hasClerk = Boolean(RawEnv.CLERK_SECRET_KEY && (RawEnv.CLERK_PUBLISHABLE_KEY || RawEnv.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY));
+  if (!hasClerk) {
     throw new Error(
-      'Auth provider env vars are required in production: configure either Clerk (CLERK_SECRET_KEY + CLERK_PUBLISHABLE_KEY) or Supabase (NEXT_PUBLIC_SUPABASE_URL + NEXT_PUBLIC_SUPABASE_ANON_KEY)'
+      'Clerk env vars required in production: CLERK_SECRET_KEY + CLERK_PUBLISHABLE_KEY (or NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)'
     );
   }
 
