@@ -30,7 +30,12 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "ruflo": "npx -y ruflo@latest",
+    "ruflo:swarm": "npx -y ruflo@latest hive-mind spawn",
+    "ruflo:agent": "npx -y ruflo@latest agent spawn",
+    "ruflo:mcp": "npx -y ruflo@latest mcp start",
+    "ruflo:init": "npx -y ruflo@latest init"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

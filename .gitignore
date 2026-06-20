@@ -83,3 +83,11 @@ coverage/
 out/
 build/
 dist/
+
+# Ruflo agent-orchestration framework (see RUFLO_INTEGRATION.md)
+.ruflo/cache/
+.ruflo/logs/
+.ruflo/runs/
+.ruflo/state.db*
+.claude-flow/
+claude-flow.log
