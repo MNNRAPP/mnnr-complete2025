@@ -29,6 +29,10 @@ model User {
   email             String             @unique
   clerkId           String?            @unique @map("clerk_id")
   createdAt         DateTime           @default(now()) @map("created_at")
+  // onboardedAt — set when the user finishes the /onboarding 3-step tour.
+  // Null means the user has never completed it; /onboarding/page.tsx reads
+  // this field server-side and bounces returning users straight to /dashboard.
+  onboardedAt       DateTime?          @map("onboarded_at")
   usageEvents       UsageEvent[]
   apiKeys           ApiKey[]
   auditEvents       AuditEvent[]
