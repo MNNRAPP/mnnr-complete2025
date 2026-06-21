@@ -116,8 +116,38 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/legal/risk-disclosures" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
+                  Risk Disclosures
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/refund-policy" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/shipping-policy" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
+                  Service Delivery
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/return-policy" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
+                  Returns
+                </Link>
+              </li>
+              <li>
                 <Link href="/legal/security" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
                   Security
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/imprint" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
+                  Imprint / Impressum
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/accessibility" className="text-gray-400 hover:text-amber-400 transition-colors text-sm">
+                  Accessibility
                 </Link>
               </li>
               <li>
@@ -139,6 +169,12 @@ export default function Footer() {
               EIN: 33-3678186 | 1603 Capitol Ave, Suite 413 PMB #1750, Cheyenne, WY 82001
             </p>
             <div className="text-gray-600 text-xs leading-relaxed max-w-4xl">
+              <p className="mb-2">
+                <strong className="text-gray-500">Not legal advice.</strong> Information on this site, including all briefs, checklists, attestations, and the
+                14-point engineering checklist, is provided for informational purposes only and does <strong>not</strong> constitute legal, regulatory, tax, accounting, or investment
+                advice. MNNR, LLC is a software vendor, not a law firm. No attorney-client relationship is created by accessing this site. See{' '}
+                <Link href="/legal/risk-disclosures" className="text-amber-400 hover:text-amber-300 transition-colors">Risk Disclosures</Link>.
+              </p>
               <p className="mb-2">
                 <strong className="text-gray-500">European Compliance:</strong> MNNR is designed for compliance with PSD3, MiCA, EUDIW, and GDPR.
                 All agent transaction data is processed within EU-resident infrastructure. Regulatory certifications are in progress.

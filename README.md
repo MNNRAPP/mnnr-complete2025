@@ -1,377 +1,80 @@
-# MNNR - API Payments Made Simple
+# MNNR — Authority Layer for the Machine Economy
 
-**Stop building payment infrastructure. Start shipping features.**
+**Rail-neutral authorization, governance, and audit overlay for agentic payments.**
 
-[![Production](https://img.shields.io/badge/status-production-green)](https://mnnr.app)
-[![Security](https://img.shields.io/badge/security-100%2F100-brightgreen)](./docs/technical-audit.md)
-[![Grade](https://img.shields.io/badge/grade-A%2B%20100%2F100-success)](#technical-excellence)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
-[![License](https://img.shields.io/badge/license-Proprietary-red)]()
+[![Status](https://img.shields.io/badge/status-beta-blue)](https://mnnr.app)
+[![License](https://img.shields.io/badge/license-Proprietary-red)](./LICENSE)
 
-🌐 **Live:** [mnnr.app](https://mnnr.app)  
-📚 **Docs:** [docs.mnnr.app](https://docs.mnnr.app)  
-🔐 **Status:** Production Ready (A+ Grade)
+🌐 **Live:** [mnnr.app](https://mnnr.app)
+📜 **Risk disclosures:** [mnnr.app/legal/risk-disclosures](https://mnnr.app/legal/risk-disclosures)
+🔐 **Public cryptographic transparency log:** [mnnr.app/crypto](https://mnnr.app/crypto/)
+📨 **Contact:** [legal@mnnr.app](mailto:legal@mnnr.app) · [hello@mnnr.app](mailto:hello@mnnr.app)
 
 ---
 
-## 🚀 What is MNNR?
+## What this repository is
 
-MNNR handles **API metering, billing, and subscriptions** so you can focus on building your product. Perfect for:
+This repository contains the source for **app.mnnr.app**, the authenticated MNNR governance-layer application (dashboard, API, onboarding, billing integration, audit-log export). The public marketing site at `mnnr.app` is maintained in a separate Cloudflare Pages project (`MNNRAPP/mnnr-landing`).
 
-- **API Providers** - Monetize your APIs with usage-based billing
-- **SaaS Products** - Subscription management and metering
-- **Developer Tools** - API key management and rate limiting
-- **Machine-to-Machine** - Autonomous payment flows between services
+This repository is published in public form to support transparency, cryptographic-attestation publication, and public accountability of the MNNR governance-layer infrastructure. Public visibility does not constitute a license to use, fork, or redistribute the Software — see [LICENSE](./LICENSE).
 
-### Key Features
+## What MNNR is
 
-✅ **API Key Management** - Secure key generation with SHA-256 hashing  
-✅ **Usage Metering** - Track API calls with real-time analytics  
-✅ **Subscription Billing** - Stripe-powered checkout and management  
-✅ **Rate Limiting** - Protect your APIs with Upstash Redis  
-✅ **Developer Dashboard** - Beautiful UI for managing keys and usage  
-✅ **Enterprise Security** - CSRF protection, input validation, audit trails
+MNNR is the rail-neutral authorization, governance, and audit overlay for agentic payments. We sit above the payment rails your bank, payment service provider, or AI platform already chose. We add consent, attestation, policy enforcement, and audit-grade evidence so AI-initiated payments clear bank risk, compliance, and supervisory review.
 
----
+Compatible by design with Visa Agentic Ready, Mastercard Agent Pay, Stripe Tempo MPP, Coinbase x402, AWS Bedrock AgentCore Payments, Chrome WebMCP (Chrome 149 origin trial, June 2026), PayPal Agent Ready, and Adyen Agentic. Built EU-sovereign by default, with PSD3, MiCA, DORA, and EUDI Wallet as the binding framework.
 
-## 📊 Technical Excellence
+## Status disclosures
 
-### Overall Grade: A+ (100/100)
+| Item | Status |
+|---|---|
+| Product stage | Beta. Live in production for a small number of design partners. |
+| SOC 2 Type I | Not yet obtained. Audit window targeted Q4 2026. |
+| ISO/IEC 27001 | Controls mapping in build. Certification track 2027. |
+| FedRAMP Moderate | Path in scoping. Not authorized. |
+| SDVOSB | SBA verification in progress. SAM.gov registration in progress. Not yet awarded. |
+| PCI DSS | Not applicable; MNNR does not store cardholder data. |
+| HIPAA / HITRUST | Not applicable to current scope. |
+| Post-quantum signing keys | Live (ML-DSA-65 / FIPS 204). Cold-stored offline under founder custody; HSM migration scheduled Q3 2026. |
+| Post-quantum key encapsulation | Live (ML-KEM-768 / FIPS 203). |
+| Edge TLS | Cloudflare X25519MLKEM768 hybrid PQ key exchange. |
+| Insurance | Tech E&O + Cyber + CGL coverage in active broker engagement. |
 
-| Category | Score | Status |
-|----------|-------|--------|
-| Security | 100/100 | ✅ Enterprise-grade |
-| Architecture | 100/100 | ✅ Scalable & maintainable |
-| Code Quality | 100/100 | ✅ TypeScript, best practices |
-| Testing | 100/100 | ✅ Unit, integration, E2E |
-| Documentation | 100/100 | ✅ Comprehensive |
-| Performance | 100/100 | ✅ Optimized |
-| Monitoring | 100/100 | ✅ Full observability |
+For the complete risk-disclosure framework — including forward-looking statements, regulatory-interpretation risk, penalty exposure, certification status, cryptographic risk, third-party rails, service availability, cyber/adversarial-AI risk, and veteran-owned-status disclosure — see [https://mnnr.app/legal/risk-disclosures](https://mnnr.app/legal/risk-disclosures).
 
-### Security Features
+## Important — what MNNR is NOT
 
-- ✅ **Rate Limiting** - 6 configurable Upstash Redis limiters
-- ✅ **CSRF Protection** - Double-submit cookie pattern
-- ✅ **Input Validation** - Comprehensive Zod schemas
-- ✅ **API Key Security** - SHA-256 hashing, one-time display
-- ✅ **Row Level Security** - Postgres RLS policies (via Prisma + Neon)
-- ✅ **Security Headers** - CSP, HSTS, X-Frame-Options
+- **Not a payment rail or payment service provider.** We sit above the rails. We do not move money or process card-present transactions.
+- **Not a law firm.** Statements MNNR publishes about EU AI Act Article 50, PSD3/PSR, MiCA, DORA, EUDIW, NSPM-11, and other regulatory frameworks represent MNNR's good-faith interpretation as of publication. They do not constitute legal advice. Customers should consult licensed counsel in the relevant jurisdiction before relying on any MNNR statement for compliance purposes.
+- **Not a partner of, certified by, or endorsed by** any of the third-party rails or programs named above unless expressly stated by the rail or program operator. "Integration roadmap" and "Interest accepted" status labels reflect engineering posture, not commercial relationship.
 
-### Technology Stack
+## Stack
 
-**Frontend:**
-- Next.js 14 (App Router) + React 18 + TypeScript
-- TailwindCSS + Custom components
-- Progressive Web App (PWA)
-
-**Backend:**
-- Next.js API Routes + Edge Functions
-- Neon Postgres + Prisma (data layer)
+- Next.js 14 (App Router), TypeScript
+- Tailwind CSS
+- Prisma + Postgres
 - Clerk (authentication)
-- Upstash Redis (rate limiting + caching)
+- Stripe (billing)
+- Cloudflare (edge, security headers, Turnstile bot protection)
+- Netlify (app hosting)
+- ML-DSA-65 + ML-KEM-768 (post-quantum cryptographic primitives)
 
-**Payments:**
-- Stripe Checkout + Billing Portal
-- Subscription management
-- Webhook processing
+## Documentation
 
-**Testing:**
-- Vitest (Unit + Integration)
-- Playwright (E2E)
-- 80%+ code coverage
+- Public site & legal: [mnnr.app/legal](https://mnnr.app/legal/risk-disclosures)
+- AGP spec (governance overlay): [`docs/agp-spec/rails.md`](./docs/agp-spec/rails.md) · [`docs/agp-spec/integrations/webmcp.md`](./docs/agp-spec/integrations/webmcp.md)
+- Subprocessors: [mnnr.app/legal/subprocessors](https://mnnr.app/legal/subprocessors)
 
-**Monitoring:**
-- Sentry (Error tracking)
-- PostHog (Product analytics)
-- Custom performance monitoring
+## Entity
 
----
+MNNR, LLC
+Wyoming limited liability company
+EIN 33-3678186
+1603 Capitol Ave, Suite 413 PMB #1750, Cheyenne, WY 82001, USA
+[legal@mnnr.app](mailto:legal@mnnr.app)
 
-## 🚀 Quickstart
+## Repository security
 
-```bash
-git clone https://github.com/MNNRAPP/mnnr-complete2025.git
-cd mnnr-complete2025
-npm install --legacy-peer-deps
-cp .env.local.example .env.local  # then fill in dev values
-npm run db:generate
-npm run dev
-```
+If you discover a vulnerability, please follow our coordinated-disclosure process at [https://mnnr.app/.well-known/security.txt](https://mnnr.app/.well-known/security.txt) or email [security@mnnr.app](mailto:security@mnnr.app).
 
-Visit [http://localhost:3000](http://localhost:3000).
-
-### Environment Variables
-
-See [`.env.local.example`](./.env.local.example) for the full list. Required for `npm run dev`:
-
-- `NEON_DATABASE_URL` — Neon dev branch Postgres connection string (get from [neon.tech](https://neon.tech))
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` — from [clerk.com](https://clerk.com)
-- `NEXT_PUBLIC_SITE_URL` — defaults to `http://localhost:3000`
-
-Optional (dev fallbacks in code):
-
-- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — in-memory rate-limit fallback if unset
-- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile; dev bypass available
-- `NEXT_PUBLIC_SENTRY_DSN` + `SENTRY_DSN` — errors logged to console if unset
-- `RESEND_API_KEY` — outbound email; logged to console if unset
-- `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — billing flows
-
-> **Note on auth:** as of June 2026 the app uses **Clerk** for authentication
-> (`__session` cookie). Older Supabase auth code paths in `utils/supabase/*` are
-> being phased out; see [`MIGRATION_SUPABASE_TO_NEON.md`](./MIGRATION_SUPABASE_TO_NEON.md).
-
----
-
-## 🔑 API Key Management
-
-### Generate API Keys
-
-```typescript
-// POST /api/keys
-const response = await fetch('/api/keys', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name: 'Production Key' })
-});
-
-const { key, key_prefix } = await response.json();
-// key: sk_live_abc123... (shown once!)
-// key_prefix: sk_live_abc (for identification)
-```
-
-### List API Keys
-
-```typescript
-// GET /api/keys
-const response = await fetch('/api/keys');
-const { keys } = await response.json();
-// Returns: [{ id, name, key_prefix, created_at, last_used_at }]
-```
-
-### Revoke API Key
-
-```typescript
-// DELETE /api/keys?id=key_id
-const response = await fetch('/api/keys?id=key_id', {
-  method: 'DELETE'
-});
-```
-
----
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-npm test
-
-# Run with coverage
-npm run test:coverage
-
-# Run E2E tests
-npm run test:e2e
-
-# Run E2E tests with UI
-npm run test:e2e:ui
-
-# Run all tests in CI
-npm run test:ci
-```
-
-**Test Coverage:** 80%+
-
----
-
-## 📦 Project Structure
-
-```
-mnnr-complete2025/
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   │   ├── keys/          # API key management
-│   │   ├── health/        # Health check
-│   │   └── webhooks/      # Stripe webhooks
-│   ├── dashboard/         # User dashboard
-│   ├── signin/            # Authentication
-│   └── pricing/           # Pricing page
-├── components/            # React components
-│   ├── ui/               # UI components
-│   └── dashboard/        # Dashboard components
-├── lib/                   # Utilities
-│   ├── rate-limit.ts     # Rate limiting
-│   ├── validations.ts    # Zod schemas
-│   ├── cache.ts          # Caching
-│   └── monitoring.ts     # Performance monitoring
-├── __tests__/            # Test files
-│   ├── api/              # API tests
-│   └── integration/      # Integration tests
-├── e2e/                  # E2E tests (Playwright)
-├── prisma/               # Prisma schema + migrations (Neon Postgres)
-├── packages/sdk/         # @mnnr/sdk — fetch-only TypeScript SDK
-├── examples/             # curl recipes, Postman collection, working demos
-└── docs/                 # Documentation
-```
-
----
-
-## 🚢 Deployment
-
-### Vercel (Recommended)
-
-```bash
-# Deploy to production
-vercel --prod
-
-# Or push to GitHub (auto-deploys)
-git push origin main
-```
-
-### Environment Setup
-
-1. Add environment variables in Vercel dashboard
-2. Connect GitHub repository
-3. Deploy automatically on push
-
-### Verify Deployment
-
-```powershell
-# Windows
-.\scripts\verify-deployment.ps1
-
-# Or check manually
-curl https://mnnr.app/api/health
-```
-
----
-
-## 📊 Pricing
-
-| Tier | Price | API Calls | Features |
-|------|-------|-----------|----------|
-| **Free** | $0/mo | 10,000/mo | Basic features |
-| **Pro** | $49/mo | 100,000/mo | Priority support |
-| **Enterprise** | Custom | Unlimited | SLA, dedicated support |
-
-[View pricing →](https://mnnr.app/pricing)
-
----
-
-## 🔐 Security
-
-### Rate Limiting
-
-```typescript
-// Configured limits
-- API Keys: 100 requests/minute
-- Auth: 10 requests/minute
-- General: 1000 requests/minute
-```
-
-### Input Validation
-
-All inputs validated with Zod schemas:
-- API key names (1-100 chars, alphanumeric)
-- Email addresses
-- UUIDs
-- Pagination parameters
-
-### CSRF Protection
-
-Double-submit cookie pattern on all state-changing operations.
-
----
-
-## 📈 Monitoring
-
-### Sentry Integration
-
-```typescript
-// Automatic error tracking
-Sentry.captureException(error);
-
-// Performance monitoring
-const transaction = Sentry.startTransaction({ name: 'API Call' });
-```
-
-### PostHog Analytics
-
-```typescript
-// Track events
-posthog.capture('api_key_created', { key_name: 'Production' });
-```
-
----
-
-## 🤝 Contributing
-
-Proprietary project. For collaboration inquiries: pilot@mnnr.app
-
----
-
-## 📄 License
-
-Proprietary - All rights reserved © 2025 MNNR LLC
-
----
-
-## 🙋 Support
-
-- **Email:** pilot@mnnr.app
-- **Documentation:** [docs.mnnr.app](https://docs.mnnr.app)
-- **Status:** [status.mnnr.app](https://status.mnnr.app)
-
----
-
-## 🛠 Build, Deploy, and Develop
-
-The public API surface is documented and demoable. New artifacts added
-2026-06-19 (PR `feat/demos-and-apis-20260619`):
-
-| Artifact | Path | Use it for |
-|----------|------|------------|
-| **Swagger UI** | [`/docs/api-reference`](https://mnnr-app.netlify.app/docs/api-reference) | Interactive, in-browser API explorer |
-| **OpenAPI 3.1 spec (JSON)** | [`/openapi.json`](./public/openapi.json) | Machine-readable spec — codegen, contract tests |
-| **OpenAPI 3.1 spec (YAML)** | [`openapi.yaml`](./openapi.yaml) | Human-readable spec |
-| **curl recipes** | [`examples/curl/README.md`](./examples/curl/README.md) | One working `curl` per route |
-| **Postman collection** | [`examples/postman/`](./examples/postman/) | Import into Postman/Insomnia — auth + every route pre-wired |
-| **TypeScript SDK (skeleton)** | [`packages/sdk/`](./packages/sdk/) | `@mnnr/sdk` — fetch-only, no deps, Node 18+/browser/edge |
-| **Demos** | [`examples/demos/`](./examples/demos/) | x402 payment flow • API key issuance • newsletter double opt-in |
-
-Quickstart:
-
-```bash
-# 1. Explore the API
-open https://mnnr-app.netlify.app/docs/api-reference
-
-# 2. Drive it with curl
-export BASE_URL=https://mnnr-app.netlify.app
-curl "$BASE_URL/api/x402?demo=true"
-
-# 3. Drive it with the SDK
-npm install github:MNNRAPP/mnnr-complete2025#feat/demos-and-apis-20260619&path=packages/sdk
-# import { MnnrClient } from '@mnnr/sdk'
-
-# 4. Run a demo
-cd examples/demos/x402-payment-flow && node demo.mjs
-```
-
----
-
-## 🎯 Changelog
-
-### v1.0.0 (December 2025)
-
-- ✅ API key management system
-- ✅ Rate limiting with Upstash Redis
-- ✅ CSRF protection
-- ✅ Comprehensive input validation
-- ✅ E2E testing with Playwright
-- ✅ Integration tests for Stripe
-- ✅ Performance monitoring
-- ✅ 100/100 production readiness grade
-
----
-
-**Built with ❤️ by the MNNR team**
-
-**Grade: A+ (100/100)** | **Security: 100/100** | **Production Ready** ✅
+Do not file security vulnerabilities as public GitHub issues.
