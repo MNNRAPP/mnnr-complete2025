@@ -1,45 +1,80 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MNNR Global Consortium — Concentric Stars Insignia">
+  <title>MNNR Global Consortium — Concentric Stars Insignia v3</title>
+  <desc>MNNR military-patch-style consortium insignia: 8 orbital triple-concentric stars (three thin-line nested stars in each position for depth), gold concentric central authority star with filled inner glow, navy globe with gold latitude grid and dashed orbit ring. Patch aesthetic, gold-on-navy, teal omitted.</desc>
   <defs>
-    <style>
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.85; }
-      }
-      @keyframes glow {
-        0%, 100% { filter: drop-shadow(0 0 3px #10B981); }
-        50% { filter: drop-shadow(0 0 8px #10B981) drop-shadow(0 0 15px #10B98160); }
-      }
-      .logo-group {
-        animation: pulse 3s ease-in-out infinite, glow 3s ease-in-out infinite;
-      }
-    </style>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="60%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </radialGradient>
+    <!-- Reusable star path scaled inside <use> wrappers -->
+    <symbol id="star" viewBox="-20 -20 40 40">
+      <polygon points="0,-20 5.88,-6.18 19.02,-6.18 8.57,2.36 12.45,15.18 0,7.06 -12.45,15.18 -8.57,2.36 -19.02,-6.18 -5.88,-6.18"/>
+    </symbol>
   </defs>
-  
-  <!-- Background -->
-  <rect width="512" height="512" fill="#000000" rx="64"/>
-  
-  <!-- Hexagonal M Logo (mirrored) -->
-  <g class="logo-group" transform="translate(256, 256) scale(-0.9, 0.9)">
-    <!-- Right hexagon wireframe -->
-    <path d="M 20 -100 L 120 -100 L 170 0 L 120 100 L 20 100 L -30 0 Z" 
-          fill="none" stroke="#10B981" stroke-width="12" stroke-linejoin="round"/>
-    <!-- Right hexagon inner -->
-    <path d="M 35 -75 L 100 -75 L 135 0 L 100 75 L 35 75 L 0 0 Z" 
-          fill="none" stroke="#10B981" stroke-width="8" stroke-linejoin="round"/>
-    
-    <!-- Left hexagon wireframe -->
-    <path d="M -20 -100 L -120 -100 L -170 0 L -120 100 L -20 100 L 30 0 Z" 
-          fill="none" stroke="#10B981" stroke-width="12" stroke-linejoin="round"/>
-    <!-- Left hexagon inner -->
-    <path d="M -35 -75 L -100 -75 L -135 0 L -100 75 L -35 75 L 0 0 Z" 
-          fill="none" stroke="#10B981" stroke-width="8" stroke-linejoin="round"/>
-    
-    <!-- Center connection diamond -->
-    <path d="M 0 -50 L 35 0 L 0 50 L -35 0 Z" 
-          fill="none" stroke="#10B981" stroke-width="8" stroke-linejoin="round"/>
-    
-    <!-- Horizontal connectors -->
-    <line x1="-100" y1="-75" x2="100" y2="-75" stroke="#10B981" stroke-width="6"/>
-    <line x1="-100" y1="75" x2="100" y2="75" stroke="#10B981" stroke-width="6"/>
+  <!-- Navy globe base, gold stroke -->
+  <circle cx="32" cy="32" r="31" fill="#0a0b20" stroke="#F59E0B" stroke-width="1.5"/>
+  <!-- Latitude lines (subtle gold) -->
+  <g stroke="#F59E0B" stroke-width="0.5" fill="none" opacity="0.22">
+    <ellipse cx="32" cy="32" rx="26" ry="9"/>
+    <ellipse cx="32" cy="32" rx="22" ry="20"/>
+    <ellipse cx="32" cy="32" rx="9" ry="26"/>
   </g>
+  <!-- Outer orbit ring, dashed gold -->
+  <circle cx="32" cy="32" r="22" stroke="#F59E0B" stroke-width="0.7" fill="none" stroke-dasharray="2 2" opacity="0.55"/>
+  <!-- Connection lines from each orbital position to center (subtle gold) -->
+  <g stroke="#F59E0B" stroke-width="0.5" opacity="0.35">
+    <line x1="32" y1="10" x2="32" y2="32"/>
+    <line x1="47.56" y1="16.44" x2="32" y2="32"/>
+    <line x1="54" y1="32" x2="32" y2="32"/>
+    <line x1="47.56" y1="47.56" x2="32" y2="32"/>
+    <line x1="32" y1="54" x2="32" y2="32"/>
+    <line x1="16.44" y1="47.56" x2="32" y2="32"/>
+    <line x1="10" y1="32" x2="32" y2="32"/>
+    <line x1="16.44" y1="16.44" x2="32" y2="32"/>
+  </g>
+  <!-- 8 orbital TRIPLE-CONCENTRIC stars (outer→middle→inner outlines, hollow with hairline gold strokes) -->
+  <g fill="none" stroke="#F59E0B">
+    <!-- Position 1: top -->
+    <use href="#star" x="29" y="7" width="6" height="6" stroke-width="0.7" opacity="1"/>
+    <use href="#star" x="30" y="8" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="30.6" y="8.6" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 2: top-right -->
+    <use href="#star" x="44.56" y="13.44" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="45.56" y="14.44" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="46.16" y="15.04" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 3: right -->
+    <use href="#star" x="51" y="29" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="52" y="30" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="52.6" y="30.6" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 4: bottom-right -->
+    <use href="#star" x="44.56" y="44.56" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="45.56" y="45.56" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="46.16" y="46.16" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 5: bottom -->
+    <use href="#star" x="29" y="51" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="30" y="52" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="30.6" y="52.6" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 6: bottom-left -->
+    <use href="#star" x="13.44" y="44.56" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="14.44" y="45.56" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="15.04" y="46.16" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 7: left -->
+    <use href="#star" x="7" y="29" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="8" y="30" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="8.6" y="30.6" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+    <!-- Position 8: top-left -->
+    <use href="#star" x="13.44" y="13.44" width="6" height="6" stroke-width="0.7"/>
+    <use href="#star" x="14.44" y="14.44" width="4" height="4" stroke-width="0.5" opacity="0.85"/>
+    <use href="#star" x="15.04" y="15.04" width="2.8" height="2.8" stroke-width="0.4" opacity="0.7"/>
+  </g>
+  <!-- Central authority — TRIPLE-CONCENTRIC large star, hollow outer rings + filled glowing inner -->
+  <!-- Outer concentric ring (largest, hollow gold stroke) -->
+  <use href="#star" x="18" y="18" width="28" height="28" fill="none" stroke="#F59E0B" stroke-width="0.9" opacity="0.85"/>
+  <!-- Middle concentric ring (hollow gold stroke) -->
+  <use href="#star" x="22" y="22" width="20" height="20" fill="none" stroke="#F59E0B" stroke-width="0.7" opacity="0.9"/>
+  <!-- Inner concentric — FILLED with radial glow -->
+  <use href="#star" x="25" y="25" width="14" height="14" fill="url(#centerGlow)" opacity="0.98"/>
+  <!-- Tiny navy core dot in dead center for definition -->
+  <circle cx="32" cy="32" r="1.4" fill="#0a0b20"/>
 </svg>

@@ -91,3 +91,9 @@ dist/
 .ruflo/state.db*
 .claude-flow/
 claude-flow.log
+
+# Local-only secrets documentation (never commit)
+CLERK_PROD_MIGRATION_*.md
+*.secrets.md
+*.env.local
+

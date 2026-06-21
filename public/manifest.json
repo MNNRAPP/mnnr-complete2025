@@ -1,15 +1,15 @@
 {
-  "name": "MNNR - AI Usage Analytics",
+  "name": "MNNR - Authority Layer for the Machine Economy",
   "short_name": "MNNR",
-  "description": "Real-time usage analytics and billing infrastructure for AI applications",
+  "description": "Rail-neutral control plane that authorizes AI agent spend. Compliant with PSD3, MiCA, EUDIW, and DORA from day one. Bank-agnostic. EU-sovereign by default.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#2563eb",
+  "background_color": "#0a0b20",
+  "theme_color": "#F59E0B",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
-  "categories": ["business", "productivity", "utilities"],
+  "categories": ["business", "finance", "productivity"],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
