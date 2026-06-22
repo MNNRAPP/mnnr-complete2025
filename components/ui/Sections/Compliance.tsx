@@ -3,30 +3,33 @@
 export default function Compliance() {
   const regulations = [
     {
+      // CLM-003: never "compliant" — PSD3/PSR-aligned controls only.
       name: 'PSD3 / PSR',
-      desc: 'Full compliance with the Payment Services Directive 3 and Payment Services Regulation. Strong Customer Authentication for agent-initiated flows.',
-      badge: 'Ready',
+      desc: 'PSD3/PSR-aligned payment-governance controls, including Strong Customer Authentication for agent-initiated flows. Final PSD3/PSR implementation details remain subject to legislative completion.',
+      badge: 'Aligned',
       color: 'text-blue-400',
       borderColor: 'border-blue-500/30',
     },
     {
       name: 'MiCA',
-      desc: 'Markets in Crypto-Assets regulation compliance for euro stablecoin rail integration via Qivalis and future digital asset settlement.',
-      badge: 'Compliant',
+      desc: 'Designed to support Markets in Crypto-Assets (MiCA) requirements for euro-stablecoin rail integration via Qivalis and future digital-asset settlement.',
+      badge: 'By design',
       color: 'text-emerald-400',
       borderColor: 'border-emerald-500/30',
     },
     {
+      // CLM-017: design trajectory only, no eIDAS conformity claim.
       name: 'EUDIW',
-      desc: 'EU Digital Identity Wallet integration readiness. Agent credentials as verifiable presentations under eIDAS 2.0.',
-      badge: 'Integrated',
+      desc: 'Designed to support identity-assurance routing compatible with the EUDI Wallet trajectory — agent credentials as verifiable presentations under eIDAS 2.0.',
+      badge: 'In design',
       color: 'text-purple-400',
       borderColor: 'border-purple-500/30',
     },
     {
+      // CLM-015: never "GDPR compliant"; data-residency controls only.
       name: 'GDPR',
-      desc: 'Privacy-by-design architecture. Data minimization for agent transaction metadata. No cross-border data leakage to non-EU jurisdictions.',
-      badge: 'Native',
+      desc: 'Privacy-by-design architecture with data minimization for agent transaction metadata. Data-residency controls available for EU customer deployments.',
+      badge: 'By design',
       color: 'text-amber-400',
       borderColor: 'border-amber-500/30',
     },
@@ -37,7 +40,7 @@ export default function Compliance() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            European <span className="text-amber-400">Compliance</span> Ready
+            Built for <span className="text-amber-400">European</span> regulation
           </h2>
           <p className="text-lg text-white/50 max-w-3xl mx-auto leading-relaxed">
             Built from the ground up for the European regulatory framework. Not retrofitted — native.
