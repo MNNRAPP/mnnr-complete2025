@@ -114,13 +114,22 @@ function generateCSP(trustedDomains: string[]): string {
 // HARDENED CSP — nonce-based, no unsafe-inline / unsafe-eval (Finding #6)
 // ============================================================================
 //
-// Whitelisted third-party origins (verified against current product wiring):
-//   - https://challenges.cloudflare.com  -> Turnstile bot challenge widget
-//   - https://js.stripe.com              -> Stripe.js (Payment Element, checkout)
-//   - https://api.stripe.com             -> Stripe REST API (server-side + webhooks)
-//   - https://*.neon.tech                -> Neon Postgres (Hyperdrive / direct)
-//   - https://eth-mainnet.g.alchemy.com  -> Alchemy ETH RPC (x402 / wallet flows)
-//   - https://base-mainnet.g.alchemy.com -> Alchemy Base RPC (x402 / wallet flows)
+// Whitelisted third-party origins — verified against current product wiring:
+// package.json deps, app/layout.tsx (ClerkProvider + PostHogProvider),
+// providers/PostHogProvider.tsx, middleware.ts (Clerk), next.config.js (Sentry).
+//   - https://challenges.cloudflare.com         -> Turnstile bot-challenge widget
+//   - https://js.stripe.com / hooks.stripe.com  -> Stripe.js + 3DS/redirect frames
+//   - https://api.stripe.com / m.stripe.{com,network} -> Stripe API + fraud signals
+//   - https://*.clerk.accounts.dev / *.clerk.com / clerk.mnnr.app -> Clerk auth UI
+//   - https://us.i.posthog.com / us-assets.i.posthog.com -> PostHog analytics
+//   - https://*.ingest.sentry.io / *.ingest.us.sentry.io / *.sentry.io -> Sentry
+//   - https://fonts.googleapis.com / fonts.gstatic.com -> Google Fonts (defensive)
+//   - https://*.neon.tech                       -> Neon Postgres (Hyperdrive/direct)
+//   - https://{eth,base}-mainnet.g.alchemy.com  -> Alchemy RPC (x402 / wallet flows)
+//
+// WITHOUT Clerk + PostHog + Sentry here, the production nonce-CSP silently
+// blocks the auth UI (→ blank dashboard), product analytics, and error
+// reporting. See audits/20260622_csp_audit.md for the gap analysis.
 //
 // Inline <script> and <style> blocks MUST carry the per-request nonce exposed
 // via the `x-nonce` response header (set by middleware.ts). App Router pages
@@ -134,20 +143,48 @@ function generateCSP(trustedDomains: string[]): string {
  */
 export const CSP_ALLOWED_ORIGINS = {
   script: [
-    'https://challenges.cloudflare.com',
-    'https://js.stripe.com',
+    'https://challenges.cloudflare.com', // Turnstile
+    'https://js.stripe.com',             // Stripe.js
+    'https://*.clerk.accounts.dev',      // Clerk JS (hosted + dev instances)
+    'https://*.clerk.com',               // Clerk assets
+    'https://clerk.mnnr.app',            // Clerk Frontend API (prod CNAME, if configured)
+    'https://*.clerk.services',          // Clerk Frontend API service tier
+    'https://clerk-telemetry.com',       // Clerk telemetry
+    'https://us-assets.i.posthog.com',   // PostHog array.js / session recorder
   ],
-  style: [] as string[],
+  style: [
+    'https://fonts.googleapis.com',      // Google Fonts stylesheet (defensive)
+  ],
+  font: [
+    'https://fonts.gstatic.com',         // Google Fonts files (defensive)
+  ],
   connect: [
     'https://*.neon.tech',
     'https://challenges.cloudflare.com',
     'https://api.stripe.com',
+    'https://m.stripe.com',              // Stripe fraud/telemetry
+    'https://m.stripe.network',          // Stripe fraud/telemetry
     'https://eth-mainnet.g.alchemy.com',
     'https://base-mainnet.g.alchemy.com',
+    'https://*.clerk.accounts.dev',      // Clerk Frontend API (XHR/websocket)
+    'https://*.clerk.com',
+    'https://clerk.mnnr.app',
+    'https://*.clerk.services',          // Clerk Frontend API service tier
+    'https://clerk-telemetry.com',       // Clerk telemetry
+    'https://us.i.posthog.com',          // PostHog event ingest
+    'https://us-assets.i.posthog.com',
+    'https://*.ingest.sentry.io',        // Sentry event ingest
+    'https://*.ingest.us.sentry.io',
+    'https://*.sentry.io',
   ],
   frame: [
     'https://challenges.cloudflare.com',
     'https://js.stripe.com',
+    'https://hooks.stripe.com',          // Stripe 3DS / redirect frames
+    'https://*.clerk.services',          // Clerk embedded components
+  ],
+  worker: [
+    'blob:',                             // Clerk + PostHog spin up blob workers
   ],
 } as const;
 
@@ -165,17 +202,20 @@ export const CSP_ALLOWED_ORIGINS = {
 export function generateCsp(nonce: string): string {
   const scriptSrc = ["'self'", `'nonce-${nonce}'`, ...CSP_ALLOWED_ORIGINS.script].join(' ');
   const styleSrc = ["'self'", `'nonce-${nonce}'`, ...CSP_ALLOWED_ORIGINS.style].join(' ');
+  const fontSrc = ["'self'", 'data:', ...CSP_ALLOWED_ORIGINS.font].join(' ');
   const connectSrc = ["'self'", ...CSP_ALLOWED_ORIGINS.connect].join(' ');
   const frameSrc = ["'self'", ...CSP_ALLOWED_ORIGINS.frame].join(' ');
+  const workerSrc = ["'self'", ...CSP_ALLOWED_ORIGINS.worker].join(' ');
 
   return [
     `default-src 'self'`,
     `script-src ${scriptSrc}`,
     `style-src ${styleSrc}`,
     `img-src 'self' data: blob: https:`,
-    `font-src 'self' data:`,
+    `font-src ${fontSrc}`,
     `connect-src ${connectSrc}`,
     `frame-src ${frameSrc}`,
+    `worker-src ${workerSrc}`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
@@ -216,9 +256,16 @@ export const SECURITY_HEADERS_STATIC: ReadonlyArray<{ key: string; value: string
     value:
       'camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
   },
-  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  // `same-origin-allow-popups` keeps cross-origin isolation for the document
+  // while preserving the popup postMessage handshake used by Clerk OAuth and
+  // Stripe Checkout. Plain `same-origin` severs window.opener and breaks them.
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
   { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
-  { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
+  // COEP must NOT be `require-corp`: it blocks every cross-origin embed that
+  // doesn't send CORP/COEP headers — Stripe.js (js.stripe.com), Clerk widgets,
+  // and the Turnstile iframe — yielding blank payment/auth UIs in production.
+  // The app uses no SharedArrayBuffer / cross-origin-isolation features.
+  { key: 'Cross-Origin-Embedder-Policy', value: 'unsafe-none' },
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
   { key: 'X-Download-Options', value: 'noopen' },
   { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
