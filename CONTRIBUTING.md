@@ -2,6 +2,30 @@
 
 Thank you for your interest in contributing to MNNR! This document provides guidelines and information for contributors.
 
+---
+
+## ⚖️ Claims governance rule (non-negotiable)
+
+> No public compliance, security, uptime, residency, encryption, audit,
+> insurance, or certification claim may merge unless it has a row in the
+> [claims register](./claims_register.md) with evidence and an Approved (or
+> Approved with Caveat) status.
+
+Applies to every public-facing surface: README, `app/**` pages, `components/**`,
+public `docs/**`, marketing copy, `/trust`, `/a50`, SOWs, and any published brief.
+
+1. Find (or add) the relevant row in `claims_register.md` and get a Claim ID.
+2. Use **only** that row's *Approved Wording* + *Required Caveat*.
+3. Cite the Claim ID(s) in your PR (the PR template prompts for this).
+4. The owning function signs off: **Legal** (law/regulation/certification/
+   government/insurance/privacy/data/compliance), **Security** (cryptography/
+   uptime/hosting/encryption/auth/logs/incident response/infrastructure),
+   **Product** (feature scope/timeline/API behavior/demo/pricing/pilot).
+
+Rows marked **Remove**/**Reword** in the register must be actioned in source
+before the related page ships. When unsure, soften to "designed to support" /
+"under implementation" / "target" and flag the owning function.
+
 ## 📋 Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
