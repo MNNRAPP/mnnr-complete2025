@@ -24,8 +24,12 @@ const securityHeaders = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   },
-  { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
-  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  // COEP must NOT be 'require-corp': it blocks cross-origin embeds lacking
+  // CORP/COEP headers — Stripe.js, Clerk widgets, the Turnstile iframe — which
+  // blanks the payment/auth UIs in prod. No SharedArrayBuffer usage here.
+  { key: 'Cross-Origin-Embedder-Policy', value: 'unsafe-none' },
+  // 'same-origin-allow-popups' preserves the OAuth/Checkout popup handshake.
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
   { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
   { key: 'X-Download-Options', value: 'noopen' },
   { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
