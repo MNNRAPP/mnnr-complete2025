@@ -33,7 +33,6 @@ export const runtime = 'nodejs';
 const BUILD_SHA = (
   process.env.NEXT_PUBLIC_BUILD_SHA ||
   process.env.COMMIT_REF || // Netlify
-  process.env.VERCEL_GIT_COMMIT_SHA || // Vercel
   ''
 ).slice(0, 7);
 

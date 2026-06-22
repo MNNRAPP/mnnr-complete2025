@@ -43,7 +43,6 @@ next.config.js @security-team
 # ============================================
 # Require devops approval for infrastructure changes
 
-vercel.json @devops-lead
 .github/ @devops-lead @security-team
 /scripts/ @devops-lead
 Dockerfile @devops-lead
