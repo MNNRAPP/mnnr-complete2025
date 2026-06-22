@@ -19,7 +19,7 @@ MNNR is a "Payments for Machines" platform enabling pay-per-call billing for AI 
   pnpm dev            # Start Next.js dev server
   ```
 - **Database Management**: Use Supabase CLI for migrations, type generation, and schema changes
-- **Deployment**: Vercel auto-deploy from GitHub main branch, or manual with `pnpm deploy`
+- **Deployment**: Netlify auto-deploy from GitHub main branch, or manual with `pnpm deploy`
 - **Environment Setup**: Copy `.env.local.example` → `.env.local` and configure Supabase/Stripe keys
 
 ## Project-Specific Patterns & Conventions
@@ -35,7 +35,7 @@ MNNR is a "Payments for Machines" platform enabling pay-per-call billing for AI 
 - **Stripe**: Payments, webhooks, customer portal, subscription management
 - **Upstash Redis**: Rate limiting and caching for agent wallets
 - **Sentry**: Error monitoring and performance tracking
-- **Vercel**: Hosting, edge functions, analytics
+- **Netlify**: Hosting and edge functions (canonical host per privacy policy)
 - **PostHog**: User analytics and feature flags
 
 ## Critical Workflows
@@ -46,7 +46,7 @@ MNNR is a "Payments for Machines" platform enabling pay-per-call billing for AI 
 - **Emergency Procedures**: Maintenance mode toggles in `middleware.ts`
 
 ## Deployment & Operations
-- **Production**: https://mnnr-complete2025.vercel.app (auto-deploy from GitHub)
+- **Production**: https://mnnr.app (auto-deploy from GitHub via Netlify)
 - **Database**: Supabase hosted PostgreSQL with connection pooling
 - **Monitoring**: Comprehensive logging, Sentry integration, health checks
 - **Security**: SOC2-ready implementation with incident response playbooks

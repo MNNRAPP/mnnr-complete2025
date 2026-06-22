@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 # Dummy env block — none of these are real secrets. They satisfy lib/env.ts
-# zod validation at build/test time. Real values live in Netlify/Vercel.
+# zod validation at build/test time. Real values live in Netlify.
 env:
   NODE_ENV: test
   CSRF_SECRET: ci-csrf-secret-32-chars-minimum-for-validation-only

@@ -18,4 +18,17 @@
   X-DNS-Prefetch-Control: on
   X-Download-Options: noopen
   X-Permitted-Cross-Domain-Policies: none
-  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+
+# X-Robots-Tag is scoped to PRIVATE surfaces only (mirrors the Disallow list in
+# public/robots.txt). A global `noindex` on /* de-indexed the entire marketing
+# site — homepage, /docs, /pricing, /legal/* — from every crawler.
+/api/*
+  X-Robots-Tag: noindex, nofollow
+/dashboard/*
+  X-Robots-Tag: noindex, nofollow
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+/account/*
+  X-Robots-Tag: noindex, nofollow
+/settings/*
+  X-Robots-Tag: noindex, nofollow

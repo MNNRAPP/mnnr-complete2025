@@ -83,3 +83,7 @@ coverage/
 out/
 build/
 dist/
+
+# 2026-06-22 - untracked: contained a leaked Stripe sk_test_ key (rotate in Stripe dashboard)
+.env.production
+.env.production.local
