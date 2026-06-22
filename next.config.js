@@ -29,8 +29,27 @@ const securityHeaders = [
   { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
   { key: 'X-Download-Options', value: 'noopen' },
   { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
-  { key: 'Server', value: 'MNNR' },
-  { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, nosnippet' }
+  { key: 'Server', value: 'MNNR' }
+];
+
+// ----------------------------------------------------------------------------
+// X-Robots-Tag is INTENTIONALLY scoped, not global.
+//
+// Previously this lived inside `securityHeaders` and was applied to `/:path*`,
+// so EVERY response — including the marketing homepage, /docs, /pricing, and
+// /legal/* — carried `noindex, nofollow`. That header wins over
+// public/robots.txt and app/sitemap.ts, making the whole site invisible to
+// Googlebot, Bingbot, and every AI crawler the robots.txt explicitly welcomes.
+//
+// It now applies ONLY to the private route prefixes below, which mirror the
+// `Disallow:` list in public/robots.txt. Public/marketing routes stay indexable.
+// ----------------------------------------------------------------------------
+const NOINDEX_HEADER = { key: 'X-Robots-Tag', value: 'noindex, nofollow' };
+const PRIVATE_NOINDEX_SOURCES = [
+  '/dashboard/:path*',
+  '/admin/:path*',
+  '/account/:path*',
+  '/settings/:path*',
 ];
 
 const nextConfig = {
@@ -81,6 +100,7 @@ const nextConfig = {
         source: '/api/:path*',
         headers: [
           ...securityHeaders,
+          NOINDEX_HEADER,
           {
             key: 'Cache-Control',
             value: 'no-store, no-cache, must-revalidate, proxy-revalidate'
@@ -90,7 +110,13 @@ const nextConfig = {
             value: 'nosniff'
           }
         ]
-      }
+      },
+      // Keep private surfaces out of search indexes WITHOUT de-indexing the
+      // public marketing site. Mirrors the Disallow list in public/robots.txt.
+      ...PRIVATE_NOINDEX_SOURCES.map((source) => ({
+        source,
+        headers: [NOINDEX_HEADER]
+      }))
     ];
   },
 

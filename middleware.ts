@@ -78,6 +78,9 @@ export default authMiddleware({
     // /security is the public-facing proof page. No auth so external
     // auditors / monitors can probe without credentials.
     '/security',
+    // Public diligence surfaces (Phase-0 buyer-ready sprint).
+    '/trust',
+    '/a50',
   ],
 
   // Routes that can always be accessed (even while logged in)

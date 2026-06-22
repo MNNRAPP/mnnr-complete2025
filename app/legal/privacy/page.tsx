@@ -126,7 +126,7 @@ export default function PrivacyPolicy() {
         <ul>
           <li><strong>Stripe:</strong> Payment processing (PCI DSS Level 1 certified)</li>
           <li><strong>Supabase:</strong> Database hosting (SOC 2 Type II certified)</li>
-          <li><strong>Vercel:</strong> Application hosting and CDN</li>
+          <li><strong>Netlify:</strong> Application hosting and CDN</li>
           <li><strong>Sentry:</strong> Error tracking and monitoring</li>
           <li><strong>Google Analytics:</strong> Usage analytics (anonymized, opt-in)</li>
         </ul>
