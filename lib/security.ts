@@ -147,7 +147,9 @@ export const CSP_ALLOWED_ORIGINS = {
     'https://js.stripe.com',             // Stripe.js
     'https://*.clerk.accounts.dev',      // Clerk JS (hosted + dev instances)
     'https://*.clerk.com',               // Clerk assets
-    'https://clerk.mnnr.app',            // Clerk Frontend API (prod CNAME)
+    'https://clerk.mnnr.app',            // Clerk Frontend API (prod CNAME, if configured)
+    'https://*.clerk.services',          // Clerk Frontend API service tier
+    'https://clerk-telemetry.com',       // Clerk telemetry
     'https://us-assets.i.posthog.com',   // PostHog array.js / session recorder
   ],
   style: [
@@ -167,6 +169,8 @@ export const CSP_ALLOWED_ORIGINS = {
     'https://*.clerk.accounts.dev',      // Clerk Frontend API (XHR/websocket)
     'https://*.clerk.com',
     'https://clerk.mnnr.app',
+    'https://*.clerk.services',          // Clerk Frontend API service tier
+    'https://clerk-telemetry.com',       // Clerk telemetry
     'https://us.i.posthog.com',          // PostHog event ingest
     'https://us-assets.i.posthog.com',
     'https://*.ingest.sentry.io',        // Sentry event ingest
@@ -177,6 +181,7 @@ export const CSP_ALLOWED_ORIGINS = {
     'https://challenges.cloudflare.com',
     'https://js.stripe.com',
     'https://hooks.stripe.com',          // Stripe 3DS / redirect frames
+    'https://*.clerk.services',          // Clerk embedded components
   ],
   worker: [
     'blob:',                             // Clerk + PostHog spin up blob workers
