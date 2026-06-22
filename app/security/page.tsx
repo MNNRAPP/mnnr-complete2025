@@ -120,7 +120,7 @@ const HEADER_CHECKS: HeaderCheck[] = [
 
 async function probeHeaders(): Promise<{ headerMap: Record<string, string>; origin: string }> {
   const h = nextHeaders();
-  const host = h.get('host') ?? 'mnnr-app.netlify.app';
+  const host = h.get('host') ?? 'mnnr.app';
   const proto = h.get('x-forwarded-proto') ?? 'https';
   const origin = `${proto}://${host}`;
   try {
