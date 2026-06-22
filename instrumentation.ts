@@ -18,13 +18,10 @@ export async function register() {
       // helpful errors where needed (e.g., /api/webhooks).
     }
 
-    // Initialize OpenTelemetry for distributed tracing
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
-      const { registerOTel } = await import('@vercel/otel');
-      registerOTel({
-        serviceName: 'mnnr-app',
-      });
-    }
+    // Distributed tracing + error capture are handled by Sentry (below).
+    // The former @vercel/otel OpenTelemetry hook was Vercel-platform-specific
+    // (gated on NEXT_PUBLIC_VERCEL_ENV) and inert on Netlify; removed with the
+    // Vercel purge so the bundle no longer depends on @vercel/otel.
 
     // Initialize Sentry server SDK (no-ops at the SDK layer if SENTRY_DSN
     // unset; the config file itself already guards on env.sentry.dsn()).
