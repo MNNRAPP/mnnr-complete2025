@@ -7,6 +7,7 @@ import Compliance from '@/components/ui/Sections/Compliance';
 import Comparison from '@/components/ui/Sections/Comparison';
 import EuropeanTimeline from '@/components/ui/Sections/EuropeanTimeline';
 import ApiPreview from '@/components/ui/Sections/ApiPreview';
+import Countdown from '@/components/ui/Sections/Countdown';
 import CTA from '@/components/ui/Sections/CTA';
 
 // Force static generation for maximum performance
@@ -25,6 +26,7 @@ export default function HomePage() {
       <Comparison />
       <EuropeanTimeline />
       <ApiPreview />
+      <Countdown />
       <CTA />
     </>
   );
