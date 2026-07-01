@@ -57,11 +57,6 @@ export default function OnboardingStepTwo() {
       const plaintext: string | undefined = data?.apiKey?.key;
       if (!plaintext) throw new Error('Server did not return the plaintext key');
       setCreatedKey(plaintext);
-      try {
-        sessionStorage.setItem(STORAGE_KEY, plaintext);
-      } catch {
-        // sessionStorage can throw in private-browsing on iOS — non-fatal.
-      }
       toast({
         title: 'API key created',
         description: 'Copy it now — you will not see it again.',
