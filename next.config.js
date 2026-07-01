@@ -29,8 +29,19 @@ const securityHeaders = [
   { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
   { key: 'X-Download-Options', value: 'noopen' },
   { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
-  { key: 'Server', value: 'MNNR' },
-  { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, nosnippet' }
+  { key: 'Server', value: 'MNNR' }
+  // X-Robots-Tag intentionally removed 2026-07-01: pre-launch cold-outreach
+  // campaign targets Tier-A EU bank + PSP + card-network execs. Recipients
+  // will Google MNNR to verify legitimacy — noindex/nofollow would drop
+  // mnnr.app off SERP and cost credibility. Compliance brief, EU brief, and
+  // /crypto public-key fingerprints are explicitly meant to be discoverable.
+  // Default Google behavior (index + follow) restored by omission.
+  //
+  // TODO(post-launch): reconsider if unnecessary crawl volume becomes a cost
+  // or if /admin, /api, or private pilot routes need per-route noindex via
+  // route-level metadata (Next.js `robots` export). Do NOT reintroduce a
+  // global noindex header without first checking search-console visibility
+  // of the compliance-brief.pdf, eu-brief.pdf, and /crypto pages.
 ];
 
 const nextConfig = {
