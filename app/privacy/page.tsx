@@ -61,7 +61,8 @@ export default function PrivacyPolicy() {
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li><strong>Stripe:</strong> Payment processing</li>
               <li><strong>Supabase:</strong> Database and authentication services</li>
-              <li><strong>Vercel:</strong> Hosting and edge infrastructure</li>
+              <li><strong>Cloudflare (Pages + DNS + Email Routing):</strong> Production hosting, edge network, DNS, and inbound email routing</li>
+              <li><strong>Netlify:</strong> Preview deploys for pull requests</li>
               <li><strong>Analytics Providers:</strong> Usage analytics and monitoring</li>
             </ul>
 

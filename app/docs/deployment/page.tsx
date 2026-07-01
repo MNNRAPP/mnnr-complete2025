@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Deployment Guide - MNNR',
-  description: 'Step-by-step production deployment guide with Vercel, Supabase, and monitoring setup.',
+  description: 'Step-by-step production deployment guide with Cloudflare Pages, Netlify, Supabase, and monitoring setup.',
 };
 
 const deploymentSteps = [
@@ -52,27 +52,33 @@ supabase db diff --linked`,
   },
   {
     number: 3,
-    title: 'Vercel Deployment',
+    title: 'Cloudflare Pages + Netlify Deployment',
     icon: '🚀',
     gradient: 'from-purple-500/20 to-pink-500/20',
     borderColor: 'border-purple-500/30',
     items: [
       'Connect GitHub repository',
-      'Configure build settings (Next.js)',
-      'Set environment variables',
-      'Configure custom domain (mnnr.app)',
-      'Enable Edge Functions for APIs',
+      'Cloudflare Pages: production deploys on push to main → mnnr.app',
+      'Netlify: preview deploys on every PR → deploy-preview-N--mnnr-app.netlify.app',
+      'Set environment variables in Cloudflare Pages + Netlify dashboards',
+      'Configure custom domain (mnnr.app) via Cloudflare DNS',
     ],
-    code: `# vercel.json
-{
-  "framework": "nextjs",
-  "regions": ["iad1", "sfo1", "fra1"],
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 30
-    }
-  }
-}`,
+    code: `# netlify.toml (preview deploys — Netlify @next plugin)
+[build]
+  command = "corepack pnpm install --no-frozen-lockfile && corepack pnpm db:generate && corepack pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Cloudflare Pages build config (production — set in CF dashboard)
+# Build command: npm run build
+# Build output:  .next
+# Framework:     Next.js
+# Root dir:      /`,
   },
   {
     number: 4,
@@ -106,7 +112,7 @@ Sentry.init({
     items: [
       'Enable Redis rate limiting',
       'Configure CORS policies',
-      'Set up SSL certificates (auto via Vercel)',
+      'Set up SSL certificates (auto via Cloudflare)',
       'Review API access controls',
       'Enable audit logging',
     ],
@@ -159,8 +165,8 @@ export default function DeploymentPage() {
               </span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Deploy your agent infrastructure to production with Vercel, Supabase, 
-              and enterprise-grade monitoring.
+              Deploy your agent infrastructure to production with Cloudflare Pages,
+              Netlify preview builds, Supabase, and enterprise-grade monitoring.
             </p>
           </div>
 
@@ -169,9 +175,9 @@ export default function DeploymentPage() {
             <h3 className="text-lg font-semibold text-white mb-4">Infrastructure Stack</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-black/40 rounded-lg">
-                <span className="text-2xl mb-2 block">▲</span>
-                <div className="text-white font-medium">Vercel</div>
-                <div className="text-gray-400 text-sm">Edge Runtime</div>
+                <span className="text-2xl mb-2 block">☁️</span>
+                <div className="text-white font-medium">Cloudflare Pages</div>
+                <div className="text-gray-400 text-sm">Production / Edge</div>
               </div>
               <div className="text-center p-4 bg-black/40 rounded-lg">
                 <span className="text-2xl mb-2 block">⚡</span>

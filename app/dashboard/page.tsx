@@ -142,7 +142,7 @@ export default async function DashboardPage() {
       <div className="mt-10 grid gap-4 lg:grid-cols-2">
         <Panel
           title="Get the most out of MNNR"
-          body="Drop the curl from onboarding into a cron, a Vercel function, or your agent runtime — every authenticated call lights up your usage feed."
+          body="Drop the curl from onboarding into a cron, a Cloudflare Worker, a Netlify function, or your agent runtime — every authenticated call lights up your usage feed."
           cta={{ href: '/dashboard/keys', label: 'Create another API key →' }}
         />
         <Panel

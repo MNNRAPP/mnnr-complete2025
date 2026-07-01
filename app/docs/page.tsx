@@ -33,7 +33,7 @@ const docSections = [
   },
   {
     title: 'Deployment',
-    description: 'Production deployment guides for Vercel, AWS, and self-hosted environments.',
+    description: 'Production deployment guides for Cloudflare Pages, Netlify, and self-hosted environments.',
     href: '/docs/deployment',
     icon: '🚀',
     gradient: 'from-blue-500/20 to-indigo-500/20',
@@ -176,8 +176,8 @@ export default function DocsPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/docs/deployment#vercel" className="text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-2">
-                    <span className="text-emerald-400">→</span> Vercel Deployment
+                  <Link href="/docs/deployment#cloudflare-pages" className="text-gray-400 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                    <span className="text-emerald-400">→</span> Cloudflare Pages Deployment
                   </Link>
                 </li>
               </ul>
